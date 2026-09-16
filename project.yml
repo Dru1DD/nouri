@@ -1,0 +1,139 @@
+name: Nouri
+options:
+  bundleIdPrefix: com.dru1dd
+  deploymentTarget:
+    iOS: "18.0"
+    watchOS: "11.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_TREAT_WARNINGS_AS_ERRORS: NO
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+packages:
+  NouriKit:
+    path: NouriKit
+
+targets:
+  Nouri:
+    type: application
+    platform: iOS
+    sources: [Nouri]
+    dependencies:
+      - package: NouriKit
+      - target: NouriWidgets
+      - target: NouriWatch
+    entitlements:
+      path: Nouri/Nouri.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+        com.apple.security.application-groups: [group.com.dru1dd.nouri]
+    info:
+      path: Nouri/Info.plist
+      properties:
+        CFBundleDisplayName: Nouri
+        UILaunchScreen: {}
+        UIApplicationSupportsIndirectInputEvents: true
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSHealthShareUsageDescription: Nouri reads water and dietary energy logged by other apps to show them next to your own entries.
+        NSHealthUpdateUsageDescription: Nouri saves the water and calories you log to Apple Health.
+        UIBackgroundModes: [fetch]
+        BGTaskSchedulerPermittedIdentifiers: [com.dru1dd.nouri.reminders]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dru1dd.nouri
+        TARGETED_DEVICE_FAMILY: "1"
+
+  NouriWatch:
+    type: application
+    platform: watchOS
+    sources: [NouriWatch]
+    dependencies:
+      - package: NouriKit
+      - target: NouriWatchWidgets
+    entitlements:
+      path: NouriWatch/NouriWatch.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.dru1dd.nouri]
+    info:
+      path: NouriWatch/Info.plist
+      properties:
+        CFBundleDisplayName: Nouri
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.dru1dd.nouri
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dru1dd.nouri.watchkitapp
+
+  NouriWidgets:
+    type: app-extension
+    platform: iOS
+    sources: [NouriWidgets, Widgets]
+    dependencies:
+      - package: NouriKit
+    entitlements:
+      path: NouriWidgets/NouriWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.dru1dd.nouri]
+    info:
+      path: NouriWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Nouri
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dru1dd.nouri.widgets
+
+  NouriWatchWidgets:
+    type: app-extension
+    platform: watchOS
+    sources: [NouriWatchWidgets, Widgets]
+    dependencies:
+      - package: NouriKit
+    entitlements:
+      path: NouriWatchWidgets/NouriWatchWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.dru1dd.nouri]
+    info:
+      path: NouriWatchWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Nouri
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dru1dd.nouri.watchkitapp.widgets
+
+  NouriUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [NouriUITests]
+    dependencies:
+      - target: Nouri
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dru1dd.nouri.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: Nouri
+
+schemes:
+  Nouri:
+    build:
+      targets:
+        Nouri: all
+    test:
+      targets:
+        - NouriUITests
+        - package: NouriKit/NouriKitTests
+  NouriWatch:
+    build:
+      targets:
+        NouriWatch: all

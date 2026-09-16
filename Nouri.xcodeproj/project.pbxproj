@@ -1,0 +1,900 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		41135F54AE046A286014D9B9 /* NouriUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC42635A94160A05D00FD54C /* NouriUITests.swift */; };
+		4D7A729D5A5CEC169CDAEF30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2138AE62DC646B4986054BDD /* Assets.xcassets */; };
+		5824E3AB98C7151A4639854D /* NouriWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D5780A75AE83CE5E0E337726 /* NouriWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7198071DE45C2044758755FB /* NouriWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0571C13818D13842F69BEB0E /* NouriWidgets.swift */; };
+		71F7E638C9D869A906D3CA10 /* NouriKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5087EF4BD0F20C77DAF6B1D7 /* NouriKit */; };
+		72500EF4DA20BF5496BDC4C7 /* NouriKit in Frameworks */ = {isa = PBXBuildFile; productRef = DFCDED56F06D95E90FE29E47 /* NouriKit */; };
+		A1CEE2C0DAB969222BFF9A2A /* NouriWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0571C13818D13842F69BEB0E /* NouriWidgets.swift */; };
+		A88648E3DA007DE67C738E84 /* NouriKit in Frameworks */ = {isa = PBXBuildFile; productRef = EF642D9E11116D8063FC8199 /* NouriKit */; };
+		B1ED7098DB248179918050D8 /* NouriWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 06887951A72FA30EE348FDF7 /* NouriWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B431D1E00756CDE3E244C306 /* NouriWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40588B66ED1912F3F06FA9D /* NouriWatchApp.swift */; };
+		B500B0ED5A59F6583BA71916 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999C3F657B75D4AF5A1E8C41 /* DashboardView.swift */; };
+		BFA9EE14AC761438CAF565E8 /* NouriKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0560BCC9AE03191B6229EFAD /* NouriKit */; };
+		C83570F84F056A08BF4504DE /* EntryForms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6504A95DA9479BDD01F86958 /* EntryForms.swift */; };
+		D0A67DC29442BE7462D7AB58 /* HistoryAndSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E31B3584564D1BB0484490 /* HistoryAndSettings.swift */; };
+		D4D150AB51213E835FD2E6C1 /* WatchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF09E765A7224186A3C0AC28 /* WatchViews.swift */; };
+		E654D8E55AE6CA373DD0980D /* NouriApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E84225500F94EFE7F16680 /* NouriApp.swift */; };
+		ECFCFDC2D1FEF38D0B35CB26 /* NouriWatchWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D501F7E0327344AA5D088C9B /* NouriWatchWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		FE6DB1D6280D61CB72C134C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 447BC8E6C06B799DC3855EE5 /* Assets.xcassets */; };
+		FF66ACA2A9A9040800AF05EE /* MedicationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CC7EFF872F9C731B3B80E5 /* MedicationsView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		117016DBD276E88BC0E5711D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5520D6D3417118BCEA74B7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 656419483978B1D44A2045C3;
+			remoteInfo = NouriWatchWidgets;
+		};
+		28247A22E7CDF4CB924B492E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5520D6D3417118BCEA74B7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A3F8079E2E906E090A9B16CC;
+			remoteInfo = NouriWidgets;
+		};
+		41BE4A69B34BD617047E6160 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5520D6D3417118BCEA74B7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2B15EA0CB298929A6BA4DE2B;
+			remoteInfo = NouriWatch;
+		};
+		E512C701A8CA7B7372C6CDE0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5520D6D3417118BCEA74B7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84A8E96C5BF9A5792C720469;
+			remoteInfo = Nouri;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C1041134E628C0ACED2C14A0 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				B1ED7098DB248179918050D8 /* NouriWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6FAE54EB268355FC8AEEC3B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5824E3AB98C7151A4639854D /* NouriWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FC90E457A939F29488A0EB49 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				ECFCFDC2D1FEF38D0B35CB26 /* NouriWatchWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0571C13818D13842F69BEB0E /* NouriWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriWidgets.swift; sourceTree = "<group>"; };
+		06887951A72FA30EE348FDF7 /* NouriWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NouriWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		095FABD03D2E1ADE69CC5F7A /* NouriWatchWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NouriWatchWidgets.entitlements; sourceTree = "<group>"; };
+		2138AE62DC646B4986054BDD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		30258371ED5E4E7BE4C40758 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		447BC8E6C06B799DC3855EE5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		467D8B956BCC47EF7331691B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		4E7FA7DF27FD397D41C1C893 /* Nouri.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Nouri.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		53CC7EFF872F9C731B3B80E5 /* MedicationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicationsView.swift; sourceTree = "<group>"; };
+		6504A95DA9479BDD01F86958 /* EntryForms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryForms.swift; sourceTree = "<group>"; };
+		747CD2342BA2BFA6C38E1AF6 /* NouriUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NouriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		77E84225500F94EFE7F16680 /* NouriApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriApp.swift; sourceTree = "<group>"; };
+		78150583D498D1E74F53F10E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7EBB2B0A4C0FF77E189619B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		999C3F657B75D4AF5A1E8C41 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		9E6EA6DB3FAF1BF2B1303850 /* Nouri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Nouri.entitlements; sourceTree = "<group>"; };
+		AA5247F5BDFB0DA549B502CC /* NouriKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NouriKit; path = NouriKit; sourceTree = SOURCE_ROOT; };
+		C40588B66ED1912F3F06FA9D /* NouriWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriWatchApp.swift; sourceTree = "<group>"; };
+		D501F7E0327344AA5D088C9B /* NouriWatchWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NouriWatchWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5780A75AE83CE5E0E337726 /* NouriWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = NouriWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC42635A94160A05D00FD54C /* NouriUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriUITests.swift; sourceTree = "<group>"; };
+		DCAB6ED9228CE408DE867985 /* NouriWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NouriWatch.entitlements; sourceTree = "<group>"; };
+		EF09E765A7224186A3C0AC28 /* WatchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchViews.swift; sourceTree = "<group>"; };
+		F6E31B3584564D1BB0484490 /* HistoryAndSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryAndSettings.swift; sourceTree = "<group>"; };
+		F7EBBAD7300B1989862E470C /* NouriWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NouriWidgets.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4182F3CAC16DED0114588243 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				71F7E638C9D869A906D3CA10 /* NouriKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		48472141A0728877E4E4F94A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				72500EF4DA20BF5496BDC4C7 /* NouriKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7450F8A7C22D9C5DA6956904 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFA9EE14AC761438CAF565E8 /* NouriKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		79D8C156E3CD80EA2818DCF3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A88648E3DA007DE67C738E84 /* NouriKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2CF4D3C79924951EDA7E6EBA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				999C3F657B75D4AF5A1E8C41 /* DashboardView.swift */,
+				6504A95DA9479BDD01F86958 /* EntryForms.swift */,
+				F6E31B3584564D1BB0484490 /* HistoryAndSettings.swift */,
+				53CC7EFF872F9C731B3B80E5 /* MedicationsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4172817D1C4B3E693843A09E /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				0571C13818D13842F69BEB0E /* NouriWidgets.swift */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+		45C8F923013D91BFC405F0E2 /* NouriWatchWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				30258371ED5E4E7BE4C40758 /* Info.plist */,
+				095FABD03D2E1ADE69CC5F7A /* NouriWatchWidgets.entitlements */,
+			);
+			path = NouriWatchWidgets;
+			sourceTree = "<group>";
+		};
+		52DA9C45796BD4EE2DCDCC9F /* NouriWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				7EBB2B0A4C0FF77E189619B0 /* Info.plist */,
+				F7EBBAD7300B1989862E470C /* NouriWidgets.entitlements */,
+			);
+			path = NouriWidgets;
+			sourceTree = "<group>";
+		};
+		82CB571376D5412ECFFC5A2E /* NouriUITests */ = {
+			isa = PBXGroup;
+			children = (
+				DC42635A94160A05D00FD54C /* NouriUITests.swift */,
+			);
+			path = NouriUITests;
+			sourceTree = "<group>";
+		};
+		CDE86048174C15395B10A15A /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				AA5247F5BDFB0DA549B502CC /* NouriKit */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		D2139D22EC9116FFC1890D19 /* Nouri */ = {
+			isa = PBXGroup;
+			children = (
+				2138AE62DC646B4986054BDD /* Assets.xcassets */,
+				467D8B956BCC47EF7331691B /* Info.plist */,
+				9E6EA6DB3FAF1BF2B1303850 /* Nouri.entitlements */,
+				77E84225500F94EFE7F16680 /* NouriApp.swift */,
+				2CF4D3C79924951EDA7E6EBA /* Views */,
+			);
+			path = Nouri;
+			sourceTree = "<group>";
+		};
+		DA146D8EC31007C18BADF69C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4E7FA7DF27FD397D41C1C893 /* Nouri.app */,
+				747CD2342BA2BFA6C38E1AF6 /* NouriUITests.xctest */,
+				06887951A72FA30EE348FDF7 /* NouriWatch.app */,
+				D501F7E0327344AA5D088C9B /* NouriWatchWidgets.appex */,
+				D5780A75AE83CE5E0E337726 /* NouriWidgets.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EDC051A66AA094874F547584 = {
+			isa = PBXGroup;
+			children = (
+				D2139D22EC9116FFC1890D19 /* Nouri */,
+				82CB571376D5412ECFFC5A2E /* NouriUITests */,
+				F1C91B8A3496C23481BBD3B8 /* NouriWatch */,
+				45C8F923013D91BFC405F0E2 /* NouriWatchWidgets */,
+				52DA9C45796BD4EE2DCDCC9F /* NouriWidgets */,
+				CDE86048174C15395B10A15A /* Packages */,
+				4172817D1C4B3E693843A09E /* Widgets */,
+				DA146D8EC31007C18BADF69C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F1C91B8A3496C23481BBD3B8 /* NouriWatch */ = {
+			isa = PBXGroup;
+			children = (
+				447BC8E6C06B799DC3855EE5 /* Assets.xcassets */,
+				78150583D498D1E74F53F10E /* Info.plist */,
+				DCAB6ED9228CE408DE867985 /* NouriWatch.entitlements */,
+				C40588B66ED1912F3F06FA9D /* NouriWatchApp.swift */,
+				EF09E765A7224186A3C0AC28 /* WatchViews.swift */,
+			);
+			path = NouriWatch;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2B15EA0CB298929A6BA4DE2B /* NouriWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8ADED39752638D0B9D8349A9 /* Build configuration list for PBXNativeTarget "NouriWatch" */;
+			buildPhases = (
+				833E0BBED7BC9D8D27144AAE /* Sources */,
+				F00B47F7FEB94CB46724C10D /* Resources */,
+				4182F3CAC16DED0114588243 /* Frameworks */,
+				FC90E457A939F29488A0EB49 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5694F54A864A1EEF7A58B39B /* PBXTargetDependency */,
+			);
+			name = NouriWatch;
+			packageProductDependencies = (
+				5087EF4BD0F20C77DAF6B1D7 /* NouriKit */,
+			);
+			productName = NouriWatch;
+			productReference = 06887951A72FA30EE348FDF7 /* NouriWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		656419483978B1D44A2045C3 /* NouriWatchWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3FD3250FA512570C49FC1DEF /* Build configuration list for PBXNativeTarget "NouriWatchWidgets" */;
+			buildPhases = (
+				B11A7841BFB3F9A6289710ED /* Sources */,
+				48472141A0728877E4E4F94A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NouriWatchWidgets;
+			packageProductDependencies = (
+				DFCDED56F06D95E90FE29E47 /* NouriKit */,
+			);
+			productName = NouriWatchWidgets;
+			productReference = D501F7E0327344AA5D088C9B /* NouriWatchWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		84A8E96C5BF9A5792C720469 /* Nouri */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 74C2B26E28BD5A82EE452821 /* Build configuration list for PBXNativeTarget "Nouri" */;
+			buildPhases = (
+				CB81E80063EADB483BCC5E15 /* Sources */,
+				542A846A332C76C08EC83EAE /* Resources */,
+				7450F8A7C22D9C5DA6956904 /* Frameworks */,
+				C6FAE54EB268355FC8AEEC3B /* Embed Foundation Extensions */,
+				C1041134E628C0ACED2C14A0 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				280D1E8BE0642C38FD5C5042 /* PBXTargetDependency */,
+				DDF20F5610D9DD3498D86A9E /* PBXTargetDependency */,
+			);
+			name = Nouri;
+			packageProductDependencies = (
+				0560BCC9AE03191B6229EFAD /* NouriKit */,
+			);
+			productName = Nouri;
+			productReference = 4E7FA7DF27FD397D41C1C893 /* Nouri.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A3568A4307BA526966DBF1CC /* NouriUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D744374E56900684CDD8055F /* Build configuration list for PBXNativeTarget "NouriUITests" */;
+			buildPhases = (
+				53765685632D48B55441D8AC /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E93B33A9C600533B8F106334 /* PBXTargetDependency */,
+			);
+			name = NouriUITests;
+			packageProductDependencies = (
+			);
+			productName = NouriUITests;
+			productReference = 747CD2342BA2BFA6C38E1AF6 /* NouriUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		A3F8079E2E906E090A9B16CC /* NouriWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7AC97DAC7DBDB8BFA8EA4A3A /* Build configuration list for PBXNativeTarget "NouriWidgets" */;
+			buildPhases = (
+				8DF4C3D43E4DEA67AFB2607D /* Sources */,
+				79D8C156E3CD80EA2818DCF3 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NouriWidgets;
+			packageProductDependencies = (
+				EF642D9E11116D8063FC8199 /* NouriKit */,
+			);
+			productName = NouriWidgets;
+			productReference = D5780A75AE83CE5E0E337726 /* NouriWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D5520D6D3417118BCEA74B7D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					2B15EA0CB298929A6BA4DE2B = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					656419483978B1D44A2045C3 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					84A8E96C5BF9A5792C720469 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					A3568A4307BA526966DBF1CC = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = 84A8E96C5BF9A5792C720469;
+					};
+					A3F8079E2E906E090A9B16CC = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 7B9791BEE7CD6B13FB65A0EA /* Build configuration list for PBXProject "Nouri" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = EDC051A66AA094874F547584;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A6D7EDC5BB14419AC93C4686 /* XCLocalSwiftPackageReference "NouriKit" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = DA146D8EC31007C18BADF69C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84A8E96C5BF9A5792C720469 /* Nouri */,
+				2B15EA0CB298929A6BA4DE2B /* NouriWatch */,
+				A3F8079E2E906E090A9B16CC /* NouriWidgets */,
+				656419483978B1D44A2045C3 /* NouriWatchWidgets */,
+				A3568A4307BA526966DBF1CC /* NouriUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		542A846A332C76C08EC83EAE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D7A729D5A5CEC169CDAEF30 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F00B47F7FEB94CB46724C10D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FE6DB1D6280D61CB72C134C1 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		53765685632D48B55441D8AC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41135F54AE046A286014D9B9 /* NouriUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		833E0BBED7BC9D8D27144AAE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B431D1E00756CDE3E244C306 /* NouriWatchApp.swift in Sources */,
+				D4D150AB51213E835FD2E6C1 /* WatchViews.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DF4C3D43E4DEA67AFB2607D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7198071DE45C2044758755FB /* NouriWidgets.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B11A7841BFB3F9A6289710ED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1CEE2C0DAB969222BFF9A2A /* NouriWidgets.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CB81E80063EADB483BCC5E15 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B500B0ED5A59F6583BA71916 /* DashboardView.swift in Sources */,
+				C83570F84F056A08BF4504DE /* EntryForms.swift in Sources */,
+				D0A67DC29442BE7462D7AB58 /* HistoryAndSettings.swift in Sources */,
+				FF66ACA2A9A9040800AF05EE /* MedicationsView.swift in Sources */,
+				E654D8E55AE6CA373DD0980D /* NouriApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		280D1E8BE0642C38FD5C5042 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A3F8079E2E906E090A9B16CC /* NouriWidgets */;
+			targetProxy = 28247A22E7CDF4CB924B492E /* PBXContainerItemProxy */;
+		};
+		5694F54A864A1EEF7A58B39B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 656419483978B1D44A2045C3 /* NouriWatchWidgets */;
+			targetProxy = 117016DBD276E88BC0E5711D /* PBXContainerItemProxy */;
+		};
+		DDF20F5610D9DD3498D86A9E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2B15EA0CB298929A6BA4DE2B /* NouriWatch */;
+			targetProxy = 41BE4A69B34BD617047E6160 /* PBXContainerItemProxy */;
+		};
+		E93B33A9C600533B8F106334 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 84A8E96C5BF9A5792C720469 /* Nouri */;
+			targetProxy = E512C701A8CA7B7372C6CDE0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		223D83B65DC7F03013EC770D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = NouriWatch/NouriWatch.entitlements;
+				INFOPLIST_FILE = NouriWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Release;
+		};
+		271C014CEF4FA1792C1C22C7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Nouri/Nouri.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Nouri/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		2CC7C6E9BBDD9DB185846E79 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
+				SWIFT_VERSION = 6.0;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+			};
+			name = Release;
+		};
+		46153951A630CE59C3CE9453 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NouriWatchWidgets/NouriWatchWidgets.entitlements;
+				INFOPLIST_FILE = NouriWatchWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri.watchkitapp.widgets;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		467A83E995F195030F7343E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NouriWidgets/NouriWidgets.entitlements;
+				INFOPLIST_FILE = NouriWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri.widgets;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		480B2FF9C682607A4C95E7B1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NouriWatchWidgets/NouriWatchWidgets.entitlements;
+				INFOPLIST_FILE = NouriWatchWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri.watchkitapp.widgets;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Release;
+		};
+		608A12B013DA145EF06E541F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
+				SWIFT_VERSION = 6.0;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+			};
+			name = Debug;
+		};
+		9C66C00CD4AEDF9F2832EB35 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NouriWidgets/NouriWidgets.entitlements;
+				INFOPLIST_FILE = NouriWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri.widgets;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9F7C1E3130912C8BB257485D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = NouriWatch/NouriWatch.entitlements;
+				INFOPLIST_FILE = NouriWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		A496FFEF57D7691284C81D34 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Nouri/Nouri.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Nouri/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		B77427849BCF81899627AE09 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Nouri;
+			};
+			name = Release;
+		};
+		BA1A0EDD70E5A996BA73FF05 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Nouri;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3FD3250FA512570C49FC1DEF /* Build configuration list for PBXNativeTarget "NouriWatchWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				46153951A630CE59C3CE9453 /* Debug */,
+				480B2FF9C682607A4C95E7B1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		74C2B26E28BD5A82EE452821 /* Build configuration list for PBXNativeTarget "Nouri" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				271C014CEF4FA1792C1C22C7 /* Debug */,
+				A496FFEF57D7691284C81D34 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7AC97DAC7DBDB8BFA8EA4A3A /* Build configuration list for PBXNativeTarget "NouriWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9C66C00CD4AEDF9F2832EB35 /* Debug */,
+				467A83E995F195030F7343E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7B9791BEE7CD6B13FB65A0EA /* Build configuration list for PBXProject "Nouri" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				608A12B013DA145EF06E541F /* Debug */,
+				2CC7C6E9BBDD9DB185846E79 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8ADED39752638D0B9D8349A9 /* Build configuration list for PBXNativeTarget "NouriWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F7C1E3130912C8BB257485D /* Debug */,
+				223D83B65DC7F03013EC770D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D744374E56900684CDD8055F /* Build configuration list for PBXNativeTarget "NouriUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BA1A0EDD70E5A996BA73FF05 /* Debug */,
+				B77427849BCF81899627AE09 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		A6D7EDC5BB14419AC93C4686 /* XCLocalSwiftPackageReference "NouriKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = NouriKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0560BCC9AE03191B6229EFAD /* NouriKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NouriKit;
+		};
+		5087EF4BD0F20C77DAF6B1D7 /* NouriKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NouriKit;
+		};
+		DFCDED56F06D95E90FE29E47 /* NouriKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NouriKit;
+		};
+		EF642D9E11116D8063FC8199 /* NouriKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NouriKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = D5520D6D3417118BCEA74B7D /* Project object */;
+}
