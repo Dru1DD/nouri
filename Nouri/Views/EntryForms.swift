@@ -1,13 +1,25 @@
 import NouriKit
 import SwiftUI
 
-struct AddFluidView: View {
+/// Adds a drink, or edits one when `editing` is set.
+struct FluidForm: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
-    @State private var amount: Double = 250
-    @State private var beverage: BeverageType = .water
-    @State private var calories: Double = 0
-    @State private var caloriesEdited = false
+    private let editing: FluidItem?
+    @State private var amount: Double
+    @State private var beverage: BeverageType
+    @State private var calories: Double
+    @State private var time: Date
+    @State private var caloriesEdited: Bool
+
+    init(editing: FluidItem? = nil) {
+        self.editing = editing
+        _amount = State(initialValue: editing?.amountML ?? 250)
+        _beverage = State(initialValue: editing?.beverage ?? .water)
+        _calories = State(initialValue: editing?.calories ?? 0)
+        _time = State(initialValue: editing?.timestamp ?? .now)
+        _caloriesEdited = State(initialValue: editing != nil)
+    }
 
     var body: some View {
         NavigationStack {
@@ -29,16 +41,23 @@ struct AddFluidView: View {
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                 }
+                DatePicker("Time", selection: $time, in: ...Date.now)
+                    .accessibilityIdentifier("fluid-time")
             }
             .onChange(of: beverage) { prefillCalories() }
             .onChange(of: amount) { prefillCalories() }
-            .navigationTitle("Add Drink")
+            .navigationTitle(editing == nil ? "Add Drink" : "Edit Drink")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
-                        model.addFluid(amount, beverage: beverage, calories: calories)
+                    Button(editing == nil ? "Add" : "Save") {
+                        if let editing {
+                            model.updateFluid(FluidItem(id: editing.id, amountML: amount, beverage: beverage,
+                                                        calories: calories, timestamp: time))
+                        } else {
+                            model.addFluid(amount, beverage: beverage, calories: calories, timestamp: time)
+                        }
                         dismiss()
                     }
                     .disabled(amount <= 0)
@@ -55,12 +74,22 @@ struct AddFluidView: View {
     }
 }
 
-struct AddFoodView: View {
+/// Adds food, or edits an entry when `editing` is set.
+struct FoodForm: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
-    @State private var name = ""
+    private let editing: FoodItem?
+    @State private var name: String
     @State private var calories: Double?
+    @State private var time: Date
     @State private var saveAsPreset = false
+
+    init(editing: FoodItem? = nil) {
+        self.editing = editing
+        _name = State(initialValue: editing?.name ?? "")
+        _calories = State(initialValue: editing?.calories)
+        _time = State(initialValue: editing?.timestamp ?? .now)
+    }
 
     var body: some View {
         NavigationStack {
@@ -72,18 +101,25 @@ struct AddFoodView: View {
                         .multilineTextAlignment(.trailing)
                         .accessibilityIdentifier("food-calories")
                 }
-                Toggle("Save as quick preset", isOn: $saveAsPreset)
-                    .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                DatePicker("Time", selection: $time, in: ...Date.now)
+                if editing == nil {
+                    Toggle("Save as quick preset", isOn: $saveAsPreset)
+                        .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
             }
-            .navigationTitle("Add Food")
+            .navigationTitle(editing == nil ? "Add Food" : "Edit Food")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
+                    Button(editing == nil ? "Add" : "Save") {
                         guard let calories else { return }
-                        model.addCalories(calories, name: name)
-                        if saveAsPreset { model.addPreset(name: name, calories: calories) }
+                        if let editing {
+                            model.updateFood(FoodItem(id: editing.id, name: name, calories: calories, timestamp: time))
+                        } else {
+                            model.addCalories(calories, name: name, timestamp: time)
+                            if saveAsPreset { model.addPreset(name: name, calories: calories) }
+                        }
                         dismiss()
                     }
                     .disabled((calories ?? 0) <= 0)
@@ -93,4 +129,9 @@ struct AddFoodView: View {
         }
         .presentationDetents([.medium, .large])
     }
+}
+
+extension FoodItem {
+    /// Entries logged with a quick-add button have no name.
+    var displayName: String { name.isEmpty ? String(localized: "Quick add") : name }
 }

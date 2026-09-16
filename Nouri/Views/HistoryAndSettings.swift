@@ -35,17 +35,17 @@ struct SettingsView: View {
             Section("Daily Goals") {
                 Stepper(value: Binding(get: { model.hydrationGoal },
                                        set: { model.setGoals(hydrationML: $0, calories: model.calorieGoal) }), in: 250...10_000, step: 250) {
-                    LabeledContent("Water", value: "\(Format.liters(model.hydrationGoal)) L")
+                    LabeledContent("Water", value: String(localized: "\(Format.liters(model.hydrationGoal)) L"))
                 }
                 Stepper(value: Binding(get: { model.calorieGoal },
                                        set: { model.setGoals(hydrationML: model.hydrationGoal, calories: $0) }), in: 500...10_000, step: 50) {
-                    LabeledContent("Calories", value: "\(Format.kcal(model.calorieGoal)) kcal")
+                    LabeledContent("Calories", value: String(localized: "\(Format.kcal(model.calorieGoal)) kcal"))
                 }
             }
 
             Section("Calorie Presets") {
                 ForEach(model.presets) { preset in
-                    LabeledContent(preset.name, value: "\(Format.kcal(preset.calories)) kcal")
+                    LabeledContent(preset.name, value: String(localized: "\(Format.kcal(preset.calories)) kcal"))
                 }
                 .onDelete { offsets in
                     offsets.map { model.presets[$0].id }.forEach(model.deletePreset)

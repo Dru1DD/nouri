@@ -53,7 +53,7 @@ NouriUITests/                 Critical-flow UI tests
 4. reschedules reminders (medication changes),
 5. reloads widget timelines and recomputes `today`, which views observe.
 
-Views contain no business logic and never query SwiftData. Both apps use the same `AppModel`. Platform differences come from injected optional services: the Watch has no `HealthService` and no `ReminderScheduler`. Time comes from injected `now`/`calendar` closures, so tests are deterministic.
+Views contain no business logic and never query SwiftData. Both apps use the same `AppModel`. Platform differences come from injected optional services: the Watch has no `HealthService`, and its `ReminderScheduler` only handles snoozes (`plansReminders: false`). Time comes from injected `now`/`calendar` closures, so tests are deterministic.
 
 The only protocols are the three seams that have more than one implementation: `SyncTransport` (WatchConnectivity / loopback in tests), `NotificationClient` (system / in-memory) and `HealthService`. Persistence tests run against a real in-memory SwiftData container, so the store has no protocol.
 
@@ -109,7 +109,10 @@ Nouri doesn't write "missed" records in the background. The value exists in the 
   - after every notification action (the app is woken in the background),
   - in a `BGAppRefreshTask` roughly twice a day, which keeps the 14-day window topped up.
 - Notification permission is requested only when you save your first medication. If it's denied, the Medications screen shows a warning with a link to Settings.
-- **Watch:** only the iPhone schedules reminders. watchOS mirrors iPhone notifications to the Watch, and their action buttons are handled by the iPhone app, so no reminder fires twice. Doses marked on the Watch app sync to the iPhone, which then removes the pending reminder.
+- **Watch:** only the iPhone plans dose reminders (`AppModel(plansReminders: false)` on the Watch), and watchOS mirrors them to the Watch, so no reminder fires twice.
+  - The Watch app still registers the same category and a notification delegate, so **Taken / Skip / Snooze** work wherever the system delivers the tap. Taken/Skip sync to the iPhone like any Watch entry; Snooze schedules a one-off local notification on the Watch.
+  - When a dose resolved on one device arrives on the other, that device clears its pending and delivered notifications for the dose.
+- **Delegate threading:** both apps implement the completion-handler variants of `UNUserNotificationCenterDelegate` and call the handler on the main thread. The `async` variants finish off the main thread and crash with "Call must be made on main thread".
 
 ## iPhone ↔ Watch sync
 
@@ -128,6 +131,27 @@ Sync is event-based, idempotent and last-writer-wins:
 - conflicting dose events,
 - snapshot deletions,
 - backfill.
+
+## Quick fixes: undo, time, editing
+
+- After every quick add, a banner ("Added 250 ml · Water · **Undo**") stays for 5 seconds; the Watch shows an "Undo +250 ml" row. Undo soft-deletes the entry, so it syncs like any deletion. VoiceOver announces the banner.
+- The custom drink/food forms have a **Time** picker (past only), so entries can be logged after the fact. Future times are clamped to now.
+- Tapping an entry in *Recent Activity* opens it for editing (amount, drink type, calories, name, time). Edits are LWW upserts and sync to the other device.
+
+## Localization
+
+English (source), Russian, Ukrainian and Polish, all via String Catalogs:
+- `Localization/Localizable.xcstrings`: shared by the iPhone app, Watch app and both widget extensions.
+- `NouriKit/Sources/NouriKit/Resources/Localizable.xcstrings`: beverage names, dose statuses, notification title and action buttons (`bundle: .module`).
+- `Nouri/InfoPlist.xcstrings`: HealthKit permission texts.
+
+Numbers, dates and times use the user's locale. Reminder counts use plural variants (one/few/many). Notification text is localized when the reminder is scheduled, so it follows the language at that moment.
+
+To add strings: build with `SWIFT_EMIT_LOC_STRINGS=YES` (Xcode does this automatically) and fill in the new keys in the catalog. Strings passed around as `String` must be created with `String(localized:)`; only literals are localized automatically by SwiftUI.
+
+## Privacy
+
+`PrivacyInfo.xcprivacy` in the iPhone and Watch apps: no tracking, no collected data types (nothing leaves the user's devices), and the `UserDefaults` required-reason API declared with `CA92.1`.
 
 ## HealthKit
 
@@ -151,7 +175,7 @@ The app requests only `dietaryWater` and `dietaryEnergyConsumed`, both read and 
 
 ## Tests
 
-- `NouriKit/Tests` (Swift Testing, 48 tests, run in well under a second on macOS):
+- `NouriKit/Tests` (Swift Testing, 53 tests, run in well under a second on macOS):
   - hydration, calories, presets, beverage calories,
   - schedules (weekdays, start/end dates, multiple doses, multiple medications),
   - dose status (upcoming/due/missed/taken/skipped), snooze,
@@ -159,12 +183,14 @@ The app requests only `dietaryWater` and `dietaryEnergyConsumed`, both read and 
   - dates: midnight, time zones, DST,
   - SwiftData store behavior,
   - sync: duplicates, offline delivery, conflicts, backfill,
-  - `AppModel` flows.
+  - `AppModel` flows: undo, backdating, editing, and the Watch notification mode.
 - `NouriUITests` covers:
   - add 250 ml, and the dashboard updates;
   - add 500 kcal and a custom calorie amount;
   - create a medication, and reminders are scheduled;
-  - mark a dose Taken, and the status updates.
+  - mark a dose Taken, and the status updates;
+  - undo a quick add;
+  - edit an entry's amount.
 
   The app launches with `-ui-testing`, which uses an in-memory store and an in-memory notification center. Flow 5 (Watch → iPhone) can't be driven by XCUITest across two simulators, so `SyncTests.watchEntryReachesPhone` and friends cover it at the engine level.
 
@@ -187,4 +213,4 @@ The app requests only `dietaryWater` and `dietaryEnergyConsumed`, both read and 
 4. Watch custom amounts with the Digital Crown, and a Watch-side medication reminder for users without an iPhone nearby.
 5. Caffeine and macronutrients: extend `FluidRecord`/`FoodRecord`. The sync format is Codable and tolerant of new optional fields.
 6. History detail and simple weekly trends. Swift Charts only if they prove useful.
-7. Localization: the strings are already String-Catalog-ready.
+7. More languages: add a column to the three String Catalogs.

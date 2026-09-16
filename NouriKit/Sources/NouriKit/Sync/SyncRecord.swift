@@ -61,6 +61,14 @@ public enum SyncRecord: Codable, Hashable, Sendable {
     case food(FoodRecord)
     case dose(DoseRecord)
 
+    public var id: UUID {
+        switch self {
+        case .fluid(let r): r.id
+        case .food(let r): r.id
+        case .dose(let r): r.id
+        }
+    }
+
     public var updatedAt: Date {
         switch self {
         case .fluid(let r): r.updatedAt

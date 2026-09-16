@@ -301,3 +301,113 @@ import Testing
         #expect(store.preferences().hydrationGoalML == 3100)
     }
 }
+
+@MainActor
+@Suite struct WatchNotificationTests {
+    let cal = calendar()
+
+    /// Watch configuration: handles actions and snoozes, but never plans dose reminders itself.
+    @Test func watchHandlesActionsWithoutPlanningReminders() async {
+        let clock = TestClock(date(2026, 9, 16, 8, 1))
+        let client = InMemoryNotificationClient()
+        let cal = self.cal
+        let (phoneT, watchT) = LoopbackTransport.pair()
+        let phoneClient = InMemoryNotificationClient()
+        let phone = AppModel(store: makeStore(), transport: phoneT, reminders: ReminderScheduler(client: phoneClient),
+                             now: { clock.now }, calendar: { cal })
+        let watch = AppModel(store: makeStore(), transport: watchT, reminders: ReminderScheduler(client: client),
+                             plansReminders: false, now: { clock.now }, calendar: { cal })
+
+        let m = med("Vitamin D", [(8, 0), (20, 0)])
+        await phone.saveMedication(m)
+        #expect(watch.medications.map(\.name) == ["Vitamin D"])
+        #expect(await client.pending.isEmpty)
+
+        let morning = watch.today.doses[0].occurrence
+        let payload = DoseNotification.Payload(medicationID: morning.medicationID, doseKey: morning.key,
+                                               scheduledAt: morning.scheduledAt)
+        await watch.handleNotificationAction(DoseNotification.snoozeAction, payload: payload)
+        #expect(await client.pending.keys.sorted() == [ReminderPlanner.snoozePrefix + morning.key])
+
+        // Pretend the phone already delivered/kept a snooze for this dose.
+        await phoneClient.add(ReminderPlanner.snooze(morning, now: clock.now))
+        await watch.handleNotificationAction(DoseNotification.takenAction, payload: payload)
+        #expect(await client.pending.isEmpty)
+        #expect(phone.today.doses[0].status == .taken)
+
+        // Phone cleans up the resolved dose asynchronously.
+        for _ in 0..<50 where await phoneClient.pending[ReminderPlanner.snoozePrefix + morning.key] != nil {
+            await Task.yield()
+        }
+        #expect(await phoneClient.pending[ReminderPlanner.snoozePrefix + morning.key] == nil)
+        #expect(await phoneClient.pending[ReminderPlanner.dosePrefix + watch.today.doses[1].occurrence.key] != nil)
+    }
+}
+
+@MainActor
+@Suite struct EntryEditingTests {
+    let cal = calendar()
+
+    func model(_ clock: TestClock) -> AppModel {
+        let cal = self.cal
+        return AppModel(store: makeStore(), now: { clock.now }, calendar: { cal })
+    }
+
+    @Test func undoRemovesOnlyTheLastQuickAdd() {
+        let model = model(TestClock(date(2026, 9, 16, 9)))
+        model.addFluid(250)
+        model.addFluid(500)
+        #expect(model.lastAdded?.kind == .fluid(amountML: 500, beverage: .water))
+        model.undoLastAdd()
+        #expect(model.today.hydration.value == 250)
+        #expect(model.lastAdded == nil)
+        model.undoLastAdd()  // nothing left to undo
+        #expect(model.today.hydration.value == 250)
+    }
+
+    @Test func dismissIgnoresStaleIDs() {
+        let model = model(TestClock(date(2026, 9, 16, 9)))
+        model.addCalories(100)
+        let first = model.lastAdded?.id
+        model.addCalories(250, name: "Snack")
+        model.dismissUndo(id: first!)
+        #expect(model.lastAdded?.kind == .food(kcal: 250))
+    }
+
+    @Test func backdatedEntriesLandOnTheirDayAndFutureIsClamped() {
+        let clock = TestClock(date(2026, 9, 16, 9))
+        let model = model(clock)
+        model.addFluid(300, timestamp: date(2026, 9, 15, 22))
+        model.addCalories(400, timestamp: date(2026, 9, 16, 7))
+        model.addFluid(100, timestamp: date(2026, 9, 16, 18))
+        #expect(model.today.hydration.value == 100)
+        #expect(model.today.fluids.map(\.timestamp) == [clock.now])
+        #expect(model.today.foods.map(\.timestamp) == [date(2026, 9, 16, 7)])
+        #expect(model.history(days: 2).map(\.hydration.value) == [100, 300])
+    }
+
+    @Test func editingUpdatesAmountTimeAndSyncs() {
+        let clock = TestClock(date(2026, 9, 16, 9))
+        let cal = self.cal
+        let (a, b) = LoopbackTransport.pair()
+        let phone = AppModel(store: makeStore(), transport: a, now: { clock.now }, calendar: { cal })
+        let watch = AppModel(store: makeStore(), transport: b, now: { clock.now }, calendar: { cal })
+        watch.addFluid(250)
+        clock.advance(minutes: 1)
+        var drink = phone.today.fluids[0]
+        drink.amountML = 330
+        drink.beverage = .softDrink
+        drink.calories = 139
+        drink.timestamp = date(2026, 9, 16, 8)
+        phone.updateFluid(drink)
+        #expect(watch.today.fluids == [drink])
+        #expect(watch.today.calories.value == 139)
+
+        watch.addCalories(500)
+        clock.advance(minutes: 1)
+        var food = phone.today.foods[0]
+        food.name = "  Lunch "
+        phone.updateFood(food)
+        #expect(watch.today.foods[0].name == "Lunch")
+    }
+}

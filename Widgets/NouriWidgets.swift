@@ -74,7 +74,7 @@ struct HydrationView: View {
     let entry: DayEntry
 
     private var progress: GoalProgress { entry.summary.hydration }
-    private var liters: String { "\(Format.liters(progress.value)) L" }
+    private var liters: String { String(localized: "\(Format.liters(progress.value)) L") }
 
     var body: some View {
         content
@@ -154,7 +154,8 @@ struct MedicationStatusView: View {
         content
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Medications")
-            .accessibilityValue("\(summary.dosesTaken) of \(summary.doses.count) taken" + (next.map { ", next \($0)" } ?? ""))
+            .accessibilityValue(next.map { String(localized: "\(summary.dosesTaken) of \(summary.doses.count) taken, next \($0)") }
+                                ?? String(localized: "\(summary.dosesTaken) of \(summary.doses.count) taken"))
     }
 
     @ViewBuilder
@@ -172,7 +173,7 @@ struct MedicationStatusView: View {
         case .accessoryRectangular:
             VStack(alignment: .leading) {
                 Label("\(counts) taken", systemImage: "pills.fill").font(.headline)
-                Text(next.map { "Next: \($0)" } ?? "All done for today")
+                Text(next.map { String(localized: "Next: \($0)") } ?? String(localized: "All done for today"))
                     .lineLimit(2)
             }
         default:
@@ -182,7 +183,8 @@ struct MedicationStatusView: View {
                     .foregroundStyle(.purple)
                 Spacer()
                 Text("\(counts) taken").font(.title2.bold().monospacedDigit())
-                Text(next.map { "Next: \($0)" } ?? (summary.doses.isEmpty ? "No doses today" : "All done for today"))
+                Text(next.map { String(localized: "Next: \($0)") }
+                     ?? (summary.doses.isEmpty ? String(localized: "No doses today") : String(localized: "All done for today")))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)

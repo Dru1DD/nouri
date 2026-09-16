@@ -7,19 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1028AB73D0A8746350FEC724 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C2ABD8045AB61E6368C8F037 /* Localizable.xcstrings */; };
+		1E6DB63D20E58DECDBCB12A1 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F0B42B046346579C96134959 /* InfoPlist.xcstrings */; };
 		41135F54AE046A286014D9B9 /* NouriUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC42635A94160A05D00FD54C /* NouriUITests.swift */; };
 		4D7A729D5A5CEC169CDAEF30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2138AE62DC646B4986054BDD /* Assets.xcassets */; };
 		5824E3AB98C7151A4639854D /* NouriWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D5780A75AE83CE5E0E337726 /* NouriWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7198071DE45C2044758755FB /* NouriWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0571C13818D13842F69BEB0E /* NouriWidgets.swift */; };
 		71F7E638C9D869A906D3CA10 /* NouriKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5087EF4BD0F20C77DAF6B1D7 /* NouriKit */; };
 		72500EF4DA20BF5496BDC4C7 /* NouriKit in Frameworks */ = {isa = PBXBuildFile; productRef = DFCDED56F06D95E90FE29E47 /* NouriKit */; };
+		7A465D42AC5C7EF58ACC564C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1A473CDF62F1F02E00F728C3 /* PrivacyInfo.xcprivacy */; };
+		85962564F38532DA227BAD24 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C2ABD8045AB61E6368C8F037 /* Localizable.xcstrings */; };
+		A1A5B9AF60EDE7DC554ECB79 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C2ABD8045AB61E6368C8F037 /* Localizable.xcstrings */; };
 		A1CEE2C0DAB969222BFF9A2A /* NouriWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0571C13818D13842F69BEB0E /* NouriWidgets.swift */; };
 		A88648E3DA007DE67C738E84 /* NouriKit in Frameworks */ = {isa = PBXBuildFile; productRef = EF642D9E11116D8063FC8199 /* NouriKit */; };
+		AD185819FCD2984A103DADD3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AF0F0D4C960DF1201FC29BA0 /* PrivacyInfo.xcprivacy */; };
 		B1ED7098DB248179918050D8 /* NouriWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 06887951A72FA30EE348FDF7 /* NouriWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B431D1E00756CDE3E244C306 /* NouriWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40588B66ED1912F3F06FA9D /* NouriWatchApp.swift */; };
 		B500B0ED5A59F6583BA71916 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999C3F657B75D4AF5A1E8C41 /* DashboardView.swift */; };
 		BFA9EE14AC761438CAF565E8 /* NouriKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0560BCC9AE03191B6229EFAD /* NouriKit */; };
 		C83570F84F056A08BF4504DE /* EntryForms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6504A95DA9479BDD01F86958 /* EntryForms.swift */; };
+		C852A1808D1C0A5EEA96E3B0 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C2ABD8045AB61E6368C8F037 /* Localizable.xcstrings */; };
 		D0A67DC29442BE7462D7AB58 /* HistoryAndSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E31B3584564D1BB0484490 /* HistoryAndSettings.swift */; };
 		D4D150AB51213E835FD2E6C1 /* WatchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF09E765A7224186A3C0AC28 /* WatchViews.swift */; };
 		E654D8E55AE6CA373DD0980D /* NouriApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E84225500F94EFE7F16680 /* NouriApp.swift */; };
@@ -99,6 +106,7 @@
 		0571C13818D13842F69BEB0E /* NouriWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriWidgets.swift; sourceTree = "<group>"; };
 		06887951A72FA30EE348FDF7 /* NouriWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NouriWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		095FABD03D2E1ADE69CC5F7A /* NouriWatchWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NouriWatchWidgets.entitlements; sourceTree = "<group>"; };
+		1A473CDF62F1F02E00F728C3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2138AE62DC646B4986054BDD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		30258371ED5E4E7BE4C40758 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		447BC8E6C06B799DC3855EE5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -113,12 +121,15 @@
 		999C3F657B75D4AF5A1E8C41 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		9E6EA6DB3FAF1BF2B1303850 /* Nouri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Nouri.entitlements; sourceTree = "<group>"; };
 		AA5247F5BDFB0DA549B502CC /* NouriKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NouriKit; path = NouriKit; sourceTree = SOURCE_ROOT; };
+		AF0F0D4C960DF1201FC29BA0 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		C2ABD8045AB61E6368C8F037 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C40588B66ED1912F3F06FA9D /* NouriWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriWatchApp.swift; sourceTree = "<group>"; };
 		D501F7E0327344AA5D088C9B /* NouriWatchWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NouriWatchWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5780A75AE83CE5E0E337726 /* NouriWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = NouriWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC42635A94160A05D00FD54C /* NouriUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriUITests.swift; sourceTree = "<group>"; };
 		DCAB6ED9228CE408DE867985 /* NouriWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NouriWatch.entitlements; sourceTree = "<group>"; };
 		EF09E765A7224186A3C0AC28 /* WatchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchViews.swift; sourceTree = "<group>"; };
+		F0B42B046346579C96134959 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		F6E31B3584564D1BB0484490 /* HistoryAndSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryAndSettings.swift; sourceTree = "<group>"; };
 		F7EBBAD7300B1989862E470C /* NouriWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NouriWidgets.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -204,6 +215,14 @@
 			path = NouriUITests;
 			sourceTree = "<group>";
 		};
+		B18B8BFDCCC81E85C11E0A45 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				C2ABD8045AB61E6368C8F037 /* Localizable.xcstrings */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
 		CDE86048174C15395B10A15A /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -217,8 +236,10 @@
 			children = (
 				2138AE62DC646B4986054BDD /* Assets.xcassets */,
 				467D8B956BCC47EF7331691B /* Info.plist */,
+				F0B42B046346579C96134959 /* InfoPlist.xcstrings */,
 				9E6EA6DB3FAF1BF2B1303850 /* Nouri.entitlements */,
 				77E84225500F94EFE7F16680 /* NouriApp.swift */,
+				1A473CDF62F1F02E00F728C3 /* PrivacyInfo.xcprivacy */,
 				2CF4D3C79924951EDA7E6EBA /* Views */,
 			);
 			path = Nouri;
@@ -239,6 +260,7 @@
 		EDC051A66AA094874F547584 = {
 			isa = PBXGroup;
 			children = (
+				B18B8BFDCCC81E85C11E0A45 /* Localization */,
 				D2139D22EC9116FFC1890D19 /* Nouri */,
 				82CB571376D5412ECFFC5A2E /* NouriUITests */,
 				F1C91B8A3496C23481BBD3B8 /* NouriWatch */,
@@ -257,6 +279,7 @@
 				78150583D498D1E74F53F10E /* Info.plist */,
 				DCAB6ED9228CE408DE867985 /* NouriWatch.entitlements */,
 				C40588B66ED1912F3F06FA9D /* NouriWatchApp.swift */,
+				AF0F0D4C960DF1201FC29BA0 /* PrivacyInfo.xcprivacy */,
 				EF09E765A7224186A3C0AC28 /* WatchViews.swift */,
 			);
 			path = NouriWatch;
@@ -292,6 +315,7 @@
 			buildConfigurationList = 3FD3250FA512570C49FC1DEF /* Build configuration list for PBXNativeTarget "NouriWatchWidgets" */;
 			buildPhases = (
 				B11A7841BFB3F9A6289710ED /* Sources */,
+				5C640B629C4B9C41EB15E046 /* Resources */,
 				48472141A0728877E4E4F94A /* Frameworks */,
 			);
 			buildRules = (
@@ -353,6 +377,7 @@
 			buildConfigurationList = 7AC97DAC7DBDB8BFA8EA4A3A /* Build configuration list for PBXNativeTarget "NouriWidgets" */;
 			buildPhases = (
 				8DF4C3D43E4DEA67AFB2607D /* Sources */,
+				848746C277992EB3973C2CC3 /* Resources */,
 				79D8C156E3CD80EA2818DCF3 /* Frameworks */,
 			);
 			buildRules = (
@@ -405,6 +430,9 @@
 			knownRegions = (
 				Base,
 				en,
+				pl,
+				ru,
+				uk,
 			);
 			mainGroup = EDC051A66AA094874F547584;
 			minimizedProjectReferenceProxies = 1;
@@ -431,6 +459,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D7A729D5A5CEC169CDAEF30 /* Assets.xcassets in Resources */,
+				1E6DB63D20E58DECDBCB12A1 /* InfoPlist.xcstrings in Resources */,
+				A1A5B9AF60EDE7DC554ECB79 /* Localizable.xcstrings in Resources */,
+				7A465D42AC5C7EF58ACC564C /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C640B629C4B9C41EB15E046 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1028AB73D0A8746350FEC724 /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		848746C277992EB3973C2CC3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				85962564F38532DA227BAD24 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,6 +486,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE6DB1D6280D61CB72C134C1 /* Assets.xcassets in Resources */,
+				C852A1808D1C0A5EEA96E3B0 /* Localizable.xcstrings in Resources */,
+				AD185819FCD2984A103DADD3 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,8 +11,23 @@ struct WatchRootView: View {
                 RingsHeader(today: model.today)
                     .listRowBackground(Color.clear)
 
+                if let added = model.lastAdded {
+                    Button {
+                        model.undoLastAdd()
+                        WKInterfaceDevice.current().play(.click)
+                    } label: {
+                        Label(undoText(added), systemImage: "arrow.uturn.backward")
+                            .font(.footnote)
+                    }
+                    .tint(.secondary)
+                    .task(id: added.id) {
+                        try? await Task.sleep(for: .seconds(5))
+                        model.dismissUndo(id: added.id)
+                    }
+                }
+
                 Section {
-                    AmountButtons(values: [100, 250, 500], tint: .blue, a11yUnit: "milliliters of water") {
+                    AmountButtons(values: [100, 250, 500], tint: .blue, a11yLabel: { String(localized: "Add \($0) milliliters of water") }) {
                         model.addFluid($0)
                     }
                 } header: {
@@ -20,7 +35,7 @@ struct WatchRootView: View {
                 }
 
                 Section {
-                    AmountButtons(values: [100, 250], tint: .orange, a11yUnit: "kilocalories") {
+                    AmountButtons(values: [100, 250], tint: .orange, a11yLabel: { String(localized: "Add \($0) kilocalories") }) {
                         model.addCalories($0)
                     }
                     ForEach(model.presets) { preset in
@@ -56,6 +71,13 @@ struct WatchRootView: View {
             .containerBackground(Color.blue.opacity(0.35).gradient, for: .navigation)
         }
     }
+
+    private func undoText(_ added: AppModel.LastAdded) -> String {
+        switch added.kind {
+        case .fluid(let ml, _): String(localized: "Undo +\(Format.ml(ml)) ml")
+        case .food(let kcal): String(localized: "Undo +\(Format.kcal(kcal)) kcal")
+        }
+    }
 }
 
 /// Two activity-style rings: water and calories.
@@ -65,9 +87,9 @@ private struct RingsHeader: View {
     var body: some View {
         HStack(spacing: 12) {
             RingStat(progress: today.hydration, tint: .blue, symbol: "drop.fill",
-                     value: Format.liters(today.hydration.value), unit: "L", a11yName: "Water")
+                     value: Format.liters(today.hydration.value), unit: String(localized: "L"), a11yName: "Water")
             RingStat(progress: today.calories, tint: .orange, symbol: "flame.fill",
-                     value: Format.kcal(today.calories.value), unit: "kcal", a11yName: "Calories")
+                     value: Format.kcal(today.calories.value), unit: String(localized: "kcal"), a11yName: "Calories")
         }
         .frame(maxWidth: .infinity)
     }
@@ -80,7 +102,7 @@ private struct RingStat: View {
     let symbol: String
     let value: String
     let unit: String
-    let a11yName: String
+    let a11yName: LocalizedStringKey
 
     var body: some View {
         VStack(spacing: 4) {
@@ -107,7 +129,7 @@ private struct RingStat: View {
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(a11yName)
+        .accessibilityLabel(Text(a11yName))
         .accessibilityValue("\(value) \(unit), \(progress.percent) percent of goal")
     }
 }
@@ -116,7 +138,7 @@ private struct RingStat: View {
 private struct AmountButtons: View {
     let values: [Double]
     let tint: Color
-    let a11yUnit: String
+    let a11yLabel: (Int) -> String
     let add: (Double) -> Void
 
     var body: some View {
@@ -134,7 +156,7 @@ private struct AmountButtons: View {
                 }
                 .buttonStyle(.bordered)
                 .tint(tint)
-                .accessibilityLabel("Add \(Int(value)) \(a11yUnit)")
+                .accessibilityLabel(a11yLabel(Int(value)))
             }
         }
         .listRowBackground(Color.clear)
