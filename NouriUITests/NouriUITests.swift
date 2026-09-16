@@ -77,4 +77,28 @@ final class NouriUITests: XCTestCase {
         waitForValue("medications-total", containing: "1 / 1 taken")
         XCTAssertFalse(taken.exists)
     }
+
+    func testUndoQuickAdd() {
+        app.buttons["add-water-500"].tap()
+        waitForValue("hydration-total", containing: "0.50 / 2.50 L")
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.name = "undo-banner"
+        shot.lifetime = .keepAlways
+        add(shot)
+        app.buttons["undo-add"].tap()
+        waitForValue("hydration-total", containing: "0.00 / 2.50 L")
+    }
+
+    func testEditEntryAmount() {
+        app.buttons["add-water-250"].tap()
+        app.buttons.containing(NSPredicate(format: "label CONTAINS 'Water'")).firstMatch.tap()
+        let amount = app.textFields["fluid-amount"]
+        XCTAssertTrue(amount.waitForExistence(timeout: 3))
+        amount.tap()
+        amount.press(forDuration: 1.2)
+        if app.menuItems["Select All"].waitForExistence(timeout: 2) { app.menuItems["Select All"].tap() }
+        amount.typeText("400")
+        app.buttons["fluid-save"].tap()
+        waitForValue("hydration-total", containing: "0.40 / 2.50 L")
+    }
 }

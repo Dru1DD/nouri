@@ -7,11 +7,11 @@ public enum BeverageType: String, Codable, CaseIterable, Identifiable, Sendable 
 
     public var title: String {
         switch self {
-        case .water: "Water"
-        case .coffee: "Coffee"
-        case .tea: "Tea"
-        case .softDrink: "Soft drink"
-        case .other: "Other"
+        case .water: String(localized: "Water", bundle: .module)
+        case .coffee: String(localized: "Coffee", bundle: .module)
+        case .tea: String(localized: "Tea", bundle: .module)
+        case .softDrink: String(localized: "Soft drink", bundle: .module)
+        case .other: String(localized: "Other", bundle: .module)
         }
     }
 

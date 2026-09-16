@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: NouriKit tests
+        working-directory: NouriKit
+        run: swift test
+
+  build-and-ui-tests:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Watch app
+        run: >
+          xcodebuild build -project Nouri.xcodeproj -scheme NouriWatch
+          -destination 'generic/platform=watchOS' CODE_SIGNING_ALLOWED=NO
+      - name: Build iPhone app and run tests
+        run: >
+          xcodebuild test -project Nouri.xcodeproj -scheme Nouri
+          -destination 'platform=iOS Simulator,name=iPhone 17'

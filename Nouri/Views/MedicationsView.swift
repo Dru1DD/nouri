@@ -48,7 +48,7 @@ struct MedicationsView: View {
         .navigationTitle("Medications")
         .toolbar {
             Button {
-                editing = MedicationInfo(name: "", dosage: 1, unit: "tablet",
+                editing = MedicationInfo(name: "", dosage: 1, unit: String(localized: "tablet"),
                                          schedule: MedicationSchedule(times: [TimeOfDay(hour: 8, minute: 0)]))
             } label: {
                 Label("Add Medication", systemImage: "plus")
@@ -64,7 +64,7 @@ struct MedicationsView: View {
             cal.date(bySettingHour: t.hour, minute: t.minute, second: 0, of: .now).map(Format.time)
         }
         let days = med.schedule.weekdays.isEmpty
-            ? "Every day"
+            ? String(localized: "Every day")
             : med.schedule.weekdays.sorted().map { cal.shortWeekdaySymbols[$0 - 1] }.joined(separator: ", ")
         return "\(med.dosageText) · \(times.joined(separator: ", ")) · \(days)"
     }

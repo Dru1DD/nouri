@@ -96,14 +96,35 @@ public final class NouriStore {
 
     // MARK: - Local writes
 
-    public func addFluid(amountML: Double, beverage: BeverageType, calories: Double, at date: Date) -> SyncRecord {
-        let record = FluidRecord(id: UUID(), amountML: amountML, beverage: beverage, calories: calories,
-                                 timestamp: date, updatedAt: date, deletedAt: nil)
-        return upsert(.fluid(record))
+    /// `timestamp` is when it was consumed (may be in the past); `date` is when the write happens.
+    public func addFluid(amountML: Double, beverage: BeverageType, calories: Double, timestamp: Date? = nil,
+                         at date: Date) -> SyncRecord {
+        upsert(.fluid(FluidRecord(id: UUID(), amountML: amountML, beverage: beverage, calories: calories,
+                                  timestamp: timestamp ?? date, updatedAt: date, deletedAt: nil)))
     }
 
-    public func addFood(name: String, calories: Double, at date: Date) -> SyncRecord {
-        upsert(.food(FoodRecord(id: UUID(), name: name, calories: calories, timestamp: date, updatedAt: date, deletedAt: nil)))
+    public func addFood(name: String, calories: Double, timestamp: Date? = nil, at date: Date) -> SyncRecord {
+        upsert(.food(FoodRecord(id: UUID(), name: name, calories: calories, timestamp: timestamp ?? date,
+                                updatedAt: date, deletedAt: nil)))
+    }
+
+    public func updateFluid(_ item: FluidItem, at date: Date) -> SyncRecord? {
+        guard var r = fetchFluid(item.id)?.record else { return nil }
+        r.amountML = item.amountML
+        r.beverage = item.beverage
+        r.calories = item.calories
+        r.timestamp = item.timestamp
+        r.updatedAt = Self.stamp(date, after: r.updatedAt)
+        return upsert(.fluid(r))
+    }
+
+    public func updateFood(_ item: FoodItem, at date: Date) -> SyncRecord? {
+        guard var r = fetchFood(item.id)?.record else { return nil }
+        r.name = item.name
+        r.calories = item.calories
+        r.timestamp = item.timestamp
+        r.updatedAt = Self.stamp(date, after: r.updatedAt)
+        return upsert(.food(r))
     }
 
     public func deleteEntry(id: UUID, at date: Date) -> SyncRecord? {

@@ -24,6 +24,7 @@ public final class AppModel {
     @ObservationIgnored private let sync: SyncEngine?
     @ObservationIgnored private let health: HealthService?
     @ObservationIgnored private let reminders: ReminderScheduler?
+    @ObservationIgnored private let plansReminders: Bool
     @ObservationIgnored private let now: () -> Date
     @ObservationIgnored private let calendar: () -> Calendar
 
@@ -32,12 +33,14 @@ public final class AppModel {
         transport: SyncTransport? = nil,
         health: HealthService? = nil,
         reminders: ReminderScheduler? = nil,
+        plansReminders: Bool = true,
         now: @escaping () -> Date = Date.init,
         calendar: @escaping () -> Calendar = { Calendar.autoupdatingCurrent }
     ) {
         self.store = store
         self.health = health
         self.reminders = reminders
+        self.plansReminders = plansReminders
         self.now = now
         self.calendar = calendar
         self.sync = transport.map { SyncEngine(store: store, transport: $0, now: now) }
@@ -84,8 +87,10 @@ public final class AppModel {
         await refreshExternal()
     }
 
+    /// On the Watch `plansReminders` is false: the iPhone owns dose reminders (mirrored by the
+    /// system), the Watch only schedules snoozes it was asked for.
     public func rescheduleReminders() async {
-        guard let reminders else { return }
+        guard let reminders, plansReminders else { return }
         let date = now(), cal = calendar()
         let horizon = DateInterval(start: cal.startOfDay(for: date), duration: Double(ReminderPlanner.horizonDays + 1) * 86_400)
         let resolved = Set(store.doseLogs(around: horizon).filter { $0.value.status != .missed }.keys)
@@ -104,20 +109,70 @@ public final class AppModel {
 
     // MARK: - Entries
 
-    public func addFluid(_ amountML: Double, beverage: BeverageType = .water, calories: Double? = nil) {
+    /// Adds a drink. `timestamp` defaults to now; past times are allowed, future ones are clamped.
+    public func addFluid(_ amountML: Double, beverage: BeverageType = .water, calories: Double? = nil, timestamp: Date? = nil) {
         guard amountML > 0 else { return }
+        let date = now()
         let kcal = max(calories ?? beverage.defaultCalories(amountML: amountML), 0)
-        localChange(store.addFluid(amountML: amountML, beverage: beverage, calories: kcal, at: now()))
+        let record = store.addFluid(amountML: amountML, beverage: beverage, calories: kcal,
+                                    timestamp: min(timestamp ?? date, date), at: date)
+        lastAdded = LastAdded(id: record.id, kind: .fluid(amountML: amountML, beverage: beverage))
+        localChange(record)
     }
 
-    public func addCalories(_ kcal: Double, name: String = "Quick add") {
+    /// Adds food. An empty name is stored as empty; views show a localized "Quick add" instead.
+    public func addCalories(_ kcal: Double, name: String = "", timestamp: Date? = nil) {
         guard kcal > 0 else { return }
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        localChange(store.addFood(name: trimmed.isEmpty ? "Quick add" : trimmed, calories: kcal, at: now()))
+        let date = now()
+        let record = store.addFood(name: name.trimmingCharacters(in: .whitespacesAndNewlines), calories: kcal,
+                                   timestamp: min(timestamp ?? date, date), at: date)
+        lastAdded = LastAdded(id: record.id, kind: .food(kcal: kcal))
+        localChange(record)
+    }
+
+    public func updateFluid(_ item: FluidItem) {
+        guard item.amountML > 0 else { return }
+        var item = item
+        item.calories = max(item.calories, 0)
+        item.timestamp = min(item.timestamp, now())
+        store.updateFluid(item, at: now()).map(localChange)
+    }
+
+    public func updateFood(_ item: FoodItem) {
+        guard item.calories > 0 else { return }
+        var item = item
+        item.name = item.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        item.timestamp = min(item.timestamp, now())
+        store.updateFood(item, at: now()).map(localChange)
     }
 
     public func deleteEntry(id: UUID) {
+        if lastAdded?.id == id { lastAdded = nil }
         store.deleteEntry(id: id, at: now()).map(localChange)
+    }
+
+    // MARK: - Undo
+
+    public struct LastAdded: Equatable, Sendable {
+        public enum Kind: Equatable, Sendable {
+            case fluid(amountML: Double, beverage: BeverageType)
+            case food(kcal: Double)
+        }
+        public let id: UUID
+        public let kind: Kind
+    }
+
+    /// The most recent quick add, offered for undo for a few seconds by the UI.
+    public private(set) var lastAdded: LastAdded?
+
+    public func undoLastAdd() {
+        guard let lastAdded else { return }
+        deleteEntry(id: lastAdded.id)
+    }
+
+    /// Hides the undo offer, unless a newer entry replaced it meanwhile.
+    public func dismissUndo(id: UUID) {
+        if lastAdded?.id == id { lastAdded = nil }
     }
 
     // MARK: - Medications
@@ -145,7 +200,7 @@ public final class AppModel {
             await setDose(key: payload.doseKey, medicationID: payload.medicationID, scheduledAt: payload.scheduledAt, status: .skipped)
         case DoseNotification.snoozeAction:
             let med = store.medications().first { $0.id == payload.medicationID }
-            let dose = DoseOccurrence(medicationID: payload.medicationID, medicationName: med?.name ?? "medication",
+            let dose = DoseOccurrence(medicationID: payload.medicationID, medicationName: med?.name ?? String(localized: "medication", bundle: .module),
                                       dosageText: med?.dosageText ?? "", time: TimeOfDay(hour: 0, minute: 0),
                                       scheduledAt: payload.scheduledAt, key: payload.doseKey)
             await snooze(dose)
@@ -202,7 +257,15 @@ public final class AppModel {
     private func handleRemote(_ records: [SyncRecord]) {
         exportToHealth(records)
         didChange()
-        Task { await rescheduleReminders() }
+        // A dose resolved on the other device: drop its pending/delivered notifications here too.
+        let resolvedKeys = records.compactMap { record -> String? in
+            guard case .dose(let d) = record, d.deletedAt == nil else { return nil }
+            return d.doseKey
+        }
+        Task {
+            for key in resolvedKeys { await reminders?.clear(doseKey: key) }
+            await rescheduleReminders()
+        }
     }
 
     private func exportToHealth(_ records: [SyncRecord]) {

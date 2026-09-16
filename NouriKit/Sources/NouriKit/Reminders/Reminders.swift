@@ -52,7 +52,7 @@ public enum ReminderPlanner {
     }
 
     static func reminder(for dose: DoseOccurrence, id: String, fireDate: Date) -> PlannedReminder {
-        PlannedReminder(id: id, title: "💊 Time to take \(dose.medicationName)", body: dose.dosageText,
+        PlannedReminder(id: id, title: String(localized: "💊 Time to take \(dose.medicationName)", bundle: .module), body: dose.dosageText,
                         fireDate: fireDate, medicationID: dose.medicationID, doseKey: dose.key,
                         scheduledAt: dose.scheduledAt)
     }
@@ -121,9 +121,9 @@ public enum DoseNotification {
         let category = UNNotificationCategory(
             identifier: category,
             actions: [
-                UNNotificationAction(identifier: takenAction, title: "Taken", options: []),
-                UNNotificationAction(identifier: snoozeAction, title: "Snooze 10 min", options: []),
-                UNNotificationAction(identifier: skipAction, title: "Skip", options: [.destructive]),
+                UNNotificationAction(identifier: takenAction, title: String(localized: "Taken", bundle: .module), options: []),
+                UNNotificationAction(identifier: snoozeAction, title: String(localized: "Snooze 10 min", bundle: .module), options: []),
+                UNNotificationAction(identifier: skipAction, title: String(localized: "Skip", bundle: .module), options: [.destructive]),
             ],
             intentIdentifiers: []
         )

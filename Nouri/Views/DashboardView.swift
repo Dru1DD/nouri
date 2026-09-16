@@ -4,10 +4,21 @@ import SwiftUI
 struct DashboardView: View {
     @Environment(AppModel.self) private var model
     @State private var sheet: Sheet?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private enum Sheet: String, Identifiable {
+    private enum Sheet: Identifiable {
         case fluid, food
-        var id: String { rawValue }
+        case editFluid(FluidItem)
+        case editFood(FoodItem)
+
+        var id: String {
+            switch self {
+            case .fluid: "fluid"
+            case .food: "food"
+            case .editFluid(let f): "fluid-\(f.id)"
+            case .editFood(let f): "food-\(f.id)"
+            }
+        }
     }
 
     var body: some View {
@@ -33,10 +44,21 @@ struct DashboardView: View {
             }
             .sheet(item: $sheet) { sheet in
                 switch sheet {
-                case .fluid: AddFluidView()
-                case .food: AddFoodView()
+                case .fluid: FluidForm()
+                case .food: FoodForm()
+                case .editFluid(let item): FluidForm(editing: item)
+                case .editFood(let item): FoodForm(editing: item)
                 }
             }
+            .safeAreaInset(edge: .bottom) {
+                if let added = model.lastAdded {
+                    UndoBanner(added: added)
+                        .padding(.horizontal)
+                        .padding(.bottom, 8)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(reduceMotion ? nil : .snappy, value: model.lastAdded)
         }
     }
 
@@ -50,11 +72,11 @@ struct DashboardView: View {
                 title: "Hydration",
                 symbol: "drop.fill",
                 tint: .blue,
-                value: "\(Format.liters(today.hydration.value)) / \(Format.liters(today.hydration.goal)) L",
+                value: String(localized: "\(Format.liters(today.hydration.value)) / \(Format.liters(today.hydration.goal)) L"),
                 progress: today.hydration,
                 identifier: "hydration-total"
             )
-            QuickAddRow(values: [100, 250, 500], unit: "ml", idPrefix: "add-water") { model.addFluid($0) } more: {
+            QuickAddRow(values: [100, 250, 500], idPrefix: "add-water", a11yLabel: { String(localized: "Add \($0) milliliters") }) { model.addFluid($0) } more: {
                 sheet = .fluid
             }
             if let imported = model.imported, imported.waterML > 0 {
@@ -71,11 +93,11 @@ struct DashboardView: View {
                 title: "Calories",
                 symbol: "flame.fill",
                 tint: .orange,
-                value: "\(Format.kcal(today.calories.value)) / \(Format.kcal(today.calories.goal)) kcal",
+                value: String(localized: "\(Format.kcal(today.calories.value)) / \(Format.kcal(today.calories.goal)) kcal"),
                 progress: today.calories,
                 identifier: "calories-total"
             )
-            QuickAddRow(values: [50, 100, 250, 500], unit: "kcal", idPrefix: "add-kcal") { model.addCalories($0) } more: {
+            QuickAddRow(values: [50, 100, 250, 500], idPrefix: "add-kcal", a11yLabel: { String(localized: "Add \($0) kilocalories") }) { model.addCalories($0) } more: {
                 sheet = .food
             }
             if !model.presets.isEmpty {
@@ -110,7 +132,7 @@ struct DashboardView: View {
                     title: "Medications",
                     symbol: "pills.fill",
                     tint: .purple,
-                    value: "\(today.dosesTaken) / \(today.doses.count) taken",
+                    value: String(localized: "\(today.dosesTaken) / \(today.doses.count) taken"),
                     progress: today.medicationProgress,
                     identifier: "medications-total"
                 )
@@ -132,17 +154,28 @@ struct DashboardView: View {
                 Text("Nothing logged yet today.").foregroundStyle(.secondary)
             }
             ForEach(today.activity) { item in
-                ActivityRow(item: item)
-                    .swipeActions {
-                        switch item {
-                        case .fluid(let f):
-                            Button("Delete", role: .destructive) { model.deleteEntry(id: f.id) }
-                        case .food(let f):
-                            Button("Delete", role: .destructive) { model.deleteEntry(id: f.id) }
-                        case .dose:
-                            EmptyView()
-                        }
+                Button {
+                    switch item {
+                    case .fluid(let f): sheet = .editFluid(f)
+                    case .food(let f): sheet = .editFood(f)
+                    case .dose: break
                     }
+                } label: {
+                    ActivityRow(item: item)
+                }
+                .foregroundStyle(.primary)
+                .disabled({ if case .dose = item { true } else { false } }())
+                .accessibilityHint({ if case .dose = item { "" } else { String(localized: "Opens the entry for editing") } }())
+                .swipeActions {
+                    switch item {
+                    case .fluid(let f):
+                        Button("Delete", role: .destructive) { model.deleteEntry(id: f.id) }
+                    case .food(let f):
+                        Button("Delete", role: .destructive) { model.deleteEntry(id: f.id) }
+                    case .dose:
+                        EmptyView()
+                    }
+                }
             }
         }
     }
@@ -151,7 +184,7 @@ struct DashboardView: View {
 // MARK: - Rows
 
 struct ProgressRow: View {
-    let title: String
+    let title: LocalizedStringKey
     let symbol: String
     let tint: Color
     let value: String
@@ -176,7 +209,7 @@ struct ProgressRow: View {
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(title)
+        .accessibilityLabel(Text(title))
         .accessibilityValue("\(value), \(progress.percent) percent of goal")
         .accessibilityIdentifier(identifier)
     }
@@ -184,8 +217,8 @@ struct ProgressRow: View {
 
 struct QuickAddRow: View {
     let values: [Double]
-    let unit: String
     let idPrefix: String
+    let a11yLabel: (Int) -> String
     let add: (Double) -> Void
     let more: () -> Void
     @State private var taps = 0
@@ -203,7 +236,7 @@ struct QuickAddRow: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                .accessibilityLabel("Add \(Int(value)) \(unit == "ml" ? "milliliters" : "kilocalories")")
+                .accessibilityLabel(a11yLabel(Int(value)))
                 .accessibilityIdentifier("\(idPrefix)-\(Int(value))")
             }
             Button { more() } label: {
@@ -303,16 +336,57 @@ struct ActivityRow: View {
     private var title: String {
         switch item {
         case .fluid(let f): f.beverage.title
-        case .food(let f): f.name
+        case .food(let f): f.displayName
         case .dose(let d): d.occurrence.medicationName
         }
     }
 
     private var amount: String {
         switch item {
-        case .fluid(let f): f.calories > 0 ? "+\(Format.ml(f.amountML)) ml · \(Format.kcal(f.calories)) kcal" : "+\(Format.ml(f.amountML)) ml"
-        case .food(let f): "+\(Format.kcal(f.calories)) kcal"
+        case .fluid(let f): f.calories > 0
+            ? String(localized: "+\(Format.ml(f.amountML)) ml · \(Format.kcal(f.calories)) kcal")
+            : String(localized: "+\(Format.ml(f.amountML)) ml")
+        case .food(let f): String(localized: "+\(Format.kcal(f.calories)) kcal")
         case .dose(let d): d.status.label
+        }
+    }
+}
+
+/// "Added 250 ml · Undo", shown for a few seconds after a quick add.
+struct UndoBanner: View {
+    @Environment(AppModel.self) private var model
+    let added: AppModel.LastAdded
+
+    private var text: String {
+        switch added.kind {
+        case .fluid(let ml, let beverage):
+            String(localized: "Added \(Format.ml(ml)) ml · \(beverage.title)")
+        case .food(let kcal):
+            String(localized: "Added \(Format.kcal(kcal)) kcal")
+        }
+    }
+
+    var body: some View {
+        HStack {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+                .accessibilityHidden(true)
+            Text(text)
+                .font(.subheadline.weight(.medium))
+                .lineLimit(2)
+            Spacer()
+            Button("Undo") { model.undoLastAdd() }
+                .font(.subheadline.weight(.semibold))
+                .accessibilityIdentifier("undo-add")
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(.regularMaterial, in: .capsule)
+        .shadow(color: .black.opacity(0.12), radius: 8, y: 2)
+        .task(id: added.id) {
+            AccessibilityNotification.Announcement(text).post()
+            try? await Task.sleep(for: .seconds(5))
+            model.dismissUndo(id: added.id)
         }
     }
 }

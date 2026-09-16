@@ -5,6 +5,7 @@ options:
     iOS: "18.0"
     watchOS: "11.0"
   createIntermediateGroups: true
+  developmentLanguage: en
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -24,7 +25,7 @@ targets:
   Nouri:
     type: application
     platform: iOS
-    sources: [Nouri]
+    sources: [Nouri, Localization]
     dependencies:
       - package: NouriKit
       - target: NouriWidgets
@@ -54,7 +55,7 @@ targets:
   NouriWatch:
     type: application
     platform: watchOS
-    sources: [NouriWatch]
+    sources: [NouriWatch, Localization]
     dependencies:
       - package: NouriKit
       - target: NouriWatchWidgets
@@ -75,7 +76,7 @@ targets:
   NouriWidgets:
     type: app-extension
     platform: iOS
-    sources: [NouriWidgets, Widgets]
+    sources: [NouriWidgets, Widgets, Localization]
     dependencies:
       - package: NouriKit
     entitlements:
@@ -95,7 +96,7 @@ targets:
   NouriWatchWidgets:
     type: app-extension
     platform: watchOS
-    sources: [NouriWatchWidgets, Widgets]
+    sources: [NouriWatchWidgets, Widgets, Localization]
     dependencies:
       - package: NouriKit
     entitlements:

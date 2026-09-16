@@ -132,11 +132,11 @@ public enum DoseStatus: String, Sendable {
     /// Text + symbol so status never relies on color alone.
     public var label: String {
         switch self {
-        case .upcoming: "Upcoming"
-        case .due: "Due now"
-        case .taken: "Taken"
-        case .skipped: "Skipped"
-        case .missed: "Missed"
+        case .upcoming: String(localized: "Upcoming", bundle: .module)
+        case .due: String(localized: "Due now", bundle: .module)
+        case .taken: String(localized: "Taken", bundle: .module)
+        case .skipped: String(localized: "Skipped", bundle: .module)
+        case .missed: String(localized: "Missed", bundle: .module)
         }
     }
 
