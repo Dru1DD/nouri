@@ -1,64 +1,88 @@
 {
-  "sourceLanguage": "en",
-  "version": "1.0",
-  "strings": {
-    "NSHealthShareUsageDescription": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nouri reads water and dietary energy logged by other apps to show them next to your own entries."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nouri читает воду и калории, записанные другими приложениями, чтобы показать их рядом с вашими записями."
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nouri читає воду й калорії, записані іншими програмами, щоб показати їх поруч із вашими записами."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nouri odczytuje wodę i kalorie zapisane przez inne aplikacje, aby pokazać je obok Twoich wpisów."
+  "sourceLanguage" : "en",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nouri"
           }
         }
       }
     },
-    "NSHealthUpdateUsageDescription": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nouri saves the water and calories you log to Apple Health."
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nouri"
+          }
+        }
+      }
+    },
+    "NSHealthShareUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri reads water and dietary energy logged by other apps to show them next to your own entries."
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nouri сохраняет записанные вами воду и калории в «Здоровье»."
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri odczytuje wodę i kalorie zapisane przez inne aplikacje, aby pokazać je obok Twoich wpisów."
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nouri зберігає записані вами воду й калорії у «Здоров'я»."
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri читает воду и калории, записанные другими приложениями, чтобы показать их рядом с вашими записями."
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nouri zapisuje wodę i kalorie, które rejestrujesz, w aplikacji Zdrowie."
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri читає воду й калорії, записані іншими програмами, щоб показати їх поруч із вашими записами."
+          }
+        }
+      }
+    },
+    "NSHealthUpdateUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri saves the water and calories you log to Apple Health."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri zapisuje wodę i kalorie, które rejestrujesz, w aplikacji Zdrowie."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri сохраняет записанные вами воду и калории в «Здоровье»."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri зберігає записані вами воду й калорії у «Здоров'я»."
           }
         }
       }
     }
-  }
+  },
+  "version" : "1.0"
 }

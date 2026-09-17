@@ -1,0 +1,116 @@
+:root {
+  --bg: #f5f6f8;
+  --card: #ffffff;
+  --text: #1c1c1e;
+  --muted: #6b6b73;
+  --accent: #1f6fe5;
+  --border: #e3e5ea;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e0f12;
+    --card: #1a1b20;
+    --text: #f2f2f5;
+    --muted: #a0a0aa;
+    --accent: #5ea0ff;
+    --border: #2a2c33;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+header, main, footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 20px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.brand img { width: 36px; height: 36px; border-radius: 9px; }
+
+.langs { display: flex; gap: 4px; }
+
+.langs button {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.langs button[aria-pressed="true"] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+article {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 8px 24px 20px;
+  margin: 20px 0;
+}
+
+h1 { font-size: 28px; line-height: 1.25; margin: 20px 0 4px; }
+h2 { font-size: 19px; margin: 28px 0 6px; }
+p, li { color: var(--text); }
+.muted { color: var(--muted); font-size: 14px; }
+a { color: var(--accent); }
+ul { padding-left: 20px; }
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0 8px;
+}
+
+.links a {
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 600;
+}
+
+footer {
+  color: var(--muted);
+  font-size: 13px;
+  padding-bottom: 32px;
+}
+
+@media (max-width: 480px) {
+  article { padding: 4px 16px 16px; }
+  h1 { font-size: 24px; }
+}
