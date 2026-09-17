@@ -40,6 +40,7 @@ targets:
       path: Nouri/Info.plist
       properties:
         CFBundleDisplayName: Nouri
+        ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
         UIApplicationSupportsIndirectInputEvents: true
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
@@ -67,6 +68,7 @@ targets:
       path: NouriWatch/Info.plist
       properties:
         CFBundleDisplayName: Nouri
+        ITSAppUsesNonExemptEncryption: false
         WKApplication: true
         WKCompanionAppBundleIdentifier: com.dru1dd.nouri
     settings:
