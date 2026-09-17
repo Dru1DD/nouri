@@ -2,8 +2,8 @@ import NouriKit
 import SwiftUI
 import WatchKit
 
-/// Activity-style layout: one metric per vertical page. Each page opens on a full-screen
-/// ring; scrolling down (Digital Crown or swipe) reveals the "+" buttons, then the next page.
+/// One metric per page, swiped horizontally. Each page opens on a full-screen ring;
+/// scrolling down (Digital Crown or swipe) reveals its "+" buttons.
 struct WatchRootView: View {
     @Environment(AppModel.self) private var model
     @SceneStorage("watch.page") private var page = Page.water
@@ -21,7 +21,7 @@ struct WatchRootView: View {
                     MedicationsPage().tag(Page.medications)
                 }
             }
-            .tabViewStyle(.verticalPage)
+            .tabViewStyle(.page)
         }
     }
 }
@@ -47,7 +47,6 @@ private struct WaterPage: View {
                 }
             }
         }
-        .navigationTitle("Water")
     }
 }
 
@@ -76,7 +75,6 @@ private struct CaloriesPage: View {
                 }
             }
         }
-        .navigationTitle("Calories")
     }
 }
 
@@ -92,7 +90,6 @@ private struct MedicationsPage: View {
         } actions: {
             ForEach(today.doses) { DoseCard(dose: $0) }
         }
-        .navigationTitle("Medications")
     }
 
     private func caption(_ today: DaySummary) -> String {
@@ -114,14 +111,9 @@ private struct MetricPage<Hero: View, Actions: View>: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
-                VStack(spacing: 6) {
-                    hero
-                    Image(systemName: "chevron.compact.down")
-                        .font(.title3)
-                        .foregroundStyle(.secondary)
-                        .accessibilityHidden(true)
-                }
-                .containerRelativeFrame(.vertical, alignment: .center)
+                hero
+                    .containerRelativeFrame(.vertical, alignment: .center)
+                    .padding(.bottom, 16)  // keeps the first button clear of the page dots
 
                 actions
             }
@@ -168,7 +160,7 @@ private struct BigRing: View {
                 }
                 .padding(lineWidth + 4)
             }
-            .frame(maxWidth: 120, maxHeight: 120)
+            .frame(maxWidth: 130, maxHeight: 130)
 
             Text(caption)
                 .font(.footnote.monospacedDigit())
