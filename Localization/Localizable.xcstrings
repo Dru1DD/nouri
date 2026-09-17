@@ -1474,6 +1474,28 @@
         }
       }
     },
+    "Next: %@ %@": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Далее: %1$@ %2$@"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Далі: %1$@ %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Następnie: %1$@ %2$@"
+          }
+        }
+      }
+    },
     "No Medications": {
       "localizations": {
         "ru": {
@@ -2196,6 +2218,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "z %1$@ l · %2$lld%%"
+          }
+        }
+      }
+    },
+    "of %@ kcal · %lld%%": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "из %1$@ ккал · %2$lld%%"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "з %1$@ ккал · %2$lld%%"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "z %1$@ kcal · %2$lld%%"
           }
         }
       }
