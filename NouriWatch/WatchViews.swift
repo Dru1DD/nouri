@@ -2,77 +2,242 @@ import NouriKit
 import SwiftUI
 import WatchKit
 
+/// Activity-style layout: one metric per vertical page. Each page opens on a full-screen
+/// ring; scrolling down (Digital Crown or swipe) reveals the "+" buttons, then the next page.
 struct WatchRootView: View {
     @Environment(AppModel.self) private var model
+    @SceneStorage("watch.page") private var page = Page.water
+
+    enum Page: String {
+        case water, calories, medications
+    }
 
     var body: some View {
         NavigationStack {
-            List {
-                RingsHeader(today: model.today)
-                    .listRowBackground(Color.clear)
-
-                if let added = model.lastAdded {
-                    Button {
-                        model.undoLastAdd()
-                        WKInterfaceDevice.current().play(.click)
-                    } label: {
-                        Label(undoText(added), systemImage: "arrow.uturn.backward")
-                            .font(.footnote)
-                    }
-                    .tint(.secondary)
-                    .task(id: added.id) {
-                        try? await Task.sleep(for: .seconds(5))
-                        model.dismissUndo(id: added.id)
-                    }
-                }
-
-                Section {
-                    AmountButtons(values: [100, 250, 500], tint: .blue, a11yLabel: { String(localized: "Add \($0) milliliters of water") }) {
-                        model.addFluid($0)
-                    }
-                } header: {
-                    Label("Water", systemImage: "drop.fill").foregroundStyle(.blue)
-                }
-
-                Section {
-                    AmountButtons(values: [100, 250], tint: .orange, a11yLabel: { String(localized: "Add \($0) kilocalories") }) {
-                        model.addCalories($0)
-                    }
-                    ForEach(model.presets) { preset in
-                        Button {
-                            model.addCalories(preset.calories, name: preset.name)
-                            WKInterfaceDevice.current().play(.success)
-                        } label: {
-                            HStack {
-                                Text(preset.name).lineLimit(1)
-                                Spacer()
-                                Text(Format.kcal(preset.calories))
-                                    .monospacedDigit()
-                                    .foregroundStyle(.orange)
-                            }
-                        }
-                        .accessibilityLabel("Add \(preset.name), \(Format.kcal(preset.calories)) kilocalories")
-                    }
-                } header: {
-                    Label("Calories", systemImage: "flame.fill").foregroundStyle(.orange)
-                }
-
+            TabView(selection: $page) {
+                WaterPage().tag(Page.water)
+                CaloriesPage().tag(Page.calories)
                 if !model.medications.isEmpty {
-                    Section {
-                        NavigationLink { WatchMedicationsView() } label: {
-                            MedicationSummaryRow(today: model.today)
-                        }
-                    } header: {
-                        Label("Medications", systemImage: "pills.fill").foregroundStyle(.purple)
-                    }
+                    MedicationsPage().tag(Page.medications)
                 }
             }
-            .navigationTitle("Today")
-            .containerBackground(Color.blue.opacity(0.35).gradient, for: .navigation)
+            .tabViewStyle(.verticalPage)
+        }
+    }
+}
+
+// MARK: - Pages
+
+private struct WaterPage: View {
+    @Environment(AppModel.self) private var model
+
+    var body: some View {
+        let progress = model.today.hydration
+        MetricPage(tint: .blue) {
+            BigRing(progress: progress, tint: .blue, symbol: "drop.fill",
+                    value: Format.liters(progress.value), unit: String(localized: "L"),
+                    caption: String(localized: "of \(Format.liters(progress.goal)) L · \(progress.percent)%"),
+                    a11yName: "Water")
+        } actions: {
+            UndoRow(matches: { if case .fluid = $0 { true } else { false } })
+            ForEach([100.0, 250, 500], id: \.self) { ml in
+                AddButton(title: "+\(Int(ml))", unit: String(localized: "ml"), tint: .blue,
+                          a11yLabel: String(localized: "Add \(Int(ml)) milliliters of water")) {
+                    model.addFluid(ml)
+                }
+            }
+        }
+        .navigationTitle("Water")
+    }
+}
+
+private struct CaloriesPage: View {
+    @Environment(AppModel.self) private var model
+
+    var body: some View {
+        let progress = model.today.calories
+        MetricPage(tint: .orange) {
+            BigRing(progress: progress, tint: .orange, symbol: "flame.fill",
+                    value: Format.kcal(progress.value), unit: String(localized: "kcal"),
+                    caption: String(localized: "of \(Format.kcal(progress.goal)) kcal · \(progress.percent)%"),
+                    a11yName: "Calories")
+        } actions: {
+            UndoRow(matches: { if case .food = $0 { true } else { false } })
+            ForEach([100.0, 250, 500], id: \.self) { kcal in
+                AddButton(title: "+\(Int(kcal))", unit: String(localized: "kcal"), tint: .orange,
+                          a11yLabel: String(localized: "Add \(Int(kcal)) kilocalories")) {
+                    model.addCalories(kcal)
+                }
+            }
+            ForEach(model.presets) { preset in
+                AddButton(title: preset.name, unit: Format.kcal(preset.calories), tint: .orange,
+                          a11yLabel: String(localized: "Add \(preset.name), \(Format.kcal(preset.calories)) kilocalories")) {
+                    model.addCalories(preset.calories, name: preset.name)
+                }
+            }
+        }
+        .navigationTitle("Calories")
+    }
+}
+
+private struct MedicationsPage: View {
+    @Environment(AppModel.self) private var model
+
+    var body: some View {
+        let today = model.today
+        MetricPage(tint: .purple) {
+            BigRing(progress: today.medicationProgress, tint: .purple, symbol: "pills.fill",
+                    value: "\(today.dosesTaken)/\(today.doses.count)", unit: "",
+                    caption: caption(today), a11yName: "Medications")
+        } actions: {
+            ForEach(today.doses) { DoseCard(dose: $0) }
+        }
+        .navigationTitle("Medications")
+    }
+
+    private func caption(_ today: DaySummary) -> String {
+        if let next = today.nextDose {
+            return String(localized: "Next: \(Format.time(next.occurrence.scheduledAt)) \(next.occurrence.medicationName)")
+        }
+        return today.doses.isEmpty ? String(localized: "No doses today") : String(localized: "All done for today")
+    }
+}
+
+// MARK: - Building blocks
+
+/// A page whose first screen is the hero ring; actions sit below the fold.
+private struct MetricPage<Hero: View, Actions: View>: View {
+    let tint: Color
+    @ViewBuilder let hero: Hero
+    @ViewBuilder let actions: Actions
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 8) {
+                VStack(spacing: 6) {
+                    hero
+                    Image(systemName: "chevron.compact.down")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
+                }
+                .containerRelativeFrame(.vertical, alignment: .center)
+
+                actions
+            }
+        }
+        .containerBackground(tint.opacity(0.4).gradient, for: .tabView)
+    }
+}
+
+private struct BigRing: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let progress: GoalProgress
+    let tint: Color
+    let symbol: String
+    let value: String
+    let unit: String
+    let caption: String
+    let a11yName: LocalizedStringKey
+
+    private let lineWidth: CGFloat = 14
+
+    var body: some View {
+        VStack(spacing: 6) {
+            ZStack {
+                Circle().stroke(tint.opacity(0.25), lineWidth: lineWidth)
+                Circle()
+                    .trim(from: 0, to: progress.fraction)
+                    .stroke(tint.gradient, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .animation(reduceMotion ? nil : .spring(duration: 0.6), value: progress.fraction)
+                VStack(spacing: -2) {
+                    Image(systemName: symbol)
+                        .font(.body)
+                        .foregroundStyle(tint)
+                    Text(value)
+                        .font(.system(.title, design: .rounded, weight: .bold).monospacedDigit())
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                        .contentTransition(.numericText())
+                    if !unit.isEmpty {
+                        Text(unit)
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(lineWidth + 4)
+            }
+            .frame(maxWidth: 120, maxHeight: 120)
+
+            Text(caption)
+                .font(.footnote.monospacedDigit())
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(a11yName))
+        .accessibilityValue(caption.isEmpty ? value : "\(value) \(unit), \(caption)")
+    }
+}
+
+/// Full-width tinted "+N unit" button.
+private struct AddButton: View {
+    let title: String
+    let unit: String
+    let tint: Color
+    let a11yLabel: String
+    let action: () -> Void
+
+    var body: some View {
+        Button {
+            action()
+            WKInterfaceDevice.current().play(.success)
+        } label: {
+            HStack(alignment: .firstTextBaseline) {
+                Text(title)
+                    .font(.system(.title3, design: .rounded, weight: .semibold).monospacedDigit())
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                Spacer()
+                Text(unit)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 4)
+        }
+        .buttonStyle(.bordered)
+        .tint(tint)
+        .accessibilityLabel(a11yLabel)
+    }
+}
+
+/// "Undo +250 ml", shown for a few seconds after a matching quick add.
+private struct UndoRow: View {
+    @Environment(AppModel.self) private var model
+    let matches: (AppModel.LastAdded.Kind) -> Bool
+
+    var body: some View {
+        if let added = model.lastAdded, matches(added.kind) {
+            Button {
+                model.undoLastAdd()
+                WKInterfaceDevice.current().play(.click)
+            } label: {
+                Label(text(added), systemImage: "arrow.uturn.backward")
+                    .font(.footnote)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderless)
+            .foregroundStyle(.secondary)
+            .task(id: added.id) {
+                try? await Task.sleep(for: .seconds(5))
+                model.dismissUndo(id: added.id)
+            }
         }
     }
 
-    private func undoText(_ added: AppModel.LastAdded) -> String {
+    private func text(_ added: AppModel.LastAdded) -> String {
         switch added.kind {
         case .fluid(let ml, _): String(localized: "Undo +\(Format.ml(ml)) ml")
         case .food(let kcal): String(localized: "Undo +\(Format.kcal(kcal)) kcal")
@@ -80,168 +245,51 @@ struct WatchRootView: View {
     }
 }
 
-/// Two activity-style rings: water and calories.
-private struct RingsHeader: View {
-    let today: DaySummary
-
-    var body: some View {
-        HStack(spacing: 12) {
-            RingStat(progress: today.hydration, tint: .blue, symbol: "drop.fill",
-                     value: Format.liters(today.hydration.value), unit: String(localized: "L"), a11yName: "Water")
-            RingStat(progress: today.calories, tint: .orange, symbol: "flame.fill",
-                     value: Format.kcal(today.calories.value), unit: String(localized: "kcal"), a11yName: "Calories")
-        }
-        .frame(maxWidth: .infinity)
-    }
-}
-
-private struct RingStat: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    let progress: GoalProgress
-    let tint: Color
-    let symbol: String
-    let value: String
-    let unit: String
-    let a11yName: LocalizedStringKey
-
-    var body: some View {
-        VStack(spacing: 4) {
-            ZStack {
-                Circle().stroke(tint.opacity(0.25), lineWidth: 7)
-                Circle()
-                    .trim(from: 0, to: progress.fraction)
-                    .stroke(tint.gradient, style: StrokeStyle(lineWidth: 7, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                    .animation(reduceMotion ? nil : .spring(duration: 0.5), value: progress.fraction)
-                VStack(spacing: 0) {
-                    Image(systemName: symbol)
-                        .font(.caption2)
-                        .foregroundStyle(tint)
-                    Text("\(progress.percent)%")
-                        .font(.caption2.weight(.semibold).monospacedDigit())
-                }
-            }
-            .frame(width: 58, height: 58)
-            Text("\(value) \(unit)")
-                .font(.footnote.weight(.semibold).monospacedDigit())
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
-        .frame(maxWidth: .infinity)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(a11yName))
-        .accessibilityValue("\(value) \(unit), \(progress.percent) percent of goal")
-    }
-}
-
-/// A row of compact tinted "+N" buttons.
-private struct AmountButtons: View {
-    let values: [Double]
-    let tint: Color
-    let a11yLabel: (Int) -> String
-    let add: (Double) -> Void
-
-    var body: some View {
-        HStack(spacing: 6) {
-            ForEach(values, id: \.self) { value in
-                Button {
-                    add(value)
-                    WKInterfaceDevice.current().play(.success)
-                } label: {
-                    Text("+\(Int(value))")
-                        .font(.body.weight(.semibold).monospacedDigit())
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.6)
-                        .frame(maxWidth: .infinity, minHeight: 36)
-                }
-                .buttonStyle(.bordered)
-                .tint(tint)
-                .accessibilityLabel(a11yLabel(Int(value)))
-            }
-        }
-        .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
-    }
-}
-
-private struct MedicationSummaryRow: View {
-    let today: DaySummary
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text("\(today.dosesTaken)/\(today.doses.count) taken")
-                    .font(.headline.monospacedDigit())
-                Spacer()
-                if !today.doses.isEmpty, today.dosesTaken == today.doses.count {
-                    Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-                }
-            }
-            if let next = today.nextDose {
-                Label("\(Format.time(next.occurrence.scheduledAt)) \(next.occurrence.medicationName)",
-                      systemImage: next.status.symbol)
-                    .font(.caption)
-                    .foregroundStyle(next.status == .due ? .orange : .secondary)
-                    .lineLimit(1)
-            } else if today.doses.isEmpty {
-                Text("No doses today").font(.caption).foregroundStyle(.secondary)
-            }
-        }
-    }
-}
-
-struct WatchMedicationsView: View {
+private struct DoseCard: View {
     @Environment(AppModel.self) private var model
+    let dose: DoseItem
 
     var body: some View {
-        List {
-            if model.today.doses.isEmpty {
-                Text("No doses today").foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(Format.time(dose.occurrence.scheduledAt))
+                    .font(.caption.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(.purple)
+                Spacer()
+                Label(dose.status.label, systemImage: dose.status.symbol)
+                    .font(.caption2)
+                    .foregroundStyle(color)
             }
-            ForEach(model.today.doses) { dose in
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(Format.time(dose.occurrence.scheduledAt))
-                            .font(.caption.weight(.semibold).monospacedDigit())
-                            .foregroundStyle(.purple)
-                        Spacer()
-                        Label(dose.status.label, systemImage: dose.status.symbol)
-                            .font(.caption2)
-                            .foregroundStyle(color(dose.status))
+            Text(dose.occurrence.medicationName).font(.headline)
+            Text(dose.occurrence.dosageText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            if dose.status.isResolved {
+                Button("Undo") { set(nil) }
+                    .buttonStyle(.bordered)
+            } else {
+                HStack(spacing: 6) {
+                    Button { set(.taken) } label: {
+                        Label("Taken", systemImage: "checkmark")
+                            .frame(maxWidth: .infinity)
                     }
-                    Text(dose.occurrence.medicationName).font(.headline)
-                    Text(dose.occurrence.dosageText)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    if dose.status.isResolved {
-                        Button("Undo") { set(dose, nil) }
-                            .buttonStyle(.bordered)
-                    } else {
-                        HStack(spacing: 6) {
-                            Button { set(dose, .taken) } label: {
-                                Label("Taken", systemImage: "checkmark")
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.green)
-                            Button { set(dose, .skipped) } label: {
-                                Image(systemName: "forward.end")
-                                    .frame(minWidth: 30)
-                            }
-                            .buttonStyle(.bordered)
-                            .accessibilityLabel("Skip")
-                        }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.green)
+                    Button { set(.skipped) } label: {
+                        Image(systemName: "forward.end")
+                            .frame(minWidth: 30)
                     }
+                    .buttonStyle(.bordered)
+                    .accessibilityLabel("Skip")
                 }
-                .padding(.vertical, 4)
             }
         }
-        .navigationTitle("Medications")
-        .containerBackground(Color.purple.opacity(0.35).gradient, for: .navigation)
+        .padding(10)
+        .background(.ultraThinMaterial, in: .rect(cornerRadius: 16))
     }
 
-    private func color(_ status: DoseStatus) -> Color {
-        switch status {
+    private var color: Color {
+        switch dose.status {
         case .taken: .green
         case .due: .orange
         case .missed: .red
@@ -249,7 +297,7 @@ struct WatchMedicationsView: View {
         }
     }
 
-    private func set(_ dose: DoseItem, _ status: DoseLogStatus?) {
+    private func set(_ status: DoseLogStatus?) {
         WKInterfaceDevice.current().play(status == nil ? .click : .success)
         Task { await model.setDose(dose.occurrence, status: status) }
     }

@@ -3,7 +3,7 @@
 A small daily health tracker for iPhone and Apple Watch. Nouri tracks three things: fluids, calories and medication reminders. Logging an entry should take a couple of seconds.
 
 - iPhone: a one-screen dashboard with quick-add buttons, custom entries, calorie presets, medications, a 30-day history and settings.
-- Apple Watch: quick logging (💧 +100/+250/+500, 🔥 +100/+250, presets) and today's medication doses with Taken/Skip.
+- Apple Watch: Activity-style vertical pages, one metric per screen (water, calories, medications). Each page opens on a large ring; scrolling down reveals the quick-add buttons (💧 +100/+250/+500, 🔥 +100/+250/+500, presets) or today's doses with Taken/Skip.
 - Widgets and complications: Hydration (💧 %) and Medications (💊 2/3 + next dose) for the iPhone Home/Lock Screen, the Watch face and the Smart Stack.
 - Medication reminders are local notifications with **Taken / Snooze 10 min / Skip** actions.
 
