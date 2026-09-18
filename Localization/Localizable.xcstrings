@@ -1025,6 +1025,28 @@
         }
       }
     },
+    "Connected to Apple Health" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Połączono z aplikacją Zdrowie"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключено к «Здоровью»"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Під'єднано до «Здоров'я»"
+          }
+        }
+      }
+    },
     "Custom amount" : {
       "extractionState" : "stale",
       "localizations" : {

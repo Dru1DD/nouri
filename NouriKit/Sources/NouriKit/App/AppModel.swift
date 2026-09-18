@@ -17,6 +17,7 @@ public final class AppModel {
     public private(set) var hydrationGoal: Double = 2500
     public private(set) var calorieGoal: Double = 2000
     public private(set) var scheduledReminderCount = 0
+    public private(set) var healthConnected = false
     /// `nil` until asked. Asked lazily, when the user first creates a medication.
     public private(set) var notificationsAllowed: Bool?
 
@@ -72,6 +73,7 @@ public final class AppModel {
 
     public func refreshExternal() async {
         guard let health, let interval = calendar().dateInterval(of: .day, for: now()) else { return }
+        healthConnected = health.isConnected
         imported = await health.importedTotals(in: interval)
     }
 
