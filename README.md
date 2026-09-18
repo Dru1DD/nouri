@@ -214,3 +214,11 @@ The app requests only `dietaryWater` and `dietaryEnergyConsumed`, both read and 
 5. Caffeine and macronutrients: extend `FluidRecord`/`FoodRecord`. The sync format is Codable and tolerant of new optional fields.
 6. History detail and simple weekly trends. Swift Charts only if they prove useful.
 7. More languages: add a column to the three String Catalogs.
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+[Apache License 2.0](LICENSE)
