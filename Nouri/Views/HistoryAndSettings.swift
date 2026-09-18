@@ -70,7 +70,12 @@ struct SettingsView: View {
 
             if model.isHealthAvailable {
                 Section {
-                    Button("Connect Apple Health") { Task { await model.connectHealth() } }
+                    if model.healthConnected {
+                        Label("Connected to Apple Health", systemImage: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                    } else {
+                        Button("Connect Apple Health") { Task { await model.connectHealth() } }
+                    }
                 } header: {
                     Text("Apple Health")
                 } footer: {

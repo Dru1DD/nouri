@@ -14,6 +14,9 @@ public struct ImportedTotals: Hashable, Sendable {
 
 public protocol HealthService: Sendable {
     func requestAuthorization() async
+    /// True once the user allowed Nouri to write at least one type. Read access is never
+    /// reported by HealthKit, so write access is the only observable signal.
+    var isConnected: Bool { get }
     /// Mirrors an app entry into Health. Idempotent (sync identifiers).
     func export(_ record: SyncRecord) async
     func importedTotals(in interval: DateInterval) async -> ImportedTotals?
@@ -34,6 +37,10 @@ public final class HealthKitService: HealthService {
     public func requestAuthorization() async {
         let types: Set = [water, energy]
         try? await store.requestAuthorization(toShare: types, read: types)
+    }
+
+    public var isConnected: Bool {
+        [water, energy].contains { store.authorizationStatus(for: $0) == .sharingAuthorized }
     }
 
     public func export(_ record: SyncRecord) async {

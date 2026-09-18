@@ -144,6 +144,28 @@
         }
       }
     },
+    "%@ ml" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ml"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ мл"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ мл"
+          }
+        }
+      }
+    },
     "%@ ml more in Apple Health from other apps" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1021,6 +1043,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Під'єднати «Здоров'я»"
+          }
+        }
+      }
+    },
+    "Connected to Apple Health" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Połączono z aplikacją Zdrowie"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключено к «Здоровью»"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Під'єднано до «Здоров'я»"
           }
         }
       }

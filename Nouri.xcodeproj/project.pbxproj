@@ -106,7 +106,7 @@
 		0571C13818D13842F69BEB0E /* NouriWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriWidgets.swift; sourceTree = "<group>"; };
 		06887951A72FA30EE348FDF7 /* NouriWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NouriWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		095FABD03D2E1ADE69CC5F7A /* NouriWatchWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NouriWatchWidgets.entitlements; sourceTree = "<group>"; };
-		1A473CDF62F1F02E00F728C3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1A473CDF62F1F02E00F728C3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2138AE62DC646B4986054BDD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		30258371ED5E4E7BE4C40758 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		447BC8E6C06B799DC3855EE5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -120,8 +120,8 @@
 		7EBB2B0A4C0FF77E189619B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		999C3F657B75D4AF5A1E8C41 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		9E6EA6DB3FAF1BF2B1303850 /* Nouri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Nouri.entitlements; sourceTree = "<group>"; };
-		AA5247F5BDFB0DA549B502CC /* NouriKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NouriKit; path = NouriKit; sourceTree = SOURCE_ROOT; };
-		AF0F0D4C960DF1201FC29BA0 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		AA5247F5BDFB0DA549B502CC /* NouriKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = NouriKit; sourceTree = SOURCE_ROOT; };
+		AF0F0D4C960DF1201FC29BA0 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		C2ABD8045AB61E6368C8F037 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C40588B66ED1912F3F06FA9D /* NouriWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriWatchApp.swift; sourceTree = "<group>"; };
 		D501F7E0327344AA5D088C9B /* NouriWatchWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NouriWatchWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -406,7 +406,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					656419483978B1D44A2045C3 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 					84A8E96C5BF9A5792C720469 = {
@@ -663,6 +662,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = NouriWatchWidgets/NouriWatchWidgets.entitlements;
+				DEVELOPMENT_TEAM = N2KQVU8JAT;
 				INFOPLIST_FILE = NouriWatchWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -696,6 +696,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = NouriWatchWidgets/NouriWatchWidgets.entitlements;
+				DEVELOPMENT_TEAM = N2KQVU8JAT;
 				INFOPLIST_FILE = NouriWatchWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

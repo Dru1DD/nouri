@@ -21,6 +21,12 @@ struct FluidForm: View {
         _caloriesEdited = State(initialValue: editing != nil)
     }
 
+    /// 50 ml steps; an edited entry keeps its exact amount even when it's off-step.
+    private var amountOptions: [Double] {
+        let steps = Array(stride(from: 50.0, through: 2000, by: 50))
+        return steps.contains(amount) ? steps : (steps + [amount]).sorted()
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -29,12 +35,13 @@ struct FluidForm: View {
                         Label(type.title, systemImage: type.symbol).tag(type)
                     }
                 }
-                LabeledContent("Amount (ml)") {
-                    TextField("ml", value: $amount, format: .number)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.trailing)
-                        .accessibilityIdentifier("fluid-amount")
+                Picker("Amount (ml)", selection: $amount) {
+                    ForEach(amountOptions, id: \.self) { ml in
+                        Text("\(Format.ml(ml)) ml").tag(ml)
+                    }
                 }
+                .pickerStyle(.wheel)
+                .accessibilityIdentifier("fluid-amount")
                 LabeledContent("Calories (kcal)") {
                     TextField("kcal", value: Binding(get: { calories }, set: { calories = $0; caloriesEdited = true }),
                               format: .number)

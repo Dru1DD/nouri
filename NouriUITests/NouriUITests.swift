@@ -92,12 +92,9 @@ final class NouriUITests: XCTestCase {
     func testEditEntryAmount() {
         app.buttons["add-water-250"].tap()
         app.buttons.containing(NSPredicate(format: "label CONTAINS 'Water'")).firstMatch.tap()
-        let amount = app.textFields["fluid-amount"]
+        let amount = app.pickerWheels.firstMatch
         XCTAssertTrue(amount.waitForExistence(timeout: 3))
-        amount.tap()
-        amount.press(forDuration: 1.2)
-        if app.menuItems["Select All"].waitForExistence(timeout: 2) { app.menuItems["Select All"].tap() }
-        amount.typeText("400")
+        amount.adjust(toPickerWheelValue: "400 ml")
         app.buttons["fluid-save"].tap()
         waitForValue("hydration-total", containing: "0.40 / 2.50 L")
     }

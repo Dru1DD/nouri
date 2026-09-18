@@ -46,6 +46,9 @@ private struct WaterPage: View {
                     model.addFluid(ml)
                 }
             }
+            CrownAmountLink(unit: String(localized: "ml"), tint: .blue, start: 250, range: 50...2000, step: 50) {
+                model.addFluid($0)
+            }
         }
     }
 }
@@ -67,6 +70,9 @@ private struct CaloriesPage: View {
                           a11yLabel: String(localized: "Add \(Int(kcal)) kilocalories")) {
                     model.addCalories(kcal)
                 }
+            }
+            CrownAmountLink(unit: String(localized: "kcal"), tint: .orange, start: 200, range: 10...2000, step: 10) {
+                model.addCalories($0)
             }
             ForEach(model.presets) { preset in
                 AddButton(title: preset.name, unit: Format.kcal(preset.calories), tint: .orange,
@@ -202,6 +208,68 @@ private struct AddButton: View {
         .buttonStyle(.bordered)
         .tint(tint)
         .accessibilityLabel(a11yLabel)
+    }
+}
+
+/// Opens a screen where the Digital Crown picks any amount, for sizes the "+" buttons don't cover.
+private struct CrownAmountLink: View {
+    let unit: String
+    let tint: Color
+    let start: Double
+    let range: ClosedRange<Double>
+    let step: Double
+    let add: (Double) -> Void
+
+    var body: some View {
+        NavigationLink {
+            CrownAmountView(unit: unit, tint: tint, amount: start, range: range, step: step, add: add)
+        } label: {
+            Label("Custom amount", systemImage: "digitalcrown.arrow.clockwise")
+        }
+        .buttonStyle(.bordered)
+        .tint(tint)
+    }
+}
+
+private struct CrownAmountView: View {
+    @Environment(\.dismiss) private var dismiss
+    let unit: String
+    let tint: Color
+    @State var amount: Double
+    let range: ClosedRange<Double>
+    let step: Double
+    let add: (Double) -> Void
+
+    var body: some View {
+        VStack {
+            Spacer()
+            VStack {
+                Text(Int(amount).formatted())
+                    .font(.system(size: 48, weight: .semibold, design: .rounded).monospacedDigit())
+                    .contentTransition(.numericText())
+                Text(unit).foregroundStyle(.secondary)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Custom amount")
+            .accessibilityValue("\(Int(amount).formatted()) \(unit)")
+            .accessibilityAdjustableAction { direction in
+                switch direction {
+                case .increment: amount = min(amount + step, range.upperBound)
+                case .decrement: amount = max(amount - step, range.lowerBound)
+                @unknown default: break
+                }
+            }
+            Spacer()
+            Button("Add") {
+                add(amount)
+                WKInterfaceDevice.current().play(.success)
+                dismiss()
+            }
+            .tint(tint)
+        }
+        .focusable()
+        .digitalCrownRotation($amount, from: range.lowerBound, through: range.upperBound, by: step,
+                              sensitivity: .medium, isContinuous: false, isHapticFeedbackEnabled: true)
     }
 }
 

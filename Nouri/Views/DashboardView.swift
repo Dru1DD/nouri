@@ -76,7 +76,7 @@ struct DashboardView: View {
                 progress: today.hydration,
                 identifier: "hydration-total"
             )
-            QuickAddRow(values: [100, 250, 500], idPrefix: "add-water", a11yLabel: { String(localized: "Add \($0) milliliters") }) { model.addFluid($0) } more: {
+            QuickAddRow(values: [100, 250, 500], unit: "ml", idPrefix: "add-water", a11yLabel: { String(localized: "Add \($0) milliliters") }) { model.addFluid($0) } more: {
                 sheet = .fluid
             }
             if let imported = model.imported, imported.waterML > 0 {
@@ -97,7 +97,7 @@ struct DashboardView: View {
                 progress: today.calories,
                 identifier: "calories-total"
             )
-            QuickAddRow(values: [50, 100, 250, 500], idPrefix: "add-kcal", a11yLabel: { String(localized: "Add \($0) kilocalories") }) { model.addCalories($0) } more: {
+            QuickAddRow(values: [50, 100, 250, 500], unit: "kcal", idPrefix: "add-kcal", a11yLabel: { String(localized: "Add \($0) kilocalories") }) { model.addCalories($0) } more: {
                 sheet = .food
             }
             if !model.presets.isEmpty {
@@ -217,6 +217,7 @@ struct ProgressRow: View {
 
 struct QuickAddRow: View {
     let values: [Double]
+    let unit: LocalizedStringKey
     let idPrefix: String
     let a11yLabel: (Int) -> String
     let add: (Double) -> Void
@@ -230,10 +231,15 @@ struct QuickAddRow: View {
                     add(value)
                     taps += 1
                 } label: {
-                    Text("+\(Int(value))")
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                        .frame(maxWidth: .infinity)
+                    VStack(spacing: 0) {
+                        Text("+\(Int(value))")
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                        Text(unit)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
                 .accessibilityLabel(a11yLabel(Int(value)))
