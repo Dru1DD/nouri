@@ -35,6 +35,11 @@ struct FluidForm: View {
                         Label(type.title, systemImage: type.symbol).tag(type)
                     }
                 }
+                if !beverage.countsTowardHydration {
+                    Text("Alcohol doesn't count toward your water goal.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
                 Picker("Amount (ml)", selection: $amount) {
                     ForEach(amountOptions, id: \.self) { ml in
                         Text("\(Format.ml(ml)) ml").tag(ml)
@@ -51,7 +56,10 @@ struct FluidForm: View {
                 DatePicker("Time", selection: $time, in: ...Date.now)
                     .accessibilityIdentifier("fluid-time")
             }
-            .onChange(of: beverage) { prefillCalories() }
+            .onChange(of: beverage) {
+                if editing == nil { amount = beverage.defaultServingML }
+                prefillCalories()
+            }
             .onChange(of: amount) { prefillCalories() }
             .navigationTitle(editing == nil ? "Add Drink" : "Edit Drink")
             .navigationBarTitleDisplayMode(.inline)

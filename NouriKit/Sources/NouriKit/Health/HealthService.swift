@@ -48,7 +48,8 @@ public final class HealthKitService: HealthService {
         case .fluid(let r):
             let kcal = r.calories > 0 && r.deletedAt == nil ? r.calories : 0
             await write(type: water, unit: .literUnit(with: .milli), value: r.amountML, date: r.timestamp,
-                        syncID: "fluid-\(r.id)", version: r.updatedAt, deleted: r.deletedAt != nil)
+                        syncID: "fluid-\(r.id)", version: r.updatedAt,
+                        deleted: r.deletedAt != nil || !r.beverage.countsTowardHydration)
             await write(type: energy, unit: .kilocalorie(), value: kcal, date: r.timestamp,
                         syncID: "fluid-kcal-\(r.id)", version: r.updatedAt, deleted: kcal == 0)
         case .food(let r):

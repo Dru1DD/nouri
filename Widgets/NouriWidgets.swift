@@ -1,3 +1,4 @@
+import AppIntents
 import NouriKit
 import SwiftUI
 import WidgetKit
@@ -9,6 +10,12 @@ struct NouriWidgetBundle: WidgetBundle {
         MedicationWidget()
     }
 }
+
+#if os(iOS)
+struct NouriWidgetIntents: AppIntentsPackage {
+    static var includedPackages: [any AppIntentsPackage.Type] { [NouriKitIntents.self] }
+}
+#endif
 
 // MARK: - Timeline
 
@@ -76,9 +83,18 @@ struct HydrationView: View {
     private var progress: GoalProgress { entry.summary.hydration }
     private var liters: String { String(localized: "\(Format.liters(progress.value)) L") }
 
+    private var hasButton: Bool {
+        #if os(iOS)
+        family == .systemSmall
+        #else
+        false
+        #endif
+    }
+
     var body: some View {
         content
-            .accessibilityElement(children: .ignore)
+            // The small widget keeps its "+250 ml" button reachable for VoiceOver.
+            .accessibilityElement(children: hasButton ? .contain : .ignore)
             .accessibilityLabel("Hydration")
             .accessibilityValue("\(liters) of \(Format.liters(progress.goal)) liters, \(progress.percent) percent")
     }
@@ -117,6 +133,16 @@ struct HydrationView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 ProgressView(value: progress.fraction).tint(.blue)
+                #if os(iOS)
+                Button(intent: AddWaterIntent(amountML: 250)) {
+                    Label("250 ml", systemImage: "plus")
+                        .font(.caption.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .tint(.blue)
+                .accessibilityLabel("Add 250 milliliters of water")
+                #endif
             }
         }
     }

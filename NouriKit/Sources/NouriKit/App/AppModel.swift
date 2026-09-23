@@ -13,6 +13,8 @@ public final class AppModel {
     public private(set) var today: DaySummary
     public private(set) var medications: [MedicationInfo] = []
     public private(set) var presets: [PresetInfo] = []
+    /// Recently logged drinks other than water, for one-tap repeats.
+    public private(set) var recentDrinks: [FluidItem] = []
     public private(set) var imported: ImportedTotals?
     public private(set) var hydrationGoal: Double = 2500
     public private(set) var calorieGoal: Double = 2000
@@ -66,6 +68,8 @@ public final class AppModel {
         today = store.summary(for: date, now: date, calendar: calendar())
         medications = store.medications()
         presets = store.presets()
+        let recentWindow = DateInterval(start: date.addingTimeInterval(-14 * 86_400), end: date.addingTimeInterval(1))
+        recentDrinks = FluidItem.recent(store.fluids(in: recentWindow))
         let prefs = store.preferences()
         hydrationGoal = prefs.hydrationGoalML
         calorieGoal = prefs.calorieGoal
@@ -75,6 +79,12 @@ public final class AppModel {
         guard let health, let interval = calendar().dateInterval(of: .day, for: now()) else { return }
         healthConnected = health.isConnected
         imported = await health.importedTotals(in: interval)
+    }
+
+    /// Asks the paired device for recent history. The Watch calls this whenever it comes to the
+    /// foreground, so anything that was still in flight shows up right away.
+    public func syncWithCounterpart() {
+        sync?.requestBackfill()
     }
 
     public var isHealthAvailable: Bool { health != nil }

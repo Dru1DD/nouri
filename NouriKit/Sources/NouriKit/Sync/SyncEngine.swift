@@ -44,12 +44,14 @@ public final class SyncEngine {
         switch message {
         case .record(let record):
             if store.apply(record) { onRemoteChange?([record]) }
+        case .records(let records):
+            let changed = records.filter { store.apply($0) }
+            if !changed.isEmpty { onRemoteChange?(changed) }
         case .snapshot(let snapshot):
             if store.apply(snapshot) { onRemoteChange?([]) }
         case .backfillRequest:
-            for record in store.records(updatedSince: now().addingTimeInterval(-Self.backfillWindow)) {
-                transport.send(.record(record))
-            }
+            let records = store.records(updatedSince: now().addingTimeInterval(-Self.backfillWindow))
+            if !records.isEmpty { transport.send(.records(records)) }
             publishSettings()
         }
     }
@@ -59,8 +61,12 @@ public final class SyncEngine {
 @preconcurrency import WatchConnectivity
 
 /// WatchConnectivity transport.
-/// - Records and backfill requests use `transferUserInfo`: queued by the OS, survives app
-///   termination and delivers in order once the counterpart is reachable.
+/// - Records and backfill requests go through `sendMessage` while the counterpart is reachable
+///   (delivered within a second, wakes the iPhone app). Otherwise, or if that fails, they fall
+///   back to `transferUserInfo`: queued by the OS, survives app termination, delivers in order.
+/// - On iPhone, when a Nouri complication is on the watch face, records are also sent with
+///   `transferCurrentComplicationUserInfo`, which wakes the Watch app so its complications refresh
+///   without opening it. Duplicates are harmless: receivers apply last-writer-wins.
 /// - Settings use `updateApplicationContext`: only the latest snapshot matters.
 @MainActor
 public final class WatchConnectivityTransport: NSObject, SyncTransport {
@@ -94,8 +100,18 @@ public final class WatchConnectivityTransport: NSObject, SyncTransport {
         guard let data = try? JSONEncoder().encode(message) else { return }
         if case .snapshot = message {
             try? session.updateApplicationContext([Self.key: data])
+        } else if session.isReachable {
+            let session = session
+            session.sendMessage([Self.key: data], replyHandler: nil) { @Sendable _ in
+                session.transferUserInfo([Self.key: data])
+            }
         } else {
             session.transferUserInfo([Self.key: data])
+            #if os(iOS)
+            if session.isComplicationEnabled, session.remainingComplicationUserInfoTransfers > 0 {
+                session.transferCurrentComplicationUserInfo([Self.key: data])
+            }
+            #endif
         }
     }
 
@@ -124,6 +140,11 @@ extension WatchConnectivityTransport: WCSessionDelegate {
 
     nonisolated public func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
         guard let data = userInfo[Self.key] as? Data else { return }
+        Task { @MainActor in self.deliver(data) }
+    }
+
+    nonisolated public func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        guard let data = message[Self.key] as? Data else { return }
         Task { @MainActor in self.deliver(data) }
     }
 

@@ -32,6 +32,12 @@ public struct MedicationSchedule: Codable, Hashable, Sendable {
         self.endDate = endDate
     }
 
+    /// The day of a one-time reminder: a schedule that starts and ends on the same day.
+    public var oneTimeDate: Date? {
+        guard let startDate, let endDate, Calendar.current.isDate(startDate, inSameDayAs: endDate) else { return nil }
+        return startDate
+    }
+
     /// Absolute fire dates for every dose on the calendar day containing `day`.
     /// Non-existent local times (DST spring-forward gap) move to the next valid instant;
     /// repeated local times (DST fall-back) resolve to the first occurrence.

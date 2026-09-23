@@ -29,6 +29,16 @@ public struct FluidItem: Hashable, Identifiable, Sendable {
         self.calories = calories
         self.timestamp = timestamp
     }
+
+    /// Distinct drinks (by type and amount) other than water, newest first: one-tap repeats.
+    /// Each keeps the calories it was last logged with, so a customised latte stays customised.
+    public static func recent(_ fluids: [FluidItem], limit: Int = 3) -> [FluidItem] {
+        var seen = Set<String>()
+        return fluids.sorted { $0.timestamp > $1.timestamp }
+            .filter { $0.beverage != .water && seen.insert("\($0.beverage.rawValue)|\($0.amountML)").inserted }
+            .prefix(limit)
+            .map { $0 }
+    }
 }
 
 public struct FoodItem: Hashable, Identifiable, Sendable {
@@ -85,6 +95,11 @@ public struct DaySummary: Hashable, Sendable {
     public var fluids: [FluidItem]
     public var foods: [FoodItem]
 
+    /// Alcohol logged this day; shown separately since it doesn't count toward hydration.
+    public var alcoholML: Double {
+        fluids.filter { !$0.beverage.countsTowardHydration }.reduce(0) { $0 + $1.amountML }
+    }
+
     public var dosesTaken: Int { doses.filter { $0.status == .taken }.count }
     public var medicationProgress: GoalProgress { GoalProgress(value: Double(dosesTaken), goal: Double(doses.count)) }
     public var nextDose: DoseItem? { doses.first { $0.status == .upcoming || $0.status == .due } }
@@ -112,7 +127,7 @@ public struct DaySummary: Hashable, Sendable {
         }
         let dayFluids = fluids.filter { interval.contains($0.timestamp) && $0.timestamp < interval.end }
         let dayFoods = foods.filter { interval.contains($0.timestamp) && $0.timestamp < interval.end }
-        let totalML = dayFluids.reduce(0) { $0 + $1.amountML }
+        let totalML = dayFluids.filter(\.beverage.countsTowardHydration).reduce(0) { $0 + $1.amountML }
         let beverageKcal = dayFluids.reduce(0) { $0 + $1.calories }
         let foodKcal = dayFoods.reduce(0) { $0 + $1.calories }
 

@@ -63,9 +63,13 @@ struct MedicationsView: View {
         let times = med.schedule.times.sorted().compactMap { t in
             cal.date(bySettingHour: t.hour, minute: t.minute, second: 0, of: .now).map(Format.time)
         }
-        let days = med.schedule.weekdays.isEmpty
-            ? String(localized: "Every day")
-            : med.schedule.weekdays.sorted().map { cal.shortWeekdaySymbols[$0 - 1] }.joined(separator: ", ")
+        let days = if let once = med.schedule.oneTimeDate {
+            String(localized: "Once, \(once.formatted(date: .abbreviated, time: .omitted))")
+        } else if med.schedule.weekdays.isEmpty {
+            String(localized: "Every day")
+        } else {
+            med.schedule.weekdays.sorted().map { cal.shortWeekdaySymbols[$0 - 1] }.joined(separator: ", ")
+        }
         return "\(med.dosageText) · \(times.joined(separator: ", ")) · \(days)"
     }
 }
@@ -75,6 +79,8 @@ struct MedicationEditor: View {
     @Environment(\.dismiss) private var dismiss
     @State private var draft: MedicationInfo
     @State private var times: [Date]
+    @State private var isOneTime: Bool
+    @State private var oneTimeDate: Date
     private let isNew: Bool
 
     init(medication: MedicationInfo) {
@@ -83,6 +89,19 @@ struct MedicationEditor: View {
         let cal = Calendar.current
         _times = State(initialValue: medication.schedule.times.sorted().compactMap {
             cal.date(bySettingHour: $0.hour, minute: $0.minute, second: 0, of: .now)
+        })
+        _isOneTime = State(initialValue: medication.schedule.oneTimeDate != nil)
+        _oneTimeDate = State(initialValue: medication.schedule.oneTimeDate ?? .now)
+    }
+
+    /// Evenly spread defaults for the "times per day" shortcut.
+    private static let presetHours = [1: [8], 2: [8, 20], 3: [8, 14, 20], 4: [8, 12, 16, 20]]
+
+    private var timesPerDay: Binding<Int> {
+        Binding(get: { times.count }, set: { count in
+            times = (Self.presetHours[count] ?? []).compactMap {
+                Calendar.current.date(bySettingHour: $0, minute: 0, second: 0, of: .now)
+            }
         })
     }
 
@@ -100,7 +119,21 @@ struct MedicationEditor: View {
                             .accessibilityLabel("Dose unit")
                     }
                 }
+                Section {
+                    Picker("Repeat", selection: $isOneTime) {
+                        Text("Regularly").tag(false)
+                        Text("Once").tag(true)
+                    }
+                    .pickerStyle(.segmented)
+                    if isOneTime {
+                        DatePicker("Date", selection: $oneTimeDate, displayedComponents: .date)
+                    }
+                }
                 Section("Times") {
+                    Picker("Times per day", selection: timesPerDay) {
+                        ForEach(1...4, id: \.self) { Text("\($0)×").tag($0) }
+                    }
+                    .pickerStyle(.segmented)
                     ForEach(times.indices, id: \.self) { index in
                         DatePicker("Reminder \(index + 1)", selection: $times[index], displayedComponents: .hourAndMinute)
                     }
@@ -109,8 +142,10 @@ struct MedicationEditor: View {
                         times.append(times.last?.addingTimeInterval(4 * 3600) ?? .now)
                     }
                 }
-                Section("Days") {
-                    WeekdayPicker(selection: $draft.schedule.weekdays)
+                if !isOneTime {
+                    Section("Days") {
+                        WeekdayPicker(selection: $draft.schedule.weekdays)
+                    }
                 }
                 Section {
                     TextField("Notes", text: $draft.notes, axis: .vertical)
@@ -129,6 +164,10 @@ struct MedicationEditor: View {
                         med.schedule.times = times.map {
                             TimeOfDay(hour: cal.component(.hour, from: $0), minute: cal.component(.minute, from: $0))
                         }
+                        // A one-time reminder is a schedule that starts and ends on the same day.
+                        med.schedule.startDate = isOneTime ? oneTimeDate : nil
+                        med.schedule.endDate = isOneTime ? oneTimeDate : nil
+                        if isOneTime { med.schedule.weekdays = [] }
                         Task {
                             await model.saveMedication(med)
                             dismiss()

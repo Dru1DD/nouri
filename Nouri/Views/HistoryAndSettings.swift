@@ -11,7 +11,11 @@ struct HistoryView: View {
                     .font(.headline)
                 HStack(spacing: 16) {
                     Label("\(Format.liters(day.hydration.value)) L", systemImage: "drop.fill")
-                    Label("\(Format.kcal(day.calories.value)) kcal", systemImage: "flame.fill")
+                    Label("\(Format.kcal(day.calories.value)) kcal", systemImage: "fork.knife")
+                    if day.alcoholML > 0 {
+                        Label("\(Format.ml(day.alcoholML)) ml", systemImage: "wineglass.fill")
+                            .accessibilityLabel("Alcohol \(Format.ml(day.alcoholML)) milliliters")
+                    }
                     if !day.doses.isEmpty {
                         Label("\(day.dosesTaken)/\(day.doses.count)", systemImage: "pills.fill")
                     }

@@ -46,11 +46,46 @@ import Testing
         #expect(s.calories.value == 650 + 142)
     }
 
+    @Test func alcoholCountsCaloriesButNotHydration() {
+        let s = summary(fluids: [
+            FluidItem(amountML: 500, beverage: .beer, calories: 215, timestamp: day),
+            FluidItem(amountML: 250, beverage: .water, calories: 0, timestamp: day),
+        ])
+        #expect(s.hydration.value == 250)
+        #expect(s.calories.value == 215)
+    }
+
+    @Test func recentDrinksAreDistinctNewestFirstWithoutWater() {
+        let drinks = FluidItem.recent([
+            FluidItem(amountML: 200, beverage: .coffee, calories: 120, timestamp: date(2026, 9, 16, 9)),
+            FluidItem(amountML: 250, beverage: .water, calories: 0, timestamp: date(2026, 9, 16, 10)),
+            FluidItem(amountML: 500, beverage: .beer, calories: 215, timestamp: date(2026, 9, 16, 11)),
+            FluidItem(amountML: 200, beverage: .coffee, calories: 2, timestamp: date(2026, 9, 16, 12)),
+            FluidItem(amountML: 330, beverage: .coffee, calories: 3, timestamp: date(2026, 9, 16, 8)),
+            FluidItem(amountML: 250, beverage: .tea, calories: 3, timestamp: date(2026, 9, 16, 7)),
+        ])
+        #expect(drinks.map(\.beverage) == [.coffee, .beer, .coffee])
+        #expect(drinks.map(\.amountML) == [200, 500, 330])
+        #expect(drinks[0].calories == 2)
+    }
+
+    @Test func alcoholIsReportedSeparately() {
+        let s = summary(fluids: [
+            FluidItem(amountML: 150, beverage: .wine, calories: 125, timestamp: day),
+            FluidItem(amountML: 50, beverage: .spirits, calories: 116, timestamp: day),
+            FluidItem(amountML: 250, beverage: .water, calories: 0, timestamp: day),
+        ])
+        #expect(s.alcoholML == 200)
+    }
+
     @Test func beverageDefaults() {
         #expect(BeverageType.water.defaultCalories(amountML: 500) == 0)
         #expect(BeverageType.coffee.defaultCalories(amountML: 300) == 3)
         #expect(BeverageType.tea.defaultCalories(amountML: 250) == 3)
         #expect(BeverageType.softDrink.defaultCalories(amountML: 330) == 139)
+        #expect(BeverageType.beer.defaultCalories(amountML: 500) == 215)
+        #expect(BeverageType.wine.defaultCalories(amountML: 150) == 125)
+        #expect(BeverageType.spirits.defaultCalories(amountML: 50) == 116)
         #expect(BeverageType.other.defaultCalories(amountML: 250) == 0)
     }
 

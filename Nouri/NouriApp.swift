@@ -1,3 +1,4 @@
+import AppIntents
 import BackgroundTasks
 import NouriKit
 import SwiftData
@@ -35,6 +36,11 @@ struct NouriApp: App {
     }
 }
 
+/// Pulls in the intents defined in NouriKit (the widget's "+250 ml" button).
+struct NouriAppIntents: AppIntentsPackage {
+    static var includedPackages: [any AppIntentsPackage.Type] { [NouriKitIntents.self] }
+}
+
 final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     static let refreshTaskID = "com.dru1dd.nouri.reminders"
     static let isUITesting = ProcessInfo.processInfo.arguments.contains("-ui-testing")
@@ -44,6 +50,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     override init() {
         model = Self.makeModel()
         super.init()
+        let model = model
+        AppDependencyManager.shared.add(dependency: model)  // for the widget's AddWaterIntent
     }
 
     func application(_ application: UIApplication,
