@@ -9,7 +9,7 @@ options:
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    MARKETING_VERSION: "1.0"
+    MARKETING_VERSION: "1.0.1"
     CURRENT_PROJECT_VERSION: "1"
     DEVELOPMENT_TEAM: ""
     CODE_SIGN_STYLE: Automatic
@@ -40,6 +40,8 @@ targets:
       path: Nouri/Info.plist
       properties:
         CFBundleDisplayName: Nouri
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
         UIApplicationSupportsIndirectInputEvents: true
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
@@ -67,6 +69,8 @@ targets:
       path: NouriWatch/Info.plist
       properties:
         CFBundleDisplayName: Nouri
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         WKApplication: true
         WKCompanionAppBundleIdentifier: com.dru1dd.nouri
     settings:
@@ -87,6 +91,8 @@ targets:
       path: NouriWidgets/Info.plist
       properties:
         CFBundleDisplayName: Nouri
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
@@ -107,6 +113,8 @@ targets:
       path: NouriWatchWidgets/Info.plist
       properties:
         CFBundleDisplayName: Nouri
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:

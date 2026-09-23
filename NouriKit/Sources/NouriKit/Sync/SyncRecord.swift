@@ -90,6 +90,8 @@ public struct SettingsSnapshot: Codable, Hashable, Sendable {
 
 public enum SyncMessage: Codable, Hashable, Sendable {
     case record(SyncRecord)
+    /// Many records in one transfer (backfill).
+    case records([SyncRecord])
     case snapshot(SettingsSnapshot)
     /// Sent by a freshly installed counterpart that wants recent history.
     case backfillRequest

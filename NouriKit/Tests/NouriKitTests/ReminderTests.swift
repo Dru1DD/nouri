@@ -38,6 +38,15 @@ import Testing
         #expect(plan.allSatisfy { cal.component(.weekday, from: $0.fireDate) == 2 })
     }
 
+    @Test func oneTimeReminderFiresOnlyOnItsDay() {
+        let day = date(2026, 9, 18, 15)
+        let m = med("X", [(9, 0), (21, 0)], start: day, end: day)
+        #expect(m.schedule.oneTimeDate == day)
+        let plan = ReminderPlanner.plan(medications: [m], resolvedKeys: [], now: date(2026, 9, 16), calendar: cal)
+        #expect(plan.map(\.fireDate) == [date(2026, 9, 18, 9), date(2026, 9, 18, 21)])
+        #expect(med("Y", [(9, 0)]).schedule.oneTimeDate == nil)
+    }
+
     @Test func acrossDSTTransitionKeepsWallClock() {
         let ny = calendar("America/New_York")
         let plan = ReminderPlanner.plan(medications: [med("X", [(8, 0)])], resolvedKeys: [],

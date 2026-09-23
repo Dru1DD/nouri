@@ -79,6 +79,21 @@ struct DashboardView: View {
             QuickAddRow(values: [100, 250, 500], unit: "ml", idPrefix: "add-water", a11yLabel: { String(localized: "Add \($0) milliliters") }) { model.addFluid($0) } more: {
                 sheet = .fluid
             }
+            if !model.recentDrinks.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(model.recentDrinks) { drink in
+                            Button {
+                                model.addFluid(drink.amountML, beverage: drink.beverage, calories: drink.calories)
+                            } label: {
+                                Label("\(drink.beverage.title) · \(Format.ml(drink.amountML)) ml", systemImage: drink.beverage.symbol)
+                            }
+                            .buttonStyle(.bordered)
+                            .accessibilityLabel("Add \(drink.beverage.title), \(Format.ml(drink.amountML)) milliliters")
+                        }
+                    }
+                }
+            }
             if let imported = model.imported, imported.waterML > 0 {
                 Label("\(Format.ml(imported.waterML)) ml more in Apple Health from other apps", systemImage: "heart.text.square")
                     .font(.footnote)
@@ -91,7 +106,7 @@ struct DashboardView: View {
         Section {
             ProgressRow(
                 title: "Calories",
-                symbol: "flame.fill",
+                symbol: "fork.knife",
                 tint: .orange,
                 value: String(localized: "\(Format.kcal(today.calories.value)) / \(Format.kcal(today.calories.goal)) kcal"),
                 progress: today.calories,

@@ -20,6 +20,7 @@ struct NouriWatchApp: App {
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
             delegate.model.refresh()
+            delegate.model.syncWithCounterpart()
             // Snoozing from the Watch schedules a local notification, which needs permission here.
             if delegate.model.notificationsAllowed == nil, !delegate.model.medications.isEmpty {
                 Task { await delegate.model.requestNotificationPermission() }

@@ -46,9 +46,13 @@ private struct WaterPage: View {
                     model.addFluid(ml)
                 }
             }
-            CrownAmountLink(unit: String(localized: "ml"), tint: .blue, start: 250, range: 50...2000, step: 50) {
-                model.addFluid($0)
+            ForEach(model.recentDrinks) { drink in
+                AddButton(title: drink.beverage.title, unit: String(localized: "\(Format.ml(drink.amountML)) ml"), tint: .blue,
+                          a11yLabel: String(localized: "Add \(drink.beverage.title), \(Format.ml(drink.amountML)) milliliters")) {
+                    model.addFluid(drink.amountML, beverage: drink.beverage, calories: drink.calories)
+                }
             }
+            DrinkLink()
         }
     }
 }
@@ -59,7 +63,7 @@ private struct CaloriesPage: View {
     var body: some View {
         let progress = model.today.calories
         MetricPage(tint: .orange) {
-            BigRing(progress: progress, tint: .orange, symbol: "flame.fill",
+            BigRing(progress: progress, tint: .orange, symbol: "fork.knife",
                     value: Format.kcal(progress.value), unit: String(localized: "kcal"),
                     caption: String(localized: "of \(Format.kcal(progress.goal)) kcal · \(progress.percent)%"),
                     a11yName: "Calories")
@@ -208,6 +212,69 @@ private struct AddButton: View {
         .buttonStyle(.bordered)
         .tint(tint)
         .accessibilityLabel(a11yLabel)
+    }
+}
+
+/// Opens the drink screen: pick what you drink (water by default), turn the crown for the amount, tap Add.
+private struct DrinkLink: View {
+    var body: some View {
+        NavigationLink {
+            DrinkView()
+        } label: {
+            Label("Choose drink", systemImage: "cup.and.saucer.fill")
+        }
+        .buttonStyle(.bordered)
+        .tint(.blue)
+    }
+}
+
+private struct DrinkView: View {
+    @Environment(AppModel.self) private var model
+    @Environment(\.dismiss) private var dismiss
+    @State private var beverage = BeverageType.water
+    @State private var amount = BeverageType.water.defaultServingML
+
+    var body: some View {
+        let kcal = beverage.defaultCalories(amountML: amount)
+        VStack(spacing: 4) {
+            Picker("Drink", selection: $beverage) {
+                ForEach(BeverageType.allCases) { type in
+                    Label(type.title, systemImage: type.symbol).tag(type)
+                }
+            }
+            .pickerStyle(.navigationLink)
+            .tint(.blue)
+            Spacer(minLength: 0)
+            VStack(spacing: 0) {
+                Text("\(Int(amount).formatted()) ml")
+                    .font(.system(size: 40, weight: .semibold, design: .rounded).monospacedDigit())
+                    .contentTransition(.numericText())
+                Text(kcal > 0 ? String(localized: "≈ \(Format.kcal(kcal)) kcal") : " ")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Amount")
+            .accessibilityValue("\(Int(amount).formatted()) ml")
+            .accessibilityAdjustableAction { direction in
+                switch direction {
+                case .increment: amount = min(amount + 10, 2000)
+                case .decrement: amount = max(amount - 10, 10)
+                @unknown default: break
+                }
+            }
+            Spacer(minLength: 0)
+            Button("Add") {
+                model.addFluid(amount, beverage: beverage)
+                WKInterfaceDevice.current().play(.success)
+                dismiss()
+            }
+            .tint(.blue)
+        }
+        .focusable()
+        .digitalCrownRotation($amount, from: 10, through: 2000, by: 10,
+                              sensitivity: .medium, isContinuous: false, isHapticFeedbackEnabled: true)
+        .onChange(of: beverage) { amount = beverage.defaultServingML }
     }
 }
 

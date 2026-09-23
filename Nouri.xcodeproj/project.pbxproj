@@ -111,7 +111,7 @@
 		30258371ED5E4E7BE4C40758 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		447BC8E6C06B799DC3855EE5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		467D8B956BCC47EF7331691B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		4E7FA7DF27FD397D41C1C893 /* Nouri.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Nouri.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E7FA7DF27FD397D41C1C893 /* Nouri.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nouri.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53CC7EFF872F9C731B3B80E5 /* MedicationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicationsView.swift; sourceTree = "<group>"; };
 		6504A95DA9479BDD01F86958 /* EntryForms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryForms.swift; sourceTree = "<group>"; };
 		747CD2342BA2BFA6C38E1AF6 /* NouriUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NouriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -125,7 +125,7 @@
 		C2ABD8045AB61E6368C8F037 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C40588B66ED1912F3F06FA9D /* NouriWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriWatchApp.swift; sourceTree = "<group>"; };
 		D501F7E0327344AA5D088C9B /* NouriWatchWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NouriWatchWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		D5780A75AE83CE5E0E337726 /* NouriWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = NouriWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5780A75AE83CE5E0E337726 /* NouriWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NouriWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC42635A94160A05D00FD54C /* NouriUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriUITests.swift; sourceTree = "<group>"; };
 		DCAB6ED9228CE408DE867985 /* NouriWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NouriWatch.entitlements; sourceTree = "<group>"; };
 		EF09E765A7224186A3C0AC28 /* WatchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchViews.swift; sourceTree = "<group>"; };
@@ -402,14 +402,12 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					2B15EA0CB298929A6BA4DE2B = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 					656419483978B1D44A2045C3 = {
 						ProvisioningStyle = Automatic;
 					};
 					84A8E96C5BF9A5792C720469 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 					A3568A4307BA526966DBF1CC = {
@@ -418,7 +416,6 @@
 						TestTargetID = 84A8E96C5BF9A5792C720469;
 					};
 					A3F8079E2E906E090A9B16CC = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -569,6 +566,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = NouriWatch/NouriWatch.entitlements;
+				DEVELOPMENT_TEAM = N2KQVU8JAT;
 				INFOPLIST_FILE = NouriWatch/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri.watchkitapp;
 				SDKROOT = watchos;
@@ -583,6 +581,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Nouri/Nouri.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = N2KQVU8JAT;
 				INFOPLIST_FILE = Nouri/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -646,7 +645,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -680,6 +679,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = NouriWidgets/NouriWidgets.entitlements;
+				DEVELOPMENT_TEAM = N2KQVU8JAT;
 				INFOPLIST_FILE = NouriWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -768,7 +768,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -785,6 +785,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = NouriWidgets/NouriWidgets.entitlements;
+				DEVELOPMENT_TEAM = N2KQVU8JAT;
 				INFOPLIST_FILE = NouriWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -802,6 +803,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = NouriWatch/NouriWatch.entitlements;
+				DEVELOPMENT_TEAM = N2KQVU8JAT;
 				INFOPLIST_FILE = NouriWatch/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri.watchkitapp;
 				SDKROOT = watchos;
@@ -816,6 +818,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Nouri/Nouri.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = N2KQVU8JAT;
 				INFOPLIST_FILE = Nouri/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

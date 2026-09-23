@@ -21,9 +21,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Nouri reads water and dietary energy logged by other apps to show them next to your own entries.</string>
 	<key>NSHealthUpdateUsageDescription</key>
