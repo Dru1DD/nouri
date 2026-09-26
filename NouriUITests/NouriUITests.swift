@@ -98,4 +98,52 @@ final class NouriUITests: XCTestCase {
         app.buttons["fluid-save"].tap()
         waitForValue("hydration-total", containing: "0.40 / 2.50 L")
     }
+
+    func testSwipeDeleteAndUndo() {
+        app.buttons["add-water-250"].tap()
+        waitForValue("hydration-total", containing: "0.25 / 2.50 L")
+        let row = app.buttons.containing(NSPredicate(format: "label CONTAINS 'Water'")).firstMatch
+        row.swipeLeft()
+        app.buttons["Delete"].tap()
+        waitForValue("hydration-total", containing: "0.00 / 2.50 L")
+        XCTAssertTrue(app.buttons["undo-delete"].waitForExistence(timeout: 3))
+        app.buttons["undo-delete"].tap()
+        waitForValue("hydration-total", containing: "0.25 / 2.50 L")
+    }
+
+    func testEditFoodEntry() {
+        app.buttons["add-kcal-500"].tap()
+        waitForValue("calories-total", containing: "500 / 2,000 kcal")
+        app.buttons.containing(NSPredicate(format: "label CONTAINS 'Quick add'")).firstMatch.tap()
+        let field = app.textFields["food-calories"]
+        XCTAssertTrue(field.waitForExistence(timeout: 3))
+        field.tap()
+        field.press(forDuration: 1.0)
+        let selectAll = app.menuItems["Select All"]
+        if selectAll.waitForExistence(timeout: 2) {
+            selectAll.tap()
+        } else if let current = field.value as? String {
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count + 2))
+        }
+        field.typeText("420")
+        app.buttons["food-save"].tap()
+        waitForValue("calories-total", containing: "420 / 2,000 kcal")
+    }
+
+    func testOpenActivityDashboard() {
+        app.buttons["open-dashboard"].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["activity-dashboard"].waitForExistence(timeout: 3))
+    }
+}
+
+private extension XCUIElement {
+    func clearAndType(_ text: String) {
+        guard let current = value as? String else {
+            typeText(text)
+            return
+        }
+        let delete = String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count)
+        typeText(delete)
+        typeText(text)
+    }
 }

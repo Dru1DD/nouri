@@ -134,14 +134,18 @@ struct HydrationView: View {
                     .foregroundStyle(.secondary)
                 ProgressView(value: progress.fraction).tint(.blue)
                 #if os(iOS)
-                Button(intent: AddWaterIntent(amountML: 250)) {
-                    Label("250 ml", systemImage: "plus")
-                        .font(.caption.weight(.semibold))
-                        .frame(maxWidth: .infinity)
+                HStack(spacing: 4) {
+                    ForEach([100, 250, 500], id: \.self) { amount in
+                        Button(intent: AddWaterIntent(amountML: amount)) {
+                            Text("+\(amount)")
+                                .font(.caption2.weight(.semibold))
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.blue)
+                        .accessibilityLabel("Add \(amount) milliliters of water")
+                    }
                 }
-                .buttonStyle(.bordered)
-                .tint(.blue)
-                .accessibilityLabel("Add 250 milliliters of water")
                 #endif
             }
         }

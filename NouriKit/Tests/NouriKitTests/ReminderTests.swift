@@ -76,6 +76,66 @@ import Testing
     }
 }
 
+@Suite struct HydrationReminderPlannerTests {
+    let cal = calendar()
+
+    @Test func emptyWhenDisabledOrGoalMet() {
+        let now = date(2026, 9, 16, 10)
+        #expect(HydrationReminderPlanner.plan(
+            enabled: false, intervalMinutes: 120, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
+            todayHydrationML: 0, goalML: 2500, now: now, calendar: cal, maxCount: 10
+        ).isEmpty)
+        #expect(HydrationReminderPlanner.plan(
+            enabled: true, intervalMinutes: 120, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
+            todayHydrationML: 2500, goalML: 2500, now: now, calendar: cal, maxCount: 10
+        ).isEmpty)
+    }
+
+    @Test func schedulesIntervalSlotsInsideAwakeWindow() {
+        let now = date(2026, 9, 16, 9, 30)
+        let plan = HydrationReminderPlanner.plan(
+            enabled: true, intervalMinutes: 120, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
+            todayHydrationML: 0, goalML: 2500, now: now, calendar: cal, maxCount: 20
+        )
+        #expect(!plan.isEmpty)
+        #expect(plan.allSatisfy { $0.id.hasPrefix(HydrationReminderPlanner.prefix) })
+        #expect(plan.allSatisfy { $0.category == HydrationNotification.category })
+        #expect(plan.allSatisfy { $0.fireDate > now })
+        #expect(plan.allSatisfy {
+            !HydrationReminderPlanner.isInQuietHours($0.fireDate, quietStartMinutes: 22 * 60,
+                                                     quietEndMinutes: 8 * 60, calendar: cal)
+        })
+        // First slot after 09:30 with 08:00 start and 2h interval → 10:00
+        #expect(plan[0].fireDate == date(2026, 9, 16, 10))
+    }
+
+    @Test func respectsMaxCountAndOvernightQuiet() {
+        let now = date(2026, 9, 16, 7)
+        let plan = HydrationReminderPlanner.plan(
+            enabled: true, intervalMinutes: 60, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
+            todayHydrationML: 100, goalML: 2500, now: now, calendar: cal, maxCount: 3
+        )
+        #expect(plan.count == 3)
+        #expect(plan.map(\.fireDate) == plan.map(\.fireDate).sorted())
+        // 07:00 is still quiet; first fire at 08:00
+        #expect(plan[0].fireDate == date(2026, 9, 16, 8))
+    }
+
+    @Test func identifiersAreDeterministicAcrossDST() {
+        let ny = calendar("America/New_York")
+        let now = date(2026, 3, 7, 10, in: ny)
+        let a = HydrationReminderPlanner.plan(
+            enabled: true, intervalMinutes: 180, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
+            todayHydrationML: 0, goalML: 2500, now: now, calendar: ny, maxCount: 5
+        )
+        let b = HydrationReminderPlanner.plan(
+            enabled: true, intervalMinutes: 180, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
+            todayHydrationML: 0, goalML: 2500, now: now.addingTimeInterval(30), calendar: ny, maxCount: 5
+        )
+        #expect(a.map(\.id) == b.map(\.id))
+    }
+}
+
 @MainActor
 @Suite struct ReminderSchedulerTests {
     let cal = calendar()
@@ -110,5 +170,24 @@ import Testing
         #expect(await client.pending.count == 2)
         await scheduler.clear(doseKey: dose.key)
         #expect(await client.pending.isEmpty)
+    }
+
+    @Test func applyPrunesHydrationAndKeepsSnooze() async {
+        let client = InMemoryNotificationClient()
+        let scheduler = ReminderScheduler(client: client)
+        let now = date(2026, 9, 16, 10)
+        let hydrate = HydrationReminderPlanner.plan(
+            enabled: true, intervalMinutes: 120, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
+            todayHydrationML: 0, goalML: 2500, now: now, calendar: cal, maxCount: 5
+        )
+        await scheduler.apply(hydrate)
+        #expect(await client.pending.count == hydrate.count)
+
+        let dose = med("A", [(8, 0)]).occurrences(on: now, calendar: cal)[0]
+        await scheduler.snooze(dose, now: now)
+        await scheduler.apply([])  // clear managed; keep snooze
+        let pending = await client.pending
+        #expect(pending.count == 1)
+        #expect(pending[ReminderPlanner.snoozePrefix + dose.key] != nil)
     }
 }

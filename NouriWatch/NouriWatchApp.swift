@@ -51,7 +51,7 @@ final class WatchAppDelegate: NSObject, WKApplicationDelegate, UNUserNotificatio
 
     func applicationDidFinishLaunching() {
         UNUserNotificationCenter.current().delegate = self
-        DoseNotification.registerCategory()
+        DoseNotification.registerCategories()
     }
 
     // Completion-handler variants: the handler must be called on the main thread.
@@ -59,9 +59,15 @@ final class WatchAppDelegate: NSObject, WKApplicationDelegate, UNUserNotificatio
                                             didReceive response: UNNotificationResponse,
                                             withCompletionHandler completionHandler: @escaping @Sendable () -> Void) {
         let action = response.actionIdentifier
-        let payload = DoseNotification.payload(from: response.notification.request.content.userInfo)
+        let userInfo = response.notification.request.content.userInfo
+        let hydrateML = HydrationNotification.amountML(for: action)
+        let dosePayload = DoseNotification.payload(from: userInfo)
         Task { @MainActor in
-            if let payload { await model.handleNotificationAction(action, payload: payload) }
+            if let hydrateML {
+                model.addFluid(hydrateML)
+            } else if let dosePayload {
+                await model.handleNotificationAction(action, payload: dosePayload)
+            }
             completionHandler()
         }
     }

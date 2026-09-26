@@ -89,6 +89,34 @@ import Testing
         #expect(BeverageType.other.defaultCalories(amountML: 250) == 0)
     }
 
+    @Test func hydrationStatsAggregatesWeekAndBeverages() {
+        let days = [
+            DaySummary.build(day: date(2026, 9, 14, 12),
+                             fluids: [FluidItem(amountML: 1000, beverage: .water, calories: 0, timestamp: date(2026, 9, 14, 10)),
+                                      FluidItem(amountML: 200, beverage: .coffee, calories: 2, timestamp: date(2026, 9, 14, 11))],
+                             foods: [], medications: [], logs: [:], hydrationGoalML: 2500, calorieGoal: 2000,
+                             now: date(2026, 9, 16, 12), calendar: cal),
+            DaySummary.build(day: date(2026, 9, 15, 12),
+                             fluids: [FluidItem(amountML: 2500, beverage: .water, calories: 0, timestamp: date(2026, 9, 15, 10))],
+                             foods: [], medications: [], logs: [:], hydrationGoalML: 2500, calorieGoal: 2000,
+                             now: date(2026, 9, 16, 12), calendar: cal),
+            DaySummary.build(day: date(2026, 9, 16, 12),
+                             fluids: [FluidItem(amountML: 500, beverage: .water, calories: 0, timestamp: date(2026, 9, 16, 9)),
+                                      FluidItem(amountML: 200, beverage: .coffee, calories: 2, timestamp: date(2026, 9, 16, 10))],
+                             foods: [], medications: [], logs: [:], hydrationGoalML: 2500, calorieGoal: 2000,
+                             now: date(2026, 9, 16, 12), calendar: cal),
+        ]
+        let stats = HydrationStats.build(days: days, calendar: cal)
+        #expect(stats.todayAmountML == 700)
+        #expect(stats.todayDrinkCount == 2)
+        #expect(stats.remainingML == 1800)
+        #expect(stats.todayPercent == 28)
+        #expect(stats.days.count == 3)
+        #expect(stats.days[1].goalMet)
+        #expect(stats.mostCommonBeverage == .water)
+        #expect(abs(stats.averageDailyML - (1200 + 2500 + 700) / 3) < 0.01)
+    }
+
     @Test func calorieTotalsAndGoal() {
         let s = summary(foods: [
             FoodItem(name: "Breakfast", calories: 450, timestamp: date(2026, 9, 16, 8)),

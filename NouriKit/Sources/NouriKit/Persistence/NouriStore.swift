@@ -194,6 +194,170 @@ public final class NouriStore {
         save()
     }
 
+    public func setHydrationReminderSettings(
+        enabled: Bool,
+        intervalMinutes: Int,
+        quietStartMinutes: Int,
+        quietEndMinutes: Int,
+        at date: Date
+    ) {
+        let prefs = preferences()
+        prefs.hydrationRemindersEnabled = enabled
+        prefs.hydrationReminderIntervalMinutes = max(intervalMinutes, 30)
+        prefs.quietHoursStartMinutes = quietStartMinutes
+        prefs.quietHoursEndMinutes = quietEndMinutes
+        prefs.updatedAt = Self.stamp(date, after: prefs.updatedAt)
+        save()
+    }
+
+    public func setOnboardingCompleted(_ done: Bool, at date: Date) {
+        let prefs = preferences()
+        prefs.hasCompletedOnboarding = done
+        prefs.updatedAt = Self.stamp(date, after: prefs.updatedAt)
+        save()
+    }
+
+    /// Clears soft-delete so an undo can restore the entry.
+    public func reviveEntry(id: UUID, at date: Date) -> SyncRecord? {
+        if var r = fetchFluid(id)?.record {
+            r.updatedAt = Self.stamp(date, after: r.updatedAt)
+            r.deletedAt = nil
+            return upsert(.fluid(r))
+        }
+        if var r = fetchFood(id)?.record {
+            r.updatedAt = Self.stamp(date, after: r.updatedAt)
+            r.deletedAt = nil
+            return upsert(.food(r))
+        }
+        return nil
+    }
+
+    public struct DeleteAllResult: Sendable {
+        public var records: [SyncRecord]
+    }
+
+    /// Soft-deletes every syncable entity and resets preferences to defaults.
+    public func deleteAllData(at date: Date) -> DeleteAllResult {
+        var records: [SyncRecord] = []
+        for entry in fetch(FetchDescriptor<FluidEntry>(predicate: #Predicate { $0.deletedAt == nil })) {
+            var r = entry.record
+            r.updatedAt = Self.stamp(date, after: r.updatedAt)
+            r.deletedAt = r.updatedAt
+            records.append(upsert(.fluid(r)))
+        }
+        for entry in fetch(FetchDescriptor<FoodEntry>(predicate: #Predicate { $0.deletedAt == nil })) {
+            var r = entry.record
+            r.updatedAt = Self.stamp(date, after: r.updatedAt)
+            r.deletedAt = r.updatedAt
+            records.append(upsert(.food(r)))
+        }
+        for log in fetch(FetchDescriptor<MedicationLog>(predicate: #Predicate { $0.deletedAt == nil })) {
+            var r = log.record
+            r.updatedAt = Self.stamp(date, after: r.updatedAt)
+            r.deletedAt = r.updatedAt
+            records.append(upsert(.dose(r)))
+        }
+        for med in fetch(FetchDescriptor<Medication>(predicate: #Predicate { $0.deletedAt == nil })) {
+            var r = med.record
+            r.updatedAt = Self.stamp(date, after: r.updatedAt)
+            r.deletedAt = r.updatedAt
+            applyMedication(r)
+        }
+        for preset in fetch(FetchDescriptor<CaloriePreset>(predicate: #Predicate { $0.deletedAt == nil })) {
+            preset.updatedAt = Self.stamp(date, after: preset.updatedAt)
+            preset.deletedAt = preset.updatedAt
+        }
+        let prefs = preferences()
+        prefs.hydrationGoalML = 2500
+        prefs.calorieGoal = 2000
+        prefs.hydrationRemindersEnabled = false
+        prefs.hydrationReminderIntervalMinutes = 120
+        prefs.quietHoursStartMinutes = 22 * 60
+        prefs.quietHoursEndMinutes = 8 * 60
+        // Keep onboarding completed so the wipe doesn't force the welcome flow again.
+        prefs.updatedAt = Self.stamp(date, after: prefs.updatedAt)
+        save()
+        return DeleteAllResult(records: records)
+    }
+
+    public func exportJSON(calendar: Calendar, now: Date) throws -> Data {
+        struct ExportPayload: Encodable {
+            struct Fluid: Encodable {
+                var id: String
+                var date: String
+                var time: String
+                var amountML: Double
+                var beverage: String
+                var calories: Double
+            }
+            struct Food: Encodable {
+                var id: String
+                var date: String
+                var time: String
+                var name: String
+                var calories: Double
+            }
+            var exportedAt: String
+            var hydrationGoalML: Double
+            var calorieGoal: Double
+            var fluids: [Fluid]
+            var foods: [Food]
+        }
+
+        let df = DateFormatter()
+        df.calendar = calendar
+        df.locale = Locale(identifier: "en_US_POSIX")
+        df.timeZone = calendar.timeZone
+        let dateFmt = DateFormatter()
+        dateFmt.calendar = calendar
+        dateFmt.locale = Locale(identifier: "en_US_POSIX")
+        dateFmt.timeZone = calendar.timeZone
+        dateFmt.dateFormat = "yyyy-MM-dd"
+        let timeFmt = DateFormatter()
+        timeFmt.calendar = calendar
+        timeFmt.locale = Locale(identifier: "en_US_POSIX")
+        timeFmt.timeZone = calendar.timeZone
+        timeFmt.dateFormat = "HH:mm:ss"
+        df.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+
+        let fluids = fetch(FetchDescriptor<FluidEntry>(
+            predicate: #Predicate { $0.deletedAt == nil },
+            sortBy: [SortDescriptor(\.timestamp)]
+        )).map {
+            ExportPayload.Fluid(
+                id: $0.id.uuidString,
+                date: dateFmt.string(from: $0.timestamp),
+                time: timeFmt.string(from: $0.timestamp),
+                amountML: $0.amountML,
+                beverage: $0.beverageRaw,
+                calories: $0.calories
+            )
+        }
+        let foods = fetch(FetchDescriptor<FoodEntry>(
+            predicate: #Predicate { $0.deletedAt == nil },
+            sortBy: [SortDescriptor(\.timestamp)]
+        )).map {
+            ExportPayload.Food(
+                id: $0.id.uuidString,
+                date: dateFmt.string(from: $0.timestamp),
+                time: timeFmt.string(from: $0.timestamp),
+                name: $0.name,
+                calories: $0.calories
+            )
+        }
+        let prefs = preferences()
+        let payload = ExportPayload(
+            exportedAt: df.string(from: now),
+            hydrationGoalML: prefs.hydrationGoalML,
+            calorieGoal: prefs.calorieGoal,
+            fluids: fluids,
+            foods: foods
+        )
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        return try encoder.encode(payload)
+    }
+
     // MARK: - Sync
 
     /// Idempotent last-writer-wins upsert. Returns whether anything changed.

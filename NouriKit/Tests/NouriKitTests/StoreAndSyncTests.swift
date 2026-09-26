@@ -1,6 +1,9 @@
 import Foundation
 import Testing
 @testable import NouriKit
+#if canImport(AppIntents) && os(iOS)
+import AppIntents
+#endif
 
 @MainActor
 @Suite struct StoreTests {
@@ -35,6 +38,40 @@ import Testing
         let s = store.summary(for: now, now: now, calendar: cal)
         #expect(s.hydration.goal == 3000)
         #expect(s.calories.goal == 1800)
+    }
+
+    @Test func deleteAllResetsAndExportContainsEntries() throws {
+        let store = makeStore()
+        _ = store.addFluid(amountML: 250, beverage: .water, calories: 0, at: now)
+        _ = store.addFood(name: "Lunch", calories: 650, at: now)
+        store.addPreset(name: "Shake", calories: 200, at: now)
+        store.saveMedication(med("X", [(8, 0)]), at: now)
+        store.setHydrationReminderSettings(enabled: true, intervalMinutes: 60,
+                                           quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60, at: now)
+
+        let data = try store.exportJSON(calendar: cal, now: now)
+        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        #expect((json?["fluids"] as? [Any])?.count == 1)
+        #expect((json?["foods"] as? [Any])?.count == 1)
+
+        let result = store.deleteAllData(at: now.addingTimeInterval(1))
+        #expect(result.records.count >= 2)
+        #expect(store.summary(for: now, now: now, calendar: cal).hydration.value == 0)
+        #expect(store.medications().isEmpty)
+        #expect(store.presets().isEmpty)
+        #expect(store.preferences().hydrationGoalML == 2500)
+        #expect(store.preferences().hydrationRemindersEnabled == false)
+    }
+
+    @Test func reviveRestoresSoftDeletedEntry() {
+        let store = makeStore()
+        guard case .fluid(let water) = store.addFluid(amountML: 250, beverage: .water, calories: 0, at: now) else {
+            Issue.record("expected fluid"); return
+        }
+        _ = store.deleteEntry(id: water.id, at: now.addingTimeInterval(1))
+        #expect(store.summary(for: now, now: now, calendar: cal).hydration.value == 0)
+        _ = store.reviveEntry(id: water.id, at: now.addingTimeInterval(2))
+        #expect(store.summary(for: now, now: now, calendar: cal).hydration.value == 250)
     }
 
     @Test func doseTakenSkippedAndUndo() {
@@ -410,4 +447,77 @@ import Testing
         phone.updateFood(food)
         #expect(watch.today.foods[0].name == "Lunch")
     }
+
+    @Test func swipeDeleteOffersUndoAndRestores() {
+        let model = model(TestClock(date(2026, 9, 16, 9)))
+        model.addFluid(250)
+        let id = model.today.fluids[0].id
+        model.deleteEntry(id: id)
+        #expect(model.today.hydration.value == 0)
+        #expect(model.lastDeleted?.id == id)
+        model.undoLastDelete()
+        #expect(model.today.hydration.value == 250)
+        #expect(model.lastDeleted == nil)
+    }
+
+    @Test func hydrationReminderSettingsRescheduleAndGoalStopsThem() async {
+        let clock = TestClock(date(2026, 9, 16, 10))
+        let client = InMemoryNotificationClient()
+        let cal = self.cal
+        let model = AppModel(store: makeStore(), reminders: ReminderScheduler(client: client),
+                             now: { clock.now }, calendar: { cal })
+        await model.setHydrationReminders(enabled: true, intervalMinutes: 120)
+        #expect(model.hydrationRemindersEnabled)
+        let pending = await client.pending
+        #expect(pending.keys.contains { $0.hasPrefix(HydrationReminderPlanner.prefix) })
+
+        model.addFluid(2500)
+        // allow async reschedule
+        for _ in 0..<50 {
+            let left = await client.pending.keys.filter { $0.hasPrefix(HydrationReminderPlanner.prefix) }
+            if left.isEmpty { break }
+            await Task.yield()
+        }
+        let hydrateLeft = await client.pending.keys.filter { $0.hasPrefix(HydrationReminderPlanner.prefix) }
+        #expect(hydrateLeft.isEmpty)
+    }
+
+    @Test func deleteAllClearsNotificationsAndSyncs() async {
+        let clock = TestClock(date(2026, 9, 16, 10))
+        let cal = self.cal
+        let (a, b) = LoopbackTransport.pair()
+        let client = InMemoryNotificationClient()
+        let phone = AppModel(store: makeStore(), transport: a, reminders: ReminderScheduler(client: client),
+                             now: { clock.now }, calendar: { cal })
+        let watch = AppModel(store: makeStore(), transport: b, now: { clock.now }, calendar: { cal })
+        phone.addFluid(250)
+        watch.addFluid(100)
+        await phone.setHydrationReminders(enabled: true)
+        #expect(phone.today.hydration.value == 350)
+        #expect(watch.today.hydration.value == 350)
+
+        await phone.deleteAllData(removeFromHealth: false)
+        #expect(phone.today.hydration.value == 0)
+        #expect(phone.today.fluids.isEmpty)
+        #expect(await client.pending.isEmpty)
+        #expect(watch.today.hydration.value == 0)
+    }
 }
+
+#if os(iOS)
+@MainActor
+@Suite struct AddWaterIntentTests {
+    @Test func loggingAmountsUpdatesStore() async throws {
+        let clock = TestClock(date(2026, 9, 16, 10))
+        let cal = calendar()
+        let model = AppModel(store: makeStore(), now: { clock.now }, calendar: { cal })
+        AppDependencyManager.shared.add(dependency: model)
+        for amount in [100, 250, 500] {
+            var intent = AddWaterIntent(amountML: amount)
+            _ = try await intent.perform()
+        }
+        #expect(model.today.hydration.value == 850)
+    }
+}
+#endif
+

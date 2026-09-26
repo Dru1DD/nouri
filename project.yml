@@ -49,6 +49,7 @@ targets:
         NSHealthUpdateUsageDescription: Nouri saves the water and calories you log to Apple Health.
         UIBackgroundModes: [fetch]
         BGTaskSchedulerPermittedIdentifiers: [com.dru1dd.nouri.reminders]
+        ITSAppUsesNonExemptEncryption: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dru1dd.nouri
