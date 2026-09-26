@@ -1,588 +1,595 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "💊 Time to take %@": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "💊 Pora przyjąć: %@"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "+100 ml" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+100 ml"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "💊 Пора принять: %@"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+100 ml"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "💊 Час прийняти: %@"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+100 мл"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+100 мл"
           }
         }
       }
     },
-    "Add Water": {},
-    "Amount (ml)": {},
-    "Beer": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Piwo"
+    "+250 ml" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+250 ml"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Пиво"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+250 ml"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Пиво"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+250 мл"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+250 мл"
           }
         }
       }
     },
-    "Coffee": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kawa"
+    "+500 ml" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+500 ml"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Кофе"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+500 ml"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Кава"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+500 мл"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+500 мл"
           }
         }
       }
     },
-    "Due now": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pora przyjąć"
+    "💊 Time to take %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💊 Pora przyjąć: %@"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Пора принять"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💊 Пора принять: %@"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Час прийняти"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💊 Час прийняти: %@"
           }
         }
       }
     },
-    "Energy drink": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Napój energetyczny"
+    "💧 Time for a drink" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💧 Time for a drink"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Энергетик"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💧 Czas na łyk wody"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Енергетик"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💧 Пора выпить воды"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💧 Час випити води"
           }
         }
       }
     },
-    "Juice": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sok"
+    "A quick sip keeps you on track." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A quick sip keeps you on track."
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Сок"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mały łyk pomoże utrzymać cel."
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Сік"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Небольшой глоток поможет держать норму."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Невеликий ковток допоможе тримати норму."
           }
         }
       }
     },
-    "medication": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "lek"
+    "Add Water" : {
+
+    },
+    "Amount (ml)" : {
+
+    },
+    "Beer" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Piwo"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "лекарство"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пиво"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ліки"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пиво"
           }
         }
       }
     },
-    "Milk": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mleko"
+    "Coffee" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kawa"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Молоко"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кофе"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Молоко"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кава"
           }
         }
       }
     },
-    "Missed": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nieprzyjęte"
+    "Due now" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pora przyjąć"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не принято"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пора принять"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не прийнято"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Час прийняти"
           }
         }
       }
     },
-    "Other": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inne"
+    "Energy drink" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napój energetyczny"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Другое"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Энергетик"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Інше"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Енергетик"
           }
         }
       }
     },
-    "Skip": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pomiń"
+    "Juice" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sok"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Пропустить"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сок"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Пропустити"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сік"
           }
         }
       }
     },
-    "Skipped": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pominięto"
+    "Log a glass of water in Nouri." : {
+
+    },
+    "medication" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lek"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Пропущено"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "лекарство"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Пропущено"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ліки"
           }
         }
       }
     },
-    "Snooze 10 min": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Odłóż o 10 min"
+    "Milk" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mleko"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Отложить на 10 мин"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Молоко"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Відкласти на 10 хв"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Молоко"
           }
         }
       }
     },
-    "Soft drink": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Napój gazowany"
+    "Missed" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nieprzyjęte"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Газировка"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не принято"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Газований напій"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не прийнято"
           }
         }
       }
     },
-    "Spirits": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mocny alkohol"
+    "Other" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inne"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Крепкий алкоголь"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Другое"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Міцний алкоголь"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Інше"
           }
         }
       }
     },
-    "Taken": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Przyjęto"
+    "Skip" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomiń"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Принято"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропустить"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Прийнято"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропустити"
           }
         }
       }
     },
-    "Tea": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Herbata"
+    "Skipped" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pominięto"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Чай"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропущено"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Чай"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пропущено"
           }
         }
       }
     },
-    "Upcoming": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nadchodzi"
+    "Snooze 10 min" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odłóż o 10 min"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Предстоит"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отложить на 10 мин"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Очікується"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкласти на 10 хв"
           }
         }
       }
     },
-    "Water": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Woda"
+    "Soft drink" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napój gazowany"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Вода"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Газировка"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Вода"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Газований напій"
           }
         }
       }
     },
-    "Wine": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wino"
+    "Spirits" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mocny alkohol"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Вино"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Крепкий алкоголь"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Вино"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Міцний алкоголь"
           }
         }
       }
     },
-    "💧 Time for a drink": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "💧 Time for a drink"
+    "Taken" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przyjęto"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "💧 Пора выпить воды"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Принято"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "💧 Час випити води"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "💧 Czas na łyk wody"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прийнято"
           }
         }
       }
     },
-    "A quick sip keeps you on track.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A quick sip keeps you on track."
+    "Tea" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herbata"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Небольшой глоток поможет держать норму."
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Чай"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Невеликий ковток допоможе тримати норму."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mały łyk pomoże utrzymać cel."
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Чай"
           }
         }
       }
     },
-    "+100 ml": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+100 ml"
+    "Upcoming" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadchodzi"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+100 мл"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Предстоит"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+100 мл"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+100 ml"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Очікується"
           }
         }
       }
     },
-    "+250 ml": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+250 ml"
+    "Water" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Woda"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+250 мл"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вода"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+250 мл"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+250 ml"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вода"
           }
         }
       }
     },
-    "+500 ml": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+500 ml"
+    "Wine" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wino"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+500 мл"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вино"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+500 мл"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+500 ml"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вино"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
