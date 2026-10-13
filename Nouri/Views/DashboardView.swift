@@ -36,6 +36,12 @@ struct DashboardView: View {
                         Label("History", systemImage: "calendar")
                     }
                 }
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink { ActivityDashboardView() } label: {
+                        Label("Dashboard", systemImage: "chart.bar.fill")
+                    }
+                    .accessibilityIdentifier("open-dashboard")
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink { SettingsView() } label: {
                         Label("Settings", systemImage: "gearshape")
@@ -51,14 +57,20 @@ struct DashboardView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) {
-                if let added = model.lastAdded {
-                    UndoBanner(added: added)
-                        .padding(.horizontal)
-                        .padding(.bottom, 8)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                VStack(spacing: 8) {
+                    if let deleted = model.lastDeleted {
+                        DeleteUndoBanner(deleted: deleted)
+                            .padding(.horizontal)
+                    } else if let added = model.lastAdded {
+                        UndoBanner(added: added)
+                            .padding(.horizontal)
+                    }
                 }
+                .padding(.bottom, 8)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
             .animation(reduceMotion ? nil : .snappy, value: model.lastAdded)
+            .animation(reduceMotion ? nil : .snappy, value: model.lastDeleted)
         }
     }
 
@@ -166,7 +178,11 @@ struct DashboardView: View {
     private var activitySection: some View {
         Section("Recent Activity") {
             if today.activity.isEmpty {
-                Text("Nothing logged yet today.").foregroundStyle(.secondary)
+                ContentUnavailableView {
+                    Label("No drinks logged today", systemImage: "drop")
+                } description: {
+                    Text("Tap +100, +250 or +500 above to log your first drink.")
+                }
             }
             ForEach(today.activity) { item in
                 Button {
@@ -185,8 +201,10 @@ struct DashboardView: View {
                     switch item {
                     case .fluid(let f):
                         Button("Delete", role: .destructive) { model.deleteEntry(id: f.id) }
+                            .accessibilityIdentifier("delete-entry")
                     case .food(let f):
                         Button("Delete", role: .destructive) { model.deleteEntry(id: f.id) }
+                            .accessibilityIdentifier("delete-entry")
                     case .dose:
                         EmptyView()
                     }
@@ -369,6 +387,45 @@ struct ActivityRow: View {
             : String(localized: "+\(Format.ml(f.amountML)) ml")
         case .food(let f): String(localized: "+\(Format.kcal(f.calories)) kcal")
         case .dose(let d): d.status.label
+        }
+    }
+}
+
+/// "Deleted · Undo", shown for a few seconds after a swipe-delete.
+struct DeleteUndoBanner: View {
+    @Environment(AppModel.self) private var model
+    let deleted: AppModel.LastDeleted
+
+    private var text: String {
+        switch deleted.kind {
+        case .fluid(let item):
+            String(localized: "Deleted \(Format.ml(item.amountML)) ml · \(item.beverage.title)")
+        case .food(let item):
+            String(localized: "Deleted \(Format.kcal(item.calories)) kcal")
+        }
+    }
+
+    var body: some View {
+        HStack {
+            Image(systemName: "trash.circle.fill")
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+            Text(text)
+                .font(.subheadline.weight(.medium))
+                .lineLimit(2)
+            Spacer()
+            Button("Undo") { model.undoLastDelete() }
+                .font(.subheadline.weight(.semibold))
+                .accessibilityIdentifier("undo-delete")
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(.regularMaterial, in: .capsule)
+        .shadow(color: .black.opacity(0.12), radius: 8, y: 2)
+        .task(id: deleted.id) {
+            AccessibilityNotification.Announcement(text).post()
+            try? await Task.sleep(for: .seconds(5))
+            model.dismissDeleteUndo(id: deleted.id)
         }
     }
 }

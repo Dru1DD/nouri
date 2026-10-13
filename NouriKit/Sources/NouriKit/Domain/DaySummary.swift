@@ -152,3 +152,68 @@ public struct DaySummary: Hashable, Sendable {
         )
     }
 }
+
+// MARK: - Hydration dashboard stats
+
+public struct BeverageCount: Hashable, Identifiable, Sendable {
+    public var beverage: BeverageType
+    public var drinkCount: Int
+    public var amountML: Double
+    public var id: String { beverage.rawValue }
+}
+
+public struct DayHydrationPoint: Hashable, Identifiable, Sendable {
+    public var day: Date
+    public var amountML: Double
+    public var goalML: Double
+    public var drinkCount: Int
+    public var goalMet: Bool { goalML > 0 && amountML >= goalML }
+    public var id: Date { day }
+}
+
+public struct HydrationStats: Hashable, Sendable {
+    public var todayAmountML: Double
+    public var todayGoalML: Double
+    public var todayPercent: Int
+    public var todayDrinkCount: Int
+    public var remainingML: Double
+    public var averageDailyML: Double
+    public var totalDrinks: Int
+    public var beverageCounts: [BeverageCount]
+    public var days: [DayHydrationPoint]
+    public var mostCommonBeverage: BeverageType?
+
+    public static func build(days: [DaySummary], calendar: Calendar = .current) -> HydrationStats {
+        let ordered = days.sorted { $0.day < $1.day }
+        let today = ordered.last
+        let points = ordered.map {
+            DayHydrationPoint(day: $0.day, amountML: $0.hydration.value, goalML: $0.hydration.goal,
+                              drinkCount: $0.fluids.filter(\.beverage.countsTowardHydration).count)
+        }
+        var counts: [BeverageType: (n: Int, ml: Double)] = [:]
+        for day in ordered {
+            for f in day.fluids where f.beverage.countsTowardHydration {
+                let cur = counts[f.beverage] ?? (0, 0)
+                counts[f.beverage] = (cur.n + 1, cur.ml + f.amountML)
+            }
+        }
+        let beverageCounts = counts
+            .map { BeverageCount(beverage: $0.key, drinkCount: $0.value.n, amountML: $0.value.ml) }
+            .sorted { ($0.drinkCount, $0.amountML) > ($1.drinkCount, $1.amountML) }
+        let avg = points.isEmpty ? 0 : points.map(\.amountML).reduce(0, +) / Double(points.count)
+        let amount = today?.hydration.value ?? 0
+        let goal = today?.hydration.goal ?? 2500
+        return HydrationStats(
+            todayAmountML: amount,
+            todayGoalML: goal,
+            todayPercent: GoalProgress(value: amount, goal: goal).percent,
+            todayDrinkCount: today.map { $0.fluids.filter(\.beverage.countsTowardHydration).count } ?? 0,
+            remainingML: max(0, goal - amount),
+            averageDailyML: avg,
+            totalDrinks: points.map(\.drinkCount).reduce(0, +),
+            beverageCounts: beverageCounts,
+            days: points,
+            mostCommonBeverage: beverageCounts.first?.beverage
+        )
+    }
+}

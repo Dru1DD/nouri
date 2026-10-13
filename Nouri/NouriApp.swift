@@ -14,6 +14,13 @@ struct NouriApp: App {
         WindowGroup {
             DashboardView()
                 .environment(delegate.model)
+                .fullScreenCover(isPresented: Binding(
+                    get: { !delegate.model.hasCompletedOnboarding && !AppDelegate.isUITesting },
+                    set: { _ in }
+                )) {
+                    OnboardingView()
+                        .environment(delegate.model)
+                }
                 .onReceive(NotificationCenter.default.publisher(for: .NSSystemTimeZoneDidChange)) { _ in timeChanged() }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in timeChanged() }
         }
@@ -58,7 +65,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // Must be set before launch finishes to receive actions that launched the app in the background.
         UNUserNotificationCenter.current().delegate = self
-        DoseNotification.registerCategory()
+        DoseNotification.registerCategories()
         return true
     }
 
@@ -69,9 +76,17 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
                                             didReceive response: UNNotificationResponse,
                                             withCompletionHandler completionHandler: @escaping @Sendable () -> Void) {
         let action = response.actionIdentifier
-        let payload = DoseNotification.payload(from: response.notification.request.content.userInfo)
+        let userInfo = response.notification.request.content.userInfo as? [String: Any] ?? [:]
+        let info: [AnyHashable: Any] = Dictionary(uniqueKeysWithValues: userInfo.map { ($0.key as AnyHashable, $0.value) })
+        // Extract hydration amount / dose payload on this thread so the MainActor task only gets Sendables.
+        let hydrateML = HydrationNotification.amountML(for: action)
+        let dosePayload = DoseNotification.payload(from: info)
         Task { @MainActor in
-            if let payload { await model.handleNotificationAction(action, payload: payload) }
+            if let hydrateML {
+                model.addFluid(hydrateML)
+            } else if let dosePayload {
+                await model.handleNotificationAction(action, payload: dosePayload)
+            }
             completionHandler()
         }
     }

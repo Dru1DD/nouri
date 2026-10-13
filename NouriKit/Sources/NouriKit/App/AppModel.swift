@@ -18,9 +18,16 @@ public final class AppModel {
     public private(set) var imported: ImportedTotals?
     public private(set) var hydrationGoal: Double = 2500
     public private(set) var calorieGoal: Double = 2000
+    public private(set) var hydrationRemindersEnabled = false
+    public private(set) var hydrationReminderIntervalMinutes = 120
+    public private(set) var quietHoursStartMinutes = 22 * 60
+    public private(set) var quietHoursEndMinutes = 8 * 60
+    public private(set) var hasCompletedOnboarding = false
     public private(set) var scheduledReminderCount = 0
     public private(set) var healthConnected = false
-    /// `nil` until asked. Asked lazily, when the user first creates a medication.
+    /// Last persistence error suitable for a user-facing alert, if any.
+    public private(set) var lastErrorMessage: String?
+    /// `nil` until asked. Asked lazily, when the user first creates a medication or enables reminders.
     public private(set) var notificationsAllowed: Bool?
 
     @ObservationIgnored public let store: NouriStore
@@ -73,6 +80,11 @@ public final class AppModel {
         let prefs = store.preferences()
         hydrationGoal = prefs.hydrationGoalML
         calorieGoal = prefs.calorieGoal
+        hydrationRemindersEnabled = prefs.hydrationRemindersEnabled
+        hydrationReminderIntervalMinutes = prefs.hydrationReminderIntervalMinutes
+        quietHoursStartMinutes = prefs.quietHoursStartMinutes
+        quietHoursEndMinutes = prefs.quietHoursEndMinutes
+        hasCompletedOnboarding = prefs.hasCompletedOnboarding
     }
 
     public func refreshExternal() async {
@@ -106,7 +118,21 @@ public final class AppModel {
         let date = now(), cal = calendar()
         let horizon = DateInterval(start: cal.startOfDay(for: date), duration: Double(ReminderPlanner.horizonDays + 1) * 86_400)
         let resolved = Set(store.doseLogs(around: horizon).filter { $0.value.status != .missed }.keys)
-        let plan = ReminderPlanner.plan(medications: store.medications(), resolvedKeys: resolved, now: date, calendar: cal)
+        var plan = ReminderPlanner.plan(medications: store.medications(), resolvedKeys: resolved, now: date, calendar: cal)
+        let prefs = store.preferences()
+        let remaining = max(0, ReminderPlanner.maxPending - plan.count)
+        let hydrate = HydrationReminderPlanner.plan(
+            enabled: prefs.hydrationRemindersEnabled && notificationsAllowed != false,
+            intervalMinutes: prefs.hydrationReminderIntervalMinutes,
+            quietStartMinutes: prefs.quietHoursStartMinutes,
+            quietEndMinutes: prefs.quietHoursEndMinutes,
+            todayHydrationML: store.summary(for: date, now: date, calendar: cal).hydration.value,
+            goalML: prefs.hydrationGoalML,
+            now: date,
+            calendar: cal,
+            maxCount: remaining
+        )
+        plan.append(contentsOf: hydrate)
         await reminders.apply(plan)
         scheduledReminderCount = plan.count
         refresh()
@@ -130,6 +156,7 @@ public final class AppModel {
                                     timestamp: min(timestamp ?? date, date), at: date)
         lastAdded = LastAdded(id: record.id, kind: .fluid(amountML: amountML, beverage: beverage))
         localChange(record)
+        Task { await rescheduleReminders() }
     }
 
     /// Adds food. An empty name is stored as empty; views show a localized "Quick add" instead.
@@ -160,7 +187,43 @@ public final class AppModel {
 
     public func deleteEntry(id: UUID) {
         if lastAdded?.id == id { lastAdded = nil }
+        // Capture for undo before soft-delete.
+        if let fluid = today.fluids.first(where: { $0.id == id }) {
+            lastDeleted = LastDeleted(id: id, kind: .fluid(fluid))
+        } else if let food = today.foods.first(where: { $0.id == id }) {
+            lastDeleted = LastDeleted(id: id, kind: .food(food))
+        }
         store.deleteEntry(id: id, at: now()).map(localChange)
+        Task { await rescheduleReminders() }
+    }
+
+    public struct LastDeleted: Equatable, Sendable {
+        public enum Kind: Equatable, Sendable {
+            case fluid(FluidItem)
+            case food(FoodItem)
+        }
+        public let id: UUID
+        public let kind: Kind
+    }
+
+    /// Soft-deleted entry offered for undo for a few seconds by the UI.
+    public private(set) var lastDeleted: LastDeleted?
+
+    public func undoLastDelete() {
+        guard let lastDeleted else { return }
+        switch lastDeleted.kind {
+        case .fluid(let item):
+            // Re-insert as a new write with the same identity via update path after revive.
+            _ = store.reviveEntry(id: item.id, at: now()).map(localChange)
+        case .food(let item):
+            _ = store.reviveEntry(id: item.id, at: now()).map(localChange)
+        }
+        self.lastDeleted = nil
+        Task { await rescheduleReminders() }
+    }
+
+    public func dismissDeleteUndo(id: UUID) {
+        if lastDeleted?.id == id { lastDeleted = nil }
     }
 
     // MARK: - Undo
@@ -203,8 +266,13 @@ public final class AppModel {
         await reminders?.snooze(dose, now: now(), minutes: minutes)
     }
 
-    /// Handles a tap on a notification action (Taken / Skip / Snooze).
-    public func handleNotificationAction(_ action: String, payload: DoseNotification.Payload) async {
+    /// Handles a tap on a notification action (Taken / Skip / Snooze / hydrate amounts).
+    public func handleNotificationAction(_ action: String, userInfo: [AnyHashable: Any]) async {
+        if let amount = HydrationNotification.amountML(for: action) {
+            addFluid(amount)
+            return
+        }
+        guard let payload = DoseNotification.payload(from: userInfo) else { return }
         switch action {
         case DoseNotification.takenAction:
             await setDose(key: payload.doseKey, medicationID: payload.medicationID, scheduledAt: payload.scheduledAt, status: .taken)
@@ -219,6 +287,15 @@ public final class AppModel {
         default:
             break
         }
+    }
+
+    /// Legacy entry used by tests that already have a dose payload.
+    public func handleNotificationAction(_ action: String, payload: DoseNotification.Payload) async {
+        await handleNotificationAction(action, userInfo: [
+            "medicationID": payload.medicationID.uuidString,
+            "doseKey": payload.doseKey,
+            "scheduledAt": payload.scheduledAt.timeIntervalSince1970,
+        ])
     }
 
     public func saveMedication(_ info: MedicationInfo) async {
@@ -239,6 +316,60 @@ public final class AppModel {
     public func setGoals(hydrationML: Double, calories: Double) {
         store.setGoals(hydrationML: max(hydrationML, 1), calories: max(calories, 1), at: now())
         settingsChanged()
+        Task { await rescheduleReminders() }
+    }
+
+    public func setHydrationReminders(
+        enabled: Bool,
+        intervalMinutes: Int? = nil,
+        quietStartMinutes: Int? = nil,
+        quietEndMinutes: Int? = nil
+    ) async {
+        if enabled, notificationsAllowed != true {
+            await requestNotificationPermission()
+        }
+        store.setHydrationReminderSettings(
+            enabled: enabled,
+            intervalMinutes: intervalMinutes ?? hydrationReminderIntervalMinutes,
+            quietStartMinutes: quietStartMinutes ?? quietHoursStartMinutes,
+            quietEndMinutes: quietEndMinutes ?? quietHoursEndMinutes,
+            at: now()
+        )
+        settingsChanged()
+        await rescheduleReminders()
+    }
+
+    public func completeOnboarding() {
+        store.setOnboardingCompleted(true, at: now())
+        settingsChanged()
+    }
+
+    public func dismissError() { lastErrorMessage = nil }
+
+    /// Soft-deletes all user data, resets prefs, clears notifications, optionally HealthKit samples.
+    public func deleteAllData(removeFromHealth: Bool) async {
+        let date = now()
+        let result = store.deleteAllData(at: date)
+        lastAdded = nil
+        lastDeleted = nil
+        for record in result.records {
+            sync?.publish(record)
+        }
+        sync?.publishSettings()
+        if removeFromHealth, let health {
+            for record in result.records { await health.export(record) }
+        }
+        await reminders?.clearAllManaged()
+        didChange()
+        await rescheduleReminders()
+    }
+
+    public func exportDataJSON() throws -> Data {
+        try store.exportJSON(calendar: calendar(), now: now())
+    }
+
+    public func hydrationStats(days: Int = 7) -> HydrationStats {
+        HydrationStats.build(days: history(days: days), calendar: calendar())
     }
 
     public func addPreset(name: String, calories: Double) {

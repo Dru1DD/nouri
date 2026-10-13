@@ -10,8 +10,10 @@
 		1028AB73D0A8746350FEC724 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C2ABD8045AB61E6368C8F037 /* Localizable.xcstrings */; };
 		1E6DB63D20E58DECDBCB12A1 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F0B42B046346579C96134959 /* InfoPlist.xcstrings */; };
 		41135F54AE046A286014D9B9 /* NouriUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC42635A94160A05D00FD54C /* NouriUITests.swift */; };
+		47C7644A9DE6EFC929AE60B1 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B039AECEB76F4D120A63106 /* OnboardingView.swift */; };
 		4D7A729D5A5CEC169CDAEF30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2138AE62DC646B4986054BDD /* Assets.xcassets */; };
 		5824E3AB98C7151A4639854D /* NouriWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D5780A75AE83CE5E0E337726 /* NouriWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6579F4A432C3DAEC5F9620C2 /* ActivityDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF313630A0EB644DD2CD2A5 /* ActivityDashboardView.swift */; };
 		7198071DE45C2044758755FB /* NouriWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0571C13818D13842F69BEB0E /* NouriWidgets.swift */; };
 		71F7E638C9D869A906D3CA10 /* NouriKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5087EF4BD0F20C77DAF6B1D7 /* NouriKit */; };
 		72500EF4DA20BF5496BDC4C7 /* NouriKit in Frameworks */ = {isa = PBXBuildFile; productRef = DFCDED56F06D95E90FE29E47 /* NouriKit */; };
@@ -114,9 +116,11 @@
 		4E7FA7DF27FD397D41C1C893 /* Nouri.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nouri.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53CC7EFF872F9C731B3B80E5 /* MedicationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicationsView.swift; sourceTree = "<group>"; };
 		6504A95DA9479BDD01F86958 /* EntryForms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryForms.swift; sourceTree = "<group>"; };
+		6DF313630A0EB644DD2CD2A5 /* ActivityDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDashboardView.swift; sourceTree = "<group>"; };
 		747CD2342BA2BFA6C38E1AF6 /* NouriUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NouriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		77E84225500F94EFE7F16680 /* NouriApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NouriApp.swift; sourceTree = "<group>"; };
 		78150583D498D1E74F53F10E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7B039AECEB76F4D120A63106 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		7EBB2B0A4C0FF77E189619B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		999C3F657B75D4AF5A1E8C41 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		9E6EA6DB3FAF1BF2B1303850 /* Nouri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Nouri.entitlements; sourceTree = "<group>"; };
@@ -173,10 +177,12 @@
 		2CF4D3C79924951EDA7E6EBA /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6DF313630A0EB644DD2CD2A5 /* ActivityDashboardView.swift */,
 				999C3F657B75D4AF5A1E8C41 /* DashboardView.swift */,
 				6504A95DA9479BDD01F86958 /* EntryForms.swift */,
 				F6E31B3584564D1BB0484490 /* HistoryAndSettings.swift */,
 				53CC7EFF872F9C731B3B80E5 /* MedicationsView.swift */,
+				7B039AECEB76F4D120A63106 /* OnboardingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -527,11 +533,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6579F4A432C3DAEC5F9620C2 /* ActivityDashboardView.swift in Sources */,
 				B500B0ED5A59F6583BA71916 /* DashboardView.swift in Sources */,
 				C83570F84F056A08BF4504DE /* EntryForms.swift in Sources */,
 				D0A67DC29442BE7462D7AB58 /* HistoryAndSettings.swift in Sources */,
 				FF66ACA2A9A9040800AF05EE /* MedicationsView.swift in Sources */,
 				E654D8E55AE6CA373DD0980D /* NouriApp.swift in Sources */,
+				47C7644A9DE6EFC929AE60B1 /* OnboardingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -587,6 +595,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -824,6 +833,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dru1dd.nouri;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;

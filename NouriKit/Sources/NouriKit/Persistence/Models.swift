@@ -177,6 +177,13 @@ public final class UserPreferences {
     public var hydrationGoalML: Double = 2500
     public var calorieGoal: Double = 2000
     public var updatedAt: Date = Date.distantPast
+    /// Interval + quiet-hours hydration reminders (iPhone schedules; Watch does not).
+    public var hydrationRemindersEnabled: Bool = false
+    public var hydrationReminderIntervalMinutes: Int = 120
+    /// Minutes from midnight. Overnight quiet uses start > end (e.g. 22:00–08:00).
+    public var quietHoursStartMinutes: Int = 22 * 60
+    public var quietHoursEndMinutes: Int = 8 * 60
+    public var hasCompletedOnboarding: Bool = false
 
     init() {}
 }
