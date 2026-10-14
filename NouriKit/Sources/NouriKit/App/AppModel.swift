@@ -22,7 +22,12 @@ public final class AppModel {
     public private(set) var hydrationReminderIntervalMinutes = 120
     public private(set) var quietHoursStartMinutes = 22 * 60
     public private(set) var quietHoursEndMinutes = 8 * 60
+    public private(set) var daytimeQuietEnabled = false
+    public private(set) var daytimeQuietStartMinutes = 13 * 60
+    public private(set) var daytimeQuietEndMinutes = 14 * 60
     public private(set) var hasCompletedOnboarding = false
+    public private(set) var caloriesEnabled = false
+    public private(set) var appearancePreset: AppearancePreset = .default
     public private(set) var scheduledReminderCount = 0
     public private(set) var healthConnected = false
     /// Last persistence error suitable for a user-facing alert, if any.
@@ -37,6 +42,7 @@ public final class AppModel {
     @ObservationIgnored private let plansReminders: Bool
     @ObservationIgnored private let now: () -> Date
     @ObservationIgnored private let calendar: () -> Calendar
+    @ObservationIgnored public let analytics: AnalyticsStore
 
     public init(
         store: NouriStore,
@@ -44,6 +50,7 @@ public final class AppModel {
         health: HealthService? = nil,
         reminders: ReminderScheduler? = nil,
         plansReminders: Bool = true,
+        analytics: AnalyticsStore = AnalyticsStore(),
         now: @escaping () -> Date = Date.init,
         calendar: @escaping () -> Calendar = { Calendar.autoupdatingCurrent }
     ) {
@@ -53,6 +60,7 @@ public final class AppModel {
         self.plansReminders = plansReminders
         self.now = now
         self.calendar = calendar
+        self.analytics = analytics
         self.sync = transport.map { SyncEngine(store: store, transport: $0, now: now) }
         today = store.summary(for: now(), now: now(), calendar: calendar())
         sync?.onRemoteChange = { [weak self] records in self?.handleRemote(records) }
@@ -65,6 +73,7 @@ public final class AppModel {
             #endif
         }
         refresh()
+        analytics.trackFirstOpenIfNeeded()
     }
 
     // MARK: - Lifecycle
@@ -84,7 +93,12 @@ public final class AppModel {
         hydrationReminderIntervalMinutes = prefs.hydrationReminderIntervalMinutes
         quietHoursStartMinutes = prefs.quietHoursStartMinutes
         quietHoursEndMinutes = prefs.quietHoursEndMinutes
+        daytimeQuietEnabled = prefs.daytimeQuietEnabled
+        daytimeQuietStartMinutes = prefs.daytimeQuietStartMinutes
+        daytimeQuietEndMinutes = prefs.daytimeQuietEndMinutes
         hasCompletedOnboarding = prefs.hasCompletedOnboarding
+        caloriesEnabled = prefs.caloriesEnabled
+        appearancePreset = prefs.appearancePreset
     }
 
     public func refreshExternal() async {
@@ -95,9 +109,18 @@ public final class AppModel {
 
     /// Asks the paired device for recent history. The Watch calls this whenever it comes to the
     /// foreground, so anything that was still in flight shows up right away.
+    /// Asks the paired device for recent records, at most once per `backfillInterval`.
+    /// Records already arrive one by one via queued `transferUserInfo`; backfill only repairs gaps,
+    /// so it doesn't need to wake the iPhone on every wrist raise.
     public func syncWithCounterpart() {
+        let date = now()
+        if let last = lastBackfillAt, date.timeIntervalSince(last) < Self.backfillInterval { return }
+        lastBackfillAt = date
         sync?.requestBackfill()
     }
+
+    public static let backfillInterval: TimeInterval = 3600
+    @ObservationIgnored private var lastBackfillAt: Date?
 
     public var isHealthAvailable: Bool { health != nil }
 
@@ -107,12 +130,26 @@ public final class AppModel {
     }
 
     public func connectHealth() async {
-        await health?.requestAuthorization()
+        await health?.requestAuthorization(includeEnergy: caloriesEnabled)
         await refreshExternal()
+        // Entries logged before Health was connected: idempotent thanks to sync identifiers.
+        if healthConnected {
+            exportToHealth(store.records(updatedSince: now().addingTimeInterval(-Self.healthBackfill)))
+        }
     }
 
-    /// On the Watch `plansReminders` is false: the iPhone owns dose reminders (mirrored by the
-    /// system), the Watch only schedules snoozes it was asked for.
+    static let healthBackfill: TimeInterval = 30 * 86_400
+
+    private var defaultSurface: LogSurface {
+        #if os(watchOS)
+        .watch
+        #else
+        .phone
+        #endif
+    }
+
+    /// Both iPhone and Watch plan local reminders from their store. The Watch cannot rely on
+    /// iPhone notification mirroring for an independent Watch app.
     public func rescheduleReminders() async {
         guard let reminders, plansReminders else { return }
         let date = now(), cal = calendar()
@@ -126,11 +163,13 @@ public final class AppModel {
             intervalMinutes: prefs.hydrationReminderIntervalMinutes,
             quietStartMinutes: prefs.quietHoursStartMinutes,
             quietEndMinutes: prefs.quietHoursEndMinutes,
+            daytimeQuiet: prefs.daytimeQuiet,
             todayHydrationML: store.summary(for: date, now: date, calendar: cal).hydration.value,
             goalML: prefs.hydrationGoalML,
             now: date,
             calendar: cal,
-            maxCount: remaining
+            maxCount: remaining,
+            lastDrinkAt: store.lastHydratingDrink(on: date, calendar: cal)
         )
         plan.append(contentsOf: hydrate)
         await reminders.apply(plan)
@@ -145,16 +184,23 @@ public final class AppModel {
         }
     }
 
+    public func summary(for day: Date) -> DaySummary {
+        let date = now()
+        return store.summary(for: day, now: date, calendar: calendar())
+    }
+
     // MARK: - Entries
 
     /// Adds a drink. `timestamp` defaults to now; past times are allowed, future ones are clamped.
-    public func addFluid(_ amountML: Double, beverage: BeverageType = .water, calories: Double? = nil, timestamp: Date? = nil) {
+    public func addFluid(_ amountML: Double, beverage: BeverageType = .water, calories: Double? = nil, timestamp: Date? = nil,
+                         surface: LogSurface? = nil) {
         guard amountML > 0 else { return }
         let date = now()
         let kcal = max(calories ?? beverage.defaultCalories(amountML: amountML), 0)
         let record = store.addFluid(amountML: amountML, beverage: beverage, calories: kcal,
                                     timestamp: min(timestamp ?? date, date), at: date)
         lastAdded = LastAdded(id: record.id, kind: .fluid(amountML: amountML, beverage: beverage))
+        analytics.track("water_logged", ["surface": (surface ?? defaultSurface).rawValue])
         localChange(record)
         Task { await rescheduleReminders() }
     }
@@ -166,6 +212,7 @@ public final class AppModel {
         let record = store.addFood(name: name.trimmingCharacters(in: .whitespacesAndNewlines), calories: kcal,
                                    timestamp: min(timestamp ?? date, date), at: date)
         lastAdded = LastAdded(id: record.id, kind: .food(kcal: kcal))
+        analytics.track("food_logged", ["surface": defaultSurface.rawValue])
         localChange(record)
     }
 
@@ -258,7 +305,10 @@ public final class AppModel {
 
     public func setDose(key: String, medicationID: UUID, scheduledAt: Date, status: DoseLogStatus?) async {
         localChange(store.logDose(key: key, medicationID: medicationID, scheduledAt: scheduledAt, status: status, at: now()))
-        if status != nil { await reminders?.clear(doseKey: key) }
+        if status != nil {
+            analytics.track("dose_logged", ["surface": defaultSurface.rawValue])
+            await reminders?.clear(doseKey: key)
+        }
         await rescheduleReminders()
     }
 
@@ -269,7 +319,7 @@ public final class AppModel {
     /// Handles a tap on a notification action (Taken / Skip / Snooze / hydrate amounts).
     public func handleNotificationAction(_ action: String, userInfo: [AnyHashable: Any]) async {
         if let amount = HydrationNotification.amountML(for: action) {
-            addFluid(amount)
+            addFluid(amount, surface: .notification)
             return
         }
         guard let payload = DoseNotification.payload(from: userInfo) else { return }
@@ -299,8 +349,11 @@ public final class AppModel {
     }
 
     public func saveMedication(_ info: MedicationInfo) async {
+        let isNew = !store.medications().contains { $0.id == info.id }
         store.saveMedication(info, at: now())
-        if notificationsAllowed == nil { await requestNotificationPermission() }
+        if isNew { analytics.track("med_added") }
+        // During onboarding the Reminders step asks, with context.
+        if notificationsAllowed == nil, hasCompletedOnboarding { await requestNotificationPermission() }
         settingsChanged()
         await rescheduleReminders()
     }
@@ -341,8 +394,33 @@ public final class AppModel {
 
     public func completeOnboarding() {
         store.setOnboardingCompleted(true, at: now())
+        analytics.track("onboarding_done")
         settingsChanged()
     }
+
+    public func setDaytimeQuiet(enabled: Bool? = nil, startMinutes: Int? = nil, endMinutes: Int? = nil) async {
+        store.setDaytimeQuiet(enabled: enabled ?? daytimeQuietEnabled,
+                              startMinutes: startMinutes ?? daytimeQuietStartMinutes,
+                              endMinutes: endMinutes ?? daytimeQuietEndMinutes, at: now())
+        refresh()
+        await rescheduleReminders()
+    }
+
+    public func setCaloriesEnabled(_ enabled: Bool) {
+        store.setCaloriesEnabled(enabled, at: now())
+        settingsChanged()
+    }
+
+    public func setAppearancePreset(_ preset: AppearancePreset) {
+        store.setAppearancePreset(preset, at: now())
+        settingsChanged()
+    }
+
+    public func exportAnalyticsJSON() throws -> Data {
+        try analytics.exportJSON()
+    }
+
+    public var pendingMedicationsDeepLink = false
 
     public func dismissError() { lastErrorMessage = nil }
 
@@ -357,7 +435,8 @@ public final class AppModel {
         }
         sync?.publishSettings()
         if removeFromHealth, let health {
-            for record in result.records { await health.export(record) }
+            // Delete energy samples too, even if calories are hidden now: earlier builds may have written them.
+            for record in result.records { await health.export(record, includeEnergy: true) }
         }
         await reminders?.clearAllManaged()
         didChange()
@@ -413,8 +492,12 @@ public final class AppModel {
 
     private func exportToHealth(_ records: [SyncRecord]) {
         guard let health else { return }
+        let includeEnergy = caloriesEnabled
         Task {
-            for record in records { await health.export(record) }
+            for record in records {
+                if !includeEnergy, case .food = record { continue }
+                await health.export(record, includeEnergy: includeEnergy)
+            }
         }
     }
 

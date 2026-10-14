@@ -6,6 +6,9 @@ import WidgetKit
 @main
 struct NouriWidgetBundle: WidgetBundle {
     var body: some Widget {
+        #if os(iOS)
+        TodayWidget()
+        #endif
         HydrationWidget()
         MedicationWidget()
     }
@@ -22,28 +25,31 @@ struct NouriWidgetIntents: AppIntentsPackage {
 struct DayEntry: TimelineEntry {
     let date: Date
     let summary: DaySummary
+    let appearance: AppearancePreset
 
     static let placeholder = DayEntry(date: .now, summary: DaySummary.build(
         day: .now,
         fluids: [FluidItem(amountML: 1650, beverage: .water, calories: 0, timestamp: .now)],
         foods: [FoodItem(name: "Sample", calories: 1420, timestamp: .now)],
-        medications: [], logs: [:], hydrationGoalML: 2500, calorieGoal: 2000,
+        medications: [
+            MedicationInfo(name: "Vitamin D", dosage: 1, unit: "tablet",
+                           schedule: MedicationSchedule(times: [TimeOfDay(hour: 8, minute: 0)]))
+        ],
+        logs: [:], hydrationGoalML: 2500, calorieGoal: 2000,
         now: .now, calendar: .current
-    ))
+    ), appearance: .default)
 }
 
 struct DayProvider: TimelineProvider {
     func placeholder(in context: Context) -> DayEntry { .placeholder }
 
     func getSnapshot(in context: Context, completion: @escaping (DayEntry) -> Void) {
-        completion(context.isPreview ? .placeholder : load(at: .now))
+        completion(context.isPreview ? .placeholder : load(at: .now, family: context.family))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<DayEntry>) -> Void) {
         let now = Date.now
-        let entry = load(at: now)
-        // The app reloads timelines on every change; this only handles time passing
-        // (a dose becoming due, midnight rollover).
+        let entry = load(at: now, family: context.family)
         let cal = Calendar.current
         let midnight = cal.dateInterval(of: .day, for: now)?.end ?? now.addingTimeInterval(3600)
         let nextDose = entry.summary.doses.map(\.occurrence.scheduledAt).first { $0 > now }
@@ -51,10 +57,150 @@ struct DayProvider: TimelineProvider {
         completion(Timeline(entries: [entry], policy: .after(refresh)))
     }
 
-    private func load(at now: Date) -> DayEntry {
+    private func load(at now: Date, family: WidgetFamily) -> DayEntry {
+        AnalyticsStore().trackOncePerDay("widget_seen", ["family": "\(family)"])
         guard let container = try? NouriStore.makeContainer() else { return .placeholder }
-        let summary = NouriStore(container: container).summary(for: now, now: now, calendar: .current)
-        return DayEntry(date: now, summary: summary)
+        let store = NouriStore(container: container)
+        let summary = store.summary(for: now, now: now, calendar: .current)
+        return DayEntry(date: now, summary: summary, appearance: store.preferences().appearancePreset)
+    }
+}
+
+// MARK: - Today
+
+#if os(iOS)
+/// Water and medications side by side (medium), plus today's doses (large).
+/// Small and lock-screen sizes use the separate Hydration / Medications widgets.
+struct TodayWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "Today", provider: DayProvider()) { entry in
+            TodayView(entry: entry)
+                .themedBackground(entry.appearance)
+        }
+        .configurationDisplayName("Today")
+        .description("Water and medications together.")
+        .supportedFamilies([.systemMedium, .systemLarge])
+    }
+}
+
+struct TodayView: View {
+    @Environment(\.widgetFamily) private var family
+    let entry: DayEntry
+
+    private var summary: DaySummary { entry.summary }
+    private var water: GoalProgress { summary.hydration }
+    private var next: DoseItem? { summary.nextDose }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 16) {
+                waterColumn
+                medsColumn
+            }
+            if family == .systemLarge {
+                Divider()
+                doseList
+                Spacer(minLength: 0)
+            }
+        }
+    }
+
+    private var waterColumn: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Label("Water", systemImage: "drop.fill")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(entry.appearance.waterEnd)
+            Text("\(Format.liters(water.value)) L")
+                .font(.title2.bold().monospacedDigit())
+                .minimumScaleFactor(0.6)
+                .lineLimit(1)
+            Text("of \(Format.liters(water.goal)) L · \(water.percent)%")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Spacer(minLength: 0)
+            ProgressView(value: water.fraction).tint(entry.appearance.waterEnd)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Hydration")
+        .accessibilityValue("\(Format.liters(water.value)) of \(Format.liters(water.goal)) liters, \(water.percent) percent")
+    }
+
+    private var medsColumn: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Label("Medications", systemImage: "pills.fill")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(entry.appearance.medsEnd)
+                .lineLimit(1)
+            Text(summary.doses.isEmpty ? "—" : "\(summary.dosesTaken)/\(summary.doses.count)")
+                .font(.title2.bold().monospacedDigit())
+            Text(medsCaption)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Spacer(minLength: 0)
+            ProgressView(value: summary.medicationProgress.fraction).tint(entry.appearance.medsEnd)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Medications")
+        .accessibilityValue(medsCaption)
+    }
+
+    private var medsCaption: String {
+        if let next {
+            String(localized: "Next \(Format.time(next.occurrence.scheduledAt)) \(next.occurrence.medicationName)")
+        } else if summary.doses.isEmpty {
+            String(localized: "No doses today")
+        } else {
+            String(localized: "All done for today")
+        }
+    }
+
+    @ViewBuilder
+    private var doseList: some View {
+        if summary.doses.isEmpty {
+            Text("No doses today")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } else {
+            ForEach(summary.doses.prefix(5)) { dose in
+                HStack {
+                    Text(Format.time(dose.occurrence.scheduledAt))
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                    Text(dose.occurrence.medicationName)
+                        .font(.caption)
+                        .lineLimit(1)
+                    Spacer()
+                    Label(dose.status.label, systemImage: dose.status.symbol)
+                        .font(.caption2)
+                        .foregroundStyle(dose.status == .taken ? entry.appearance.medsEnd : .secondary)
+                }
+                .accessibilityElement(children: .combine)
+            }
+        }
+    }
+}
+#endif
+
+private extension View {
+    /// Palette background (or the system one) with a soft wash, and palette text color.
+    func themedBackground(_ preset: AppearancePreset) -> some View {
+        foregroundStyle(preset.text.map(AnyShapeStyle.init) ?? AnyShapeStyle(.primary))
+            .containerBackground(for: .widget) {
+                ZStack {
+                    if let background = preset.background {
+                        background
+                    } else {
+                        Rectangle().fill(.fill.tertiary)
+                    }
+                    preset.backgroundWash
+                }
+            }
     }
 }
 
@@ -64,7 +210,7 @@ struct HydrationWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "Hydration", provider: DayProvider()) { entry in
             HydrationView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .themedBackground(entry.appearance)
         }
         .configurationDisplayName("Hydration")
         .description("Today's water intake.")
@@ -83,18 +229,9 @@ struct HydrationView: View {
     private var progress: GoalProgress { entry.summary.hydration }
     private var liters: String { String(localized: "\(Format.liters(progress.value)) L") }
 
-    private var hasButton: Bool {
-        #if os(iOS)
-        family == .systemSmall
-        #else
-        false
-        #endif
-    }
-
     var body: some View {
         content
-            // The small widget keeps its "+250 ml" button reachable for VoiceOver.
-            .accessibilityElement(children: hasButton ? .contain : .ignore)
+            .accessibilityElement(children: .contain)
             .accessibilityLabel("Hydration")
             .accessibilityValue("\(liters) of \(Format.liters(progress.goal)) liters, \(progress.percent) percent")
     }
@@ -103,50 +240,43 @@ struct HydrationView: View {
     private var content: some View {
         switch family {
         case .accessoryCircular:
-            Gauge(value: progress.fraction) {
-                Image(systemName: "drop.fill")
-            } currentValueLabel: {
-                Text("\(progress.percent)")
-            }
-            .gaugeStyle(.accessoryCircularCapacity)
+            SingleProgressRing(progress: progress, gradient: entry.appearance.waterGradient,
+                               centerText: "\(progress.percent)", accessibilityName: "Hydration")
         case .accessoryInline:
-            Label("\(progress.percent)% · \(liters)", systemImage: "drop.fill")
+            Text("\(progress.percent)% · \(liters)")
         #if os(watchOS)
         case .accessoryCorner:
-            Text("💧\(progress.percent)%")
-                .widgetLabel { Gauge(value: progress.fraction) { Text("Water") } }
+            Image(systemName: "drop.fill")
+                .font(.title3)
+                .foregroundStyle(entry.appearance.waterEnd)
+                .widgetLabel {
+                    Gauge(value: progress.fraction) { Text("Water") }
+                        .tint(entry.appearance.waterEnd)
+                }
         #endif
         case .accessoryRectangular:
             VStack(alignment: .leading) {
-                Label("Hydration", systemImage: "drop.fill").font(.headline)
+                Text("Hydration").font(.headline)
                 Text("\(liters) / \(Format.liters(progress.goal)) L")
-                ProgressView(value: progress.fraction)
+                    .minimumScaleFactor(0.7)
+                ProgressView(value: progress.fraction).tint(entry.appearance.waterEnd)
             }
         default:
             VStack(alignment: .leading, spacing: 6) {
-                Label("Hydration", systemImage: "drop.fill")
+                Text("Hydration")
                     .font(.headline)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(entry.appearance.waterEnd)
                 Spacer()
-                Text(liters).font(.title.bold().monospacedDigit())
+                Text(liters)
+                    .font(.title.bold().monospacedDigit())
+                    .minimumScaleFactor(0.6)
+                    .lineLimit(1)
                 Text("of \(Format.liters(progress.goal)) L · \(progress.percent)%")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                ProgressView(value: progress.fraction).tint(.blue)
-                #if os(iOS)
-                HStack(spacing: 4) {
-                    ForEach([100, 250, 500], id: \.self) { amount in
-                        Button(intent: AddWaterIntent(amountML: amount)) {
-                            Text("+\(amount)")
-                                .font(.caption2.weight(.semibold))
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(.blue)
-                        .accessibilityLabel("Add \(amount) milliliters of water")
-                    }
-                }
-                #endif
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+                ProgressView(value: progress.fraction).tint(entry.appearance.waterEnd)
             }
         }
     }
@@ -158,12 +288,13 @@ struct MedicationWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "Medications", provider: DayProvider()) { entry in
             MedicationStatusView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .themedBackground(entry.appearance)
+                .widgetURL(URL(string: "nouri://medications"))
         }
         .configurationDisplayName("Medications")
         .description("Doses taken today and the next reminder.")
         #if os(watchOS)
-        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
+        .supportedFamilies([.accessoryCircular, .accessoryCorner, .accessoryRectangular, .accessoryInline])
         #else
         .supportedFamilies([.systemSmall, .accessoryCircular, .accessoryRectangular, .accessoryInline])
         #endif
@@ -192,32 +323,39 @@ struct MedicationStatusView: View {
     private var content: some View {
         switch family {
         case .accessoryCircular:
-            Gauge(value: summary.medicationProgress.fraction) {
-                Image(systemName: "pills.fill")
-            } currentValueLabel: {
-                Text(counts)
-            }
-            .gaugeStyle(.accessoryCircularCapacity)
+            SingleProgressRing(progress: summary.medicationProgress, gradient: entry.appearance.medsGradient,
+                               centerText: counts, accessibilityName: "Medications")
         case .accessoryInline:
-            Label(next.map { "\(counts) · \($0)" } ?? counts, systemImage: "pills.fill")
+            Text(next.map { "\(counts) · \($0)" } ?? counts)
+        #if os(watchOS)
+        case .accessoryCorner:
+            Image(systemName: "pills.fill")
+                .font(.title3)
+                .foregroundStyle(entry.appearance.medsEnd)
+                .widgetLabel {
+                    Gauge(value: summary.medicationProgress.fraction) { Text(counts) }
+                        .tint(entry.appearance.medsEnd)
+                }
+        #endif
         case .accessoryRectangular:
             VStack(alignment: .leading) {
-                Label("\(counts) taken", systemImage: "pills.fill").font(.headline)
+                Text("\(counts) taken").font(.headline)
                 Text(next.map { String(localized: "Next: \($0)") } ?? String(localized: "All done for today"))
                     .lineLimit(2)
             }
         default:
             VStack(alignment: .leading, spacing: 6) {
-                Label("Medications", systemImage: "pills.fill")
+                Text("Medications")
                     .font(.headline)
-                    .foregroundStyle(.purple)
+                    .foregroundStyle(entry.appearance.medsEnd)
                 Spacer()
-                Text("\(counts) taken").font(.title2.bold().monospacedDigit())
+                Text("\(counts) taken").font(.title2.bold().monospacedDigit()).minimumScaleFactor(0.7)
                 Text(next.map { String(localized: "Next: \($0)") }
                      ?? (summary.doses.isEmpty ? String(localized: "No doses today") : String(localized: "All done for today")))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
+                    .minimumScaleFactor(0.7)
             }
         }
     }

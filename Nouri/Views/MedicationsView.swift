@@ -45,6 +45,7 @@ struct MedicationsView: View {
                                        description: Text("Add a medication to get reminders."))
             }
         }
+        .themedBackground(model.appearancePreset)
         .navigationTitle("Medications")
         .toolbar {
             Button {
@@ -152,6 +153,7 @@ struct MedicationEditor: View {
                     Toggle("Reminders active", isOn: $draft.isActive)
                 }
             }
+            .themedBackground(model.appearancePreset)
             .navigationTitle(isNew ? "New Medication" : "Edit Medication")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -196,8 +198,8 @@ struct WeekdayPicker: View {
                 } label: {
                     Text(cal.veryShortWeekdaySymbols[day - 1])
                         .frame(maxWidth: .infinity, minHeight: 44)
-                        .background(isOn ? Color.accentColor.opacity(0.2) : .clear, in: .circle)
-                        .overlay(Circle().strokeBorder(isOn ? Color.accentColor : .secondary))
+                        .background(isOn ? AnyShapeStyle(.tint.opacity(0.2)) : AnyShapeStyle(.clear), in: .circle)
+                        .overlay(Circle().strokeBorder(isOn ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary)))
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(cal.weekdaySymbols[day - 1])

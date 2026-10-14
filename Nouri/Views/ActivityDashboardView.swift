@@ -5,74 +5,116 @@ import SwiftUI
 struct ActivityDashboardView: View {
     @Environment(AppModel.self) private var model
 
-    private var stats: HydrationStats { model.hydrationStats(days: 7) }
+    private var week: [DaySummary] { model.history(days: 7).reversed() }
+    private var stats: HydrationStats { HydrationStats.build(days: week) }
+    private var dosesScheduled: Int { week.map(\.doses.count).reduce(0, +) }
+    private var dosesTaken: Int { week.map(\.dosesTaken).reduce(0, +) }
+    private var today: DaySummary { model.today }
 
     var body: some View {
         List {
             todaySection
-            weekSection
+            weekWaterSection
+            weekMedsSection
             beveragesSection
         }
+        .themedBackground(model.appearancePreset)
         .navigationTitle("Dashboard")
         .accessibilityIdentifier("activity-dashboard")
     }
 
     private var todaySection: some View {
         Section("Today") {
-            if stats.todayDrinkCount == 0 && stats.todayAmountML == 0 {
+            if stats.todayDrinkCount == 0 && today.doses.isEmpty {
                 ContentUnavailableView {
-                    Label("No drinks yet", systemImage: "drop")
+                    Label("Nothing logged yet", systemImage: "chart.bar")
                 } description: {
-                    Text("Start logging drinks to see your hydration trends.")
+                    Text("Log a drink or mark a dose to see today here.")
                 }
             } else {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("\(Format.liters(stats.todayAmountML)) / \(Format.liters(stats.todayGoalML)) L")
-                        .font(.title2.weight(.semibold).monospacedDigit())
-                    Text("\(stats.todayPercent)%")
-                        .font(.headline.monospacedDigit())
-                        .foregroundStyle(.secondary)
-                    LabeledContent("Drinks", value: "\(stats.todayDrinkCount)")
-                    LabeledContent("Remaining", value: String(localized: "\(Format.ml(stats.remainingML)) ml"))
+                VStack(alignment: .leading, spacing: 12) {
+                    metricBlock(
+                        title: "Water",
+                        value: String(localized: "\(Format.liters(today.hydration.value)) / \(Format.liters(today.hydration.goal)) L"),
+                        percent: today.hydration.percent,
+                        progress: today.hydration.fraction,
+                        tint: model.appearancePreset.waterEnd,
+                        extra: String(localized: "\(stats.todayDrinkCount) drinks · \(Format.ml(stats.remainingML)) ml left")
+                    )
+                    metricBlock(
+                        title: "Medications",
+                        value: today.doses.isEmpty
+                            ? String(localized: "No doses today")
+                            : String(localized: "\(today.dosesTaken) / \(today.doses.count) taken"),
+                        percent: today.doses.isEmpty ? nil : today.medicationProgress.percent,
+                        progress: today.doses.isEmpty ? 0 : today.medicationProgress.fraction,
+                        tint: model.appearancePreset.medsEnd,
+                        extra: today.nextDose.map {
+                            String(localized: "Next \(Format.time($0.occurrence.scheduledAt)) \($0.occurrence.medicationName)")
+                        }
+                    )
                 }
                 .accessibilityElement(children: .combine)
-                .accessibilityLabel("Today \(Format.liters(stats.todayAmountML)) of \(Format.liters(stats.todayGoalML)) liters, \(stats.todayPercent) percent, \(stats.todayDrinkCount) drinks, \(Format.ml(stats.remainingML)) milliliters remaining")
             }
         }
     }
 
-    private var weekSection: some View {
-        Section("This Week") {
+    private func metricBlock(title: String, value: String, percent: Int?, progress: Double, tint: Color, extra: String?) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(title).font(.headline).foregroundStyle(tint)
+                Spacer()
+                if let percent {
+                    Text("\(percent)%").font(.subheadline.monospacedDigit()).foregroundStyle(.secondary)
+                }
+            }
+            Text(value).font(.title3.weight(.semibold).monospacedDigit())
+            ProgressView(value: progress).tint(tint)
+            if let extra {
+                Text(extra).font(.caption).foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var weekWaterSection: some View {
+        Section("Water this week") {
             if stats.totalDrinks == 0 {
-                Text("No activity this week yet.")
+                Text("No drinks this week yet.")
                     .foregroundStyle(.secondary)
             } else {
                 LabeledContent("Average", value: String(localized: "\(Format.liters(stats.averageDailyML)) L / day"))
-                if let top = stats.mostCommonBeverage {
-                    LabeledContent("Most common", value: top.title)
-                }
                 Chart(stats.days) { point in
                     BarMark(
                         x: .value("Day", point.day, unit: .day),
                         y: .value("ml", point.amountML)
                     )
-                    .foregroundStyle(point.goalMet ? Color.green : Color.blue)
+                    .foregroundStyle(model.appearancePreset.waterEnd.opacity(point.goalMet ? 1 : 0.45))
                 }
-                .frame(height: 160)
+                .frame(height: 140)
                 .accessibilityLabel("Seven day hydration chart")
-                ForEach(stats.days) { point in
-                    HStack {
-                        Text(point.day.formatted(.dateTime.weekday(.abbreviated)))
-                        Spacer()
-                        Text("\(Format.liters(point.amountML)) L · \(point.drinkCount)")
-                            .monospacedDigit()
-                            .foregroundStyle(.secondary)
-                        Image(systemName: point.goalMet ? "checkmark.circle.fill" : "circle")
-                            .foregroundStyle(point.goalMet ? .green : .secondary)
-                            .accessibilityLabel(point.goalMet ? "Goal met" : "Goal not met")
-                    }
-                    .font(.subheadline)
+            }
+        }
+    }
+
+    private var weekMedsSection: some View {
+        Section("Medications this week") {
+            if dosesScheduled == 0 {
+                Text("No doses scheduled this week.")
+                    .foregroundStyle(.secondary)
+            } else {
+                LabeledContent("Taken") {
+                    Text("\(dosesTaken) / \(dosesScheduled)")
+                        .monospacedDigit()
                 }
+                Chart(week, id: \.day) { day in
+                    BarMark(
+                        x: .value("Day", day.day, unit: .day),
+                        y: .value("Taken", day.dosesTaken)
+                    )
+                    .foregroundStyle(model.appearancePreset.medsEnd)
+                }
+                .frame(height: 140)
+                .accessibilityLabel("Seven day medications chart")
             }
         }
     }

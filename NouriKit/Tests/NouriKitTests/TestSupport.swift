@@ -58,3 +58,12 @@ final class LoopbackTransport: SyncTransport {
         queued.forEach { peer?.onReceive?($0) }
     }
 }
+
+/// Records exports; "connected" once authorization was requested.
+final class FakeHealth: HealthService, @unchecked Sendable {
+    private(set) var exported: [SyncRecord] = []
+    private(set) var isConnected = false
+    func requestAuthorization(includeEnergy: Bool) async { isConnected = true }
+    func export(_ record: SyncRecord, includeEnergy: Bool) async { exported.append(record) }
+    func importedTotals(in interval: DateInterval) async -> ImportedTotals? { nil }
+}

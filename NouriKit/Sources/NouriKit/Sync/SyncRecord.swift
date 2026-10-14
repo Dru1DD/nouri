@@ -86,6 +86,31 @@ public struct SettingsSnapshot: Codable, Hashable, Sendable {
     public var goalsUpdatedAt: Date
     public var medications: [MedicationRecord]
     public var presets: [PresetRecord]
+    public var caloriesEnabled: Bool
+    public var appearancePresetRaw: String
+
+    public init(hydrationGoalML: Double, calorieGoal: Double, goalsUpdatedAt: Date,
+                medications: [MedicationRecord], presets: [PresetRecord],
+                caloriesEnabled: Bool = false, appearancePresetRaw: String = AppearancePreset.default.rawValue) {
+        self.hydrationGoalML = hydrationGoalML
+        self.calorieGoal = calorieGoal
+        self.goalsUpdatedAt = goalsUpdatedAt
+        self.medications = medications
+        self.presets = presets
+        self.caloriesEnabled = caloriesEnabled
+        self.appearancePresetRaw = appearancePresetRaw
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        hydrationGoalML = try c.decode(Double.self, forKey: .hydrationGoalML)
+        calorieGoal = try c.decode(Double.self, forKey: .calorieGoal)
+        goalsUpdatedAt = try c.decode(Date.self, forKey: .goalsUpdatedAt)
+        medications = try c.decode([MedicationRecord].self, forKey: .medications)
+        presets = try c.decode([PresetRecord].self, forKey: .presets)
+        caloriesEnabled = try c.decodeIfPresent(Bool.self, forKey: .caloriesEnabled) ?? false
+        appearancePresetRaw = try c.decodeIfPresent(String.self, forKey: .appearancePresetRaw) ?? AppearancePreset.default.rawValue
+    }
 }
 
 public enum SyncMessage: Codable, Hashable, Sendable {

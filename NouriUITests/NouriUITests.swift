@@ -14,6 +14,12 @@ final class NouriUITests: XCTestCase {
         app.launch()
     }
 
+    private func relaunch(arguments extra: [String] = []) {
+        app.terminate()
+        app.launchArguments = ["-ui-testing", "-AppleLocale", "en_US", "-AppleLanguages", "(en)"] + extra
+        app.launch()
+    }
+
     private func value(of id: String) -> String {
         app.descendants(matching: .any)[id].value as? String ?? ""
     }
@@ -34,11 +40,13 @@ final class NouriUITests: XCTestCase {
     }
 
     func testAddCaloriesUpdatesDashboard() {
+        relaunch(arguments: ["-calories-enabled"])
         app.buttons["add-kcal-500"].tap()
         waitForValue("calories-total", containing: "500 / 2,000 kcal")
     }
 
     func testCustomCalories() {
+        relaunch(arguments: ["-calories-enabled"])
         app.buttons["add-kcal-custom"].tap()
         let field = app.textFields["food-calories"]
         XCTAssertTrue(field.waitForExistence(timeout: 3))
@@ -112,6 +120,7 @@ final class NouriUITests: XCTestCase {
     }
 
     func testEditFoodEntry() {
+        relaunch(arguments: ["-calories-enabled"])
         app.buttons["add-kcal-500"].tap()
         waitForValue("calories-total", containing: "500 / 2,000 kcal")
         app.buttons.containing(NSPredicate(format: "label CONTAINS 'Quick add'")).firstMatch.tap()
@@ -128,6 +137,20 @@ final class NouriUITests: XCTestCase {
         field.typeText("420")
         app.buttons["food-save"].tap()
         waitForValue("calories-total", containing: "420 / 2,000 kcal")
+    }
+
+    func testOnboardingSkipReachesDashboard() {
+        relaunch(arguments: ["-show-onboarding"])
+        XCTAssertTrue(app.buttons["onboarding-skip"].waitForExistence(timeout: 3))
+        app.buttons["onboarding-skip"].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["hydration-total"].waitForExistence(timeout: 5))
+    }
+
+    func testOnboardingContinueToEnd() {
+        relaunch(arguments: ["-show-onboarding"])
+        XCTAssertTrue(app.buttons["onboarding-continue"].waitForExistence(timeout: 3))
+        for _ in 0..<6 { app.buttons["onboarding-continue"].tap() }
+        XCTAssertTrue(app.descendants(matching: .any)["hydration-total"].waitForExistence(timeout: 5))
     }
 
     func testOpenActivityDashboard() {

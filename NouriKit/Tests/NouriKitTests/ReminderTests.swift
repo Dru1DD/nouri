@@ -79,16 +79,71 @@ import Testing
 @Suite struct HydrationReminderPlannerTests {
     let cal = calendar()
 
-    @Test func emptyWhenDisabledOrGoalMet() {
+    @Test func emptyWhenDisabled() {
         let now = date(2026, 9, 16, 10)
         #expect(HydrationReminderPlanner.plan(
             enabled: false, intervalMinutes: 120, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
             todayHydrationML: 0, goalML: 2500, now: now, calendar: cal, maxCount: 10
         ).isEmpty)
-        #expect(HydrationReminderPlanner.plan(
+    }
+
+    @Test func goalMetTodayStillPlansTomorrow() {
+        let now = date(2026, 9, 16, 10)
+        let plan = HydrationReminderPlanner.plan(
             enabled: true, intervalMinutes: 120, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
             todayHydrationML: 2500, goalML: 2500, now: now, calendar: cal, maxCount: 10
-        ).isEmpty)
+        )
+        #expect(!plan.isEmpty)
+        #expect(plan.allSatisfy { cal.isDate($0.fireDate, inSameDayAs: date(2026, 9, 17)) })
+        #expect(plan[0].fireDate == date(2026, 9, 17, 8))
+    }
+
+    @Test func firstReminderIsIntervalAfterLastDrink() {
+        let now = date(2026, 9, 16, 10, 45)
+        let plan = HydrationReminderPlanner.plan(
+            enabled: true, intervalMinutes: 120, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
+            todayHydrationML: 250, goalML: 2500, now: now, calendar: cal, maxCount: 10,
+            lastDrinkAt: date(2026, 9, 16, 10, 40)
+        )
+        #expect(plan[0].fireDate == date(2026, 9, 16, 12, 40))
+    }
+
+    @Test func daytimeQuietKeepsMorningAndNightStaysQuiet() {
+        let now = date(2026, 9, 16, 7)
+        let plan = HydrationReminderPlanner.plan(
+            enabled: true, intervalMinutes: 60, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
+            daytimeQuiet: 12 * 60..<14 * 60,
+            todayHydrationML: 0, goalML: 2500, now: now, calendar: cal, maxCount: 40
+        )
+        let hours = plan.map { cal.component(.hour, from: $0.fireDate) }
+        #expect(plan[0].fireDate == date(2026, 9, 16, 8))
+        #expect(hours.contains(11) && hours.contains(14))
+        #expect(hours.allSatisfy { (8..<12).contains($0) || (14..<22).contains($0) })
+        // Tomorrow too: nothing at night.
+        let tomorrow = plan.filter { cal.isDate($0.fireDate, inSameDayAs: date(2026, 9, 17)) }
+        #expect(tomorrow.first?.fireDate == date(2026, 9, 17, 8))
+    }
+
+    @Test func slotInDaytimeQuietMovesToItsEnd() {
+        let now = date(2026, 9, 16, 11, 45)
+        let plan = HydrationReminderPlanner.plan(
+            enabled: true, intervalMinutes: 120, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
+            daytimeQuiet: 12 * 60..<14 * 60,
+            todayHydrationML: 250, goalML: 2500, now: now, calendar: cal, maxCount: 10,
+            lastDrinkAt: date(2026, 9, 16, 11, 30)
+        )
+        #expect(plan.prefix(2).map(\.fireDate) == [date(2026, 9, 16, 14), date(2026, 9, 16, 16)])
+    }
+
+    @Test func reschedulingWithoutDrinkDoesNotDrift() {
+        func first(at now: Date) -> Date? {
+            HydrationReminderPlanner.plan(
+                enabled: true, intervalMinutes: 120, quietStartMinutes: 22 * 60, quietEndMinutes: 8 * 60,
+                todayHydrationML: 0, goalML: 2500, now: now, calendar: cal, maxCount: 10
+            ).first?.fireDate
+        }
+        #expect(first(at: date(2026, 9, 16, 9, 30)) == date(2026, 9, 16, 10))
+        #expect(first(at: date(2026, 9, 16, 9, 55)) == date(2026, 9, 16, 10))
     }
 
     @Test func schedulesIntervalSlotsInsideAwakeWindow() {

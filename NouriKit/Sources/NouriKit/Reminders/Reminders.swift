@@ -91,87 +91,86 @@ public enum ReminderPlanner {
     }
 }
 
-/// Interval + quiet-hours hydration reminders for the remainder of today (and tomorrow's
-/// awake window if budget remains). Skips when the daily goal is already met.
+/// Interval + quiet-hours hydration reminders for the remainder of today and tomorrow.
+/// Today is skipped once the goal is met; tomorrow is still planned.
 public enum HydrationReminderPlanner {
     public static let prefix = "hydrate."
 
+    /// - `quietStart/EndMinutes`: night quiet, may wrap past midnight (22:00–08:00).
+    /// - `daytimeQuiet`: optional same-day break in minutes from midnight (e.g. 12:00..<14:00).
+    /// - The grid runs from the first awake minute of the day, or from `lastDrinkAt + interval`
+    ///   when there was a drink today. It never depends on `now`, so rescheduling is idempotent.
     public static func plan(
         enabled: Bool,
         intervalMinutes: Int,
         quietStartMinutes: Int,
         quietEndMinutes: Int,
+        daytimeQuiet: Range<Int>? = nil,
         todayHydrationML: Double,
         goalML: Double,
         now: Date,
         calendar: Calendar,
         maxCount: Int,
-        horizonDays: Int = 2
+        horizonDays: Int = 2,
+        lastDrinkAt: Date? = nil
     ) -> [PlannedReminder] {
-        guard enabled, maxCount > 0, intervalMinutes > 0, todayHydrationML < goalML else { return [] }
+        guard enabled, maxCount > 0, intervalMinutes > 0 else { return [] }
 
+        var quiet = [(quietStartMinutes, quietEndMinutes)]
+        if let daytimeQuiet { quiet.append((daytimeQuiet.lowerBound, daytimeQuiet.upperBound)) }
         let dayStart = calendar.startOfDay(for: now)
+        let step = TimeInterval(intervalMinutes * 60)
         var result: [PlannedReminder] = []
         for offset in 0..<horizonDays {
             guard let day = calendar.date(byAdding: .day, value: offset, to: dayStart) else { continue }
-            for fire in slots(on: day, intervalMinutes: intervalMinutes,
-                              quietStartMinutes: quietStartMinutes, quietEndMinutes: quietEndMinutes,
-                              calendar: calendar) where fire > now {
-                guard result.count < maxCount else { return result }
-                result.append(reminder(at: fire, calendar: calendar))
+            let isToday = offset == 0
+            if isToday, todayHydrationML >= goalML { continue }
+
+            let windows = awakeWindows(on: day, quiet: quiet, calendar: calendar)
+            guard var cursor = windows.first?.start else { continue }
+            if isToday, let last = lastDrinkAt, calendar.isDate(last, inSameDayAs: now) {
+                cursor = max(last.addingTimeInterval(step), cursor)
+            }
+            // A slot that lands in quiet time moves to the end of it, and the grid continues from there.
+            while let window = windows.first(where: { cursor < $0.end }) {
+                cursor = max(cursor, window.start)
+                if cursor > now {
+                    guard result.count < maxCount else { return result }
+                    result.append(reminder(at: cursor, calendar: calendar))
+                }
+                cursor = cursor.addingTimeInterval(step)
             }
         }
         return result
     }
 
-    /// Fire times inside the awake window for `day`, aligned to the interval from awake start.
-    public static func slots(
-        on day: Date,
-        intervalMinutes: Int,
-        quietStartMinutes: Int,
-        quietEndMinutes: Int,
-        calendar: Calendar
-    ) -> [Date] {
-        guard let awake = awakeWindow(on: day, quietStartMinutes: quietStartMinutes,
-                                      quietEndMinutes: quietEndMinutes, calendar: calendar) else { return [] }
-        var times: [Date] = []
-        var cursor = awake.start
-        let step = TimeInterval(intervalMinutes * 60)
-        while cursor < awake.end {
-            times.append(cursor)
-            cursor = cursor.addingTimeInterval(step)
+    /// The parts of `day` outside every quiet range. Ranges are minutes from midnight; one whose
+    /// start is after its end wraps past midnight; equal start and end means no quiet time.
+    public static func awakeWindows(on day: Date, quiet: [(start: Int, end: Int)], calendar: Calendar) -> [DateInterval] {
+        let dayMinutes = 24 * 60
+        var blocked: [(Int, Int)] = []
+        for (start, end) in quiet where start != end {
+            if start < end {
+                blocked.append((start, end))
+            } else {
+                blocked.append((start, dayMinutes))
+                blocked.append((0, end))
+            }
         }
-        return times
-    }
+        var awake: [(Int, Int)] = []
+        var free = 0
+        for (start, end) in blocked.sorted(by: { $0.0 < $1.0 }) {
+            if start > free { awake.append((free, start)) }
+            free = max(free, end)
+        }
+        if free < dayMinutes { awake.append((free, dayMinutes)) }
 
-    /// Awake window on a calendar day given overnight or same-day quiet hours.
-    public static func awakeWindow(
-        on day: Date,
-        quietStartMinutes: Int,
-        quietEndMinutes: Int,
-        calendar: Calendar
-    ) -> DateInterval? {
         let startOfDay = calendar.startOfDay(for: day)
-        func at(_ minutes: Int) -> Date? {
-            calendar.date(byAdding: .minute, value: minutes, to: startOfDay)
+        return awake.compactMap { start, end in
+            guard let from = calendar.date(byAdding: .minute, value: start, to: startOfDay),
+                  let to = calendar.date(byAdding: .minute, value: end, to: startOfDay) else { return nil }
+            return DateInterval(start: from, end: to)
         }
-        if quietStartMinutes == quietEndMinutes {
-            // No quiet hours — whole day.
-            guard let end = calendar.date(byAdding: .day, value: 1, to: startOfDay) else { return nil }
-            return DateInterval(start: startOfDay, end: end)
-        }
-        if quietStartMinutes > quietEndMinutes {
-            // Overnight quiet (e.g. 22:00–08:00) → awake quietEnd…quietStart.
-            guard let start = at(quietEndMinutes), let end = at(quietStartMinutes), start < end else { return nil }
-            return DateInterval(start: start, end: end)
-        }
-        // Same-day quiet (e.g. 12:00–14:00) → two awake segments; use morning + afternoon as one
-        // continuous preference by taking start-of-day…quietStart and quietEnd…end-of-day is
-        // awkward for interval slots. Prefer the longer evening-adjacent window after quiet ends.
-        guard let start = at(quietEndMinutes),
-              let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay),
-              start < endOfDay else { return nil }
-        return DateInterval(start: start, end: endOfDay)
     }
 
     public static func isInQuietHours(

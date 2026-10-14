@@ -13,12 +13,12 @@ public struct ImportedTotals: Hashable, Sendable {
 }
 
 public protocol HealthService: Sendable {
-    func requestAuthorization() async
+    func requestAuthorization(includeEnergy: Bool) async
     /// True once the user allowed Nouri to write at least one type. Read access is never
     /// reported by HealthKit, so write access is the only observable signal.
     var isConnected: Bool { get }
     /// Mirrors an app entry into Health. Idempotent (sync identifiers).
-    func export(_ record: SyncRecord) async
+    func export(_ record: SyncRecord, includeEnergy: Bool) async
     func importedTotals(in interval: DateInterval) async -> ImportedTotals?
 }
 
@@ -34,25 +34,30 @@ public final class HealthKitService: HealthService {
         guard HKHealthStore.isHealthDataAvailable() else { return nil }
     }
 
-    public func requestAuthorization() async {
-        let types: Set = [water, energy]
+    public func requestAuthorization(includeEnergy: Bool) async {
+        var types: Set<HKSampleType> = [water]
+        if includeEnergy { types.insert(energy) }
         try? await store.requestAuthorization(toShare: types, read: types)
     }
 
     public var isConnected: Bool {
-        [water, energy].contains { store.authorizationStatus(for: $0) == .sharingAuthorized }
+        store.authorizationStatus(for: water) == .sharingAuthorized
+            || store.authorizationStatus(for: energy) == .sharingAuthorized
     }
 
-    public func export(_ record: SyncRecord) async {
+    public func export(_ record: SyncRecord, includeEnergy: Bool) async {
         switch record {
         case .fluid(let r):
-            let kcal = r.calories > 0 && r.deletedAt == nil ? r.calories : 0
+            let kcal = includeEnergy && r.calories > 0 && r.deletedAt == nil ? r.calories : 0
             await write(type: water, unit: .literUnit(with: .milli), value: r.amountML, date: r.timestamp,
                         syncID: "fluid-\(r.id)", version: r.updatedAt,
                         deleted: r.deletedAt != nil || !r.beverage.countsTowardHydration)
-            await write(type: energy, unit: .kilocalorie(), value: kcal, date: r.timestamp,
-                        syncID: "fluid-kcal-\(r.id)", version: r.updatedAt, deleted: kcal == 0)
+            if includeEnergy {
+                await write(type: energy, unit: .kilocalorie(), value: kcal, date: r.timestamp,
+                            syncID: "fluid-kcal-\(r.id)", version: r.updatedAt, deleted: kcal == 0)
+            }
         case .food(let r):
+            guard includeEnergy else { return }
             await write(type: energy, unit: .kilocalorie(), value: r.calories, date: r.timestamp,
                         syncID: "food-\(r.id)", version: r.updatedAt, deleted: r.deletedAt != nil)
         case .dose:

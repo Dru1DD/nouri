@@ -4,3 +4,7 @@ DerivedData/
 .build/
 .swiftpm/
 *.xcresult
+
+obsidian/
+docs/research
+docs/gemini_research

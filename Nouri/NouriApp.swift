@@ -14,12 +14,14 @@ struct NouriApp: App {
         WindowGroup {
             DashboardView()
                 .environment(delegate.model)
+                .themedRoot(delegate.model.appearancePreset)
                 .fullScreenCover(isPresented: Binding(
-                    get: { !delegate.model.hasCompletedOnboarding && !AppDelegate.isUITesting },
+                    get: { !delegate.model.hasCompletedOnboarding && (!AppDelegate.isUITesting || AppDelegate.showOnboarding) },
                     set: { _ in }
                 )) {
                     OnboardingView()
                         .environment(delegate.model)
+                        .themedRoot(delegate.model.appearancePreset)
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .NSSystemTimeZoneDidChange)) { _ in timeChanged() }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in timeChanged() }
@@ -43,7 +45,7 @@ struct NouriApp: App {
     }
 }
 
-/// Pulls in the intents defined in NouriKit (the widget's "+250 ml" button).
+/// Pulls in the intents defined in NouriKit (Shortcuts / Siri "Add Water").
 struct NouriAppIntents: AppIntentsPackage {
     static var includedPackages: [any AppIntentsPackage.Type] { [NouriKitIntents.self] }
 }
@@ -51,6 +53,8 @@ struct NouriAppIntents: AppIntentsPackage {
 final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     static let refreshTaskID = "com.dru1dd.nouri.reminders"
     static let isUITesting = ProcessInfo.processInfo.arguments.contains("-ui-testing")
+    static let showOnboarding = ProcessInfo.processInfo.arguments.contains("-show-onboarding")
+    static let caloriesEnabledForUI = ProcessInfo.processInfo.arguments.contains("-calories-enabled")
 
     let model: AppModel
 
@@ -83,7 +87,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         let dosePayload = DoseNotification.payload(from: info)
         Task { @MainActor in
             if let hydrateML {
-                model.addFluid(hydrateML)
+                model.addFluid(hydrateML, surface: .notification)
             } else if let dosePayload {
                 await model.handleNotificationAction(action, payload: dosePayload)
             }
@@ -112,8 +116,10 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
             fatalError("Unable to open the Nouri database: \(error)")
         }
         if isUITesting {
-            return AppModel(store: NouriStore(container: container),
+            let model = AppModel(store: NouriStore(container: container),
                             reminders: ReminderScheduler(client: InMemoryNotificationClient()))
+            if caloriesEnabledForUI { model.setCaloriesEnabled(true) }
+            return model
         }
         let transport = WatchConnectivityTransport()
         let model = AppModel(

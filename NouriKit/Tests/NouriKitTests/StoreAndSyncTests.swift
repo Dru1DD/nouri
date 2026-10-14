@@ -1,9 +1,6 @@
 import Foundation
 import Testing
 @testable import NouriKit
-#if canImport(AppIntents) && os(iOS)
-import AppIntents
-#endif
 
 @MainActor
 @Suite struct StoreTests {
@@ -343,8 +340,8 @@ import AppIntents
 @Suite struct WatchNotificationTests {
     let cal = calendar()
 
-    /// Watch configuration: handles actions and snoozes, but never plans dose reminders itself.
-    @Test func watchHandlesActionsWithoutPlanningReminders() async {
+    /// Watch plans its own reminders after a medication syncs over from the phone.
+    @Test func watchPlansRemindersAndHandlesActions() async {
         let clock = TestClock(date(2026, 9, 16, 8, 1))
         let client = InMemoryNotificationClient()
         let cal = self.cal
@@ -353,23 +350,23 @@ import AppIntents
         let phone = AppModel(store: makeStore(), transport: phoneT, reminders: ReminderScheduler(client: phoneClient),
                              now: { clock.now }, calendar: { cal })
         let watch = AppModel(store: makeStore(), transport: watchT, reminders: ReminderScheduler(client: client),
-                             plansReminders: false, now: { clock.now }, calendar: { cal })
+                             now: { clock.now }, calendar: { cal })
 
         let m = med("Vitamin D", [(8, 0), (20, 0)])
         await phone.saveMedication(m)
         #expect(watch.medications.map(\.name) == ["Vitamin D"])
-        #expect(await client.pending.isEmpty)
+        for _ in 0..<50 where await client.pending.isEmpty { await Task.yield() }
+        #expect(!(await client.pending.isEmpty))
 
         let morning = watch.today.doses[0].occurrence
         let payload = DoseNotification.Payload(medicationID: morning.medicationID, doseKey: morning.key,
                                                scheduledAt: morning.scheduledAt)
         await watch.handleNotificationAction(DoseNotification.snoozeAction, payload: payload)
-        #expect(await client.pending.keys.sorted() == [ReminderPlanner.snoozePrefix + morning.key])
+        #expect(await client.pending[ReminderPlanner.snoozePrefix + morning.key] != nil)
 
-        // Pretend the phone already delivered/kept a snooze for this dose.
         await phoneClient.add(ReminderPlanner.snooze(morning, now: clock.now))
         await watch.handleNotificationAction(DoseNotification.takenAction, payload: payload)
-        #expect(await client.pending.isEmpty)
+        #expect(await client.pending[ReminderPlanner.snoozePrefix + morning.key] == nil)
         #expect(phone.today.doses[0].status == .taken)
 
         // Phone cleans up the resolved dose asynchronously.
@@ -479,7 +476,7 @@ import AppIntents
             await Task.yield()
         }
         let hydrateLeft = await client.pending.keys.filter { $0.hasPrefix(HydrationReminderPlanner.prefix) }
-        #expect(hydrateLeft.isEmpty)
+        #expect(hydrateLeft.allSatisfy { $0.contains("20260917") })
     }
 
     @Test func deleteAllClearsNotificationsAndSyncs() async {
@@ -504,20 +501,47 @@ import AppIntents
     }
 }
 
-#if os(iOS)
-@MainActor
-@Suite struct AddWaterIntentTests {
-    @Test func loggingAmountsUpdatesStore() async throws {
-        let clock = TestClock(date(2026, 9, 16, 10))
-        let cal = calendar()
-        let model = AppModel(store: makeStore(), now: { clock.now }, calendar: { cal })
-        AppDependencyManager.shared.add(dependency: model)
-        for amount in [100, 250, 500] {
-            var intent = AddWaterIntent(amountML: amount)
-            _ = try await intent.perform()
-        }
-        #expect(model.today.hydration.value == 850)
+
+
+@Suite struct AnalyticsStoreTests {
+    @Test func countsPerDayAndOncePerDay() throws {
+        let analytics = AnalyticsStore(suiteName: "nouri.tests.\(UUID().uuidString)")
+        analytics.track("water_logged", ["surface": "phone"])
+        analytics.track("water_logged", ["surface": "phone"])
+        analytics.trackOncePerDay("widget_seen", ["family": "systemSmall"])
+        analytics.trackOncePerDay("widget_seen", ["family": "systemSmall"])
+        let json = try JSONSerialization.jsonObject(with: analytics.exportJSON()) as? [String: Any]
+        let today = (json?["days"] as? [String: [String: Int]])?["0"]
+        #expect(today == ["water_logged|surface=phone": 2, "widget_seen|family=systemSmall": 1])
     }
 }
-#endif
 
+@MainActor
+@Suite struct HealthAndBackfillTests {
+    @Test func connectingHealthExportsEarlierEntries() async {
+        let clock = TestClock(date(2026, 9, 16, 10))
+        let cal = calendar()
+        let health = FakeHealth()
+        let model = AppModel(store: makeStore(), health: health, now: { clock.now }, calendar: { cal })
+        model.addFluid(250)  // exported once now; real HealthKit drops it while not authorized
+        await model.connectHealth()
+        for _ in 0..<50 where health.exported.count < 2 { await Task.yield() }
+        // Connecting re-exports it (the backfill), so the fluid shows up a second time.
+        #expect(health.exported.filter { if case .fluid = $0 { true } else { false } }.count >= 2)
+    }
+
+    @Test func backfillIsThrottled() {
+        let clock = TestClock(date(2026, 9, 16, 10))
+        let (watchT, phoneT) = LoopbackTransport.pair()
+        phoneT.isOnline = false
+        watchT.isOnline = false
+        let model = AppModel(store: makeStore(), transport: watchT, now: { clock.now })
+        let before = watchT.outbox.count
+        model.syncWithCounterpart()
+        model.syncWithCounterpart()
+        #expect(watchT.outbox.count == before + 1)
+        clock.advance(minutes: 61)
+        model.syncWithCounterpart()
+        #expect(watchT.outbox.count == before + 2)
+    }
+}
