@@ -2,6 +2,7 @@ import NouriKit
 import SwiftData
 import SwiftUI
 import UserNotifications
+import WatchConnectivity
 import WatchKit
 
 @main
@@ -13,6 +14,7 @@ struct NouriWatchApp: App {
         WindowGroup {
             WatchRootView()
                 .environment(delegate.model)
+                .tint(delegate.model.appearancePreset.accent)
                 .onReceive(NotificationCenter.default.publisher(for: .NSSystemTimeZoneDidChange)) { _ in
                     delegate.model.refresh()
                 }
@@ -21,17 +23,21 @@ struct NouriWatchApp: App {
             guard phase == .active else { return }
             delegate.model.refresh()
             delegate.model.syncWithCounterpart()
-            // Snoozing from the Watch schedules a local notification, which needs permission here.
-            if delegate.model.notificationsAllowed == nil, !delegate.model.medications.isEmpty {
-                Task { await delegate.model.requestNotificationPermission() }
+            Task { await delegate.model.rescheduleReminders() }
+        }
+        // A complication transfer from the iPhone wakes the app in the background; stay alive
+        // until WatchConnectivity has handed over the data, so the store and complications update.
+        .backgroundTask(.watchConnectivity) {
+            while WCSession.default.hasContentPending {
+                try? await Task.sleep(for: .milliseconds(200))
             }
         }
     }
 }
 
-/// The Watch keeps its own store and exchanges events with the iPhone. It doesn't plan dose
-/// reminders: iPhone reminders are mirrored to the Watch by the system. Actions tapped on the
-/// Watch may be delivered here, so they are handled the same way as on the iPhone.
+/// The Watch keeps its own store and plans the same local reminders as iPhone. iPhone mirroring
+/// of phone-scheduled alerts is unreliable for an independent Watch app, so the Watch schedules
+/// its own. Taken/Skip/Snooze on either device still sync through WatchConnectivity.
 final class WatchAppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDelegate {
     let model: AppModel
 
@@ -44,7 +50,7 @@ final class WatchAppDelegate: NSObject, WKApplicationDelegate, UNUserNotificatio
         }
         let transport = WatchConnectivityTransport()
         model = AppModel(store: NouriStore(container: container), transport: transport,
-                         reminders: ReminderScheduler(client: SystemNotificationClient()), plansReminders: false)
+                         reminders: ReminderScheduler(client: SystemNotificationClient()))
         transport.activate()
         super.init()
     }
@@ -52,6 +58,10 @@ final class WatchAppDelegate: NSObject, WKApplicationDelegate, UNUserNotificatio
     func applicationDidFinishLaunching() {
         UNUserNotificationCenter.current().delegate = self
         DoseNotification.registerCategories()
+        Task { @MainActor in
+            await model.requestNotificationPermission()
+            await model.rescheduleReminders()
+        }
     }
 
     // Completion-handler variants: the handler must be called on the main thread.

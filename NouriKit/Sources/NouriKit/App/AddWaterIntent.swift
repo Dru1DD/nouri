@@ -30,7 +30,7 @@ public struct AddWaterIntent: LiveActivityIntent {
     @MainActor
     public func perform() async throws -> some IntentResult {
         let ml = amountML > 0 ? amountML : 250
-        model.addFluid(Double(ml))
+        model.addFluid(Double(ml), surface: .shortcut)
         return .result()
     }
 }

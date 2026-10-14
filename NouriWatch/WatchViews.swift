@@ -16,7 +16,9 @@ struct WatchRootView: View {
         NavigationStack {
             TabView(selection: $page) {
                 WaterPage().tag(Page.water)
-                CaloriesPage().tag(Page.calories)
+                if model.caloriesEnabled {
+                    CaloriesPage().tag(Page.calories)
+                }
                 if !model.medications.isEmpty {
                     MedicationsPage().tag(Page.medications)
                 }
@@ -33,27 +35,98 @@ private struct WaterPage: View {
 
     var body: some View {
         let progress = model.today.hydration
-        MetricPage(tint: .blue) {
-            BigRing(progress: progress, tint: .blue, symbol: "drop.fill",
-                    value: Format.liters(progress.value), unit: String(localized: "L"),
-                    caption: String(localized: "of \(Format.liters(progress.goal)) L · \(progress.percent)%"),
-                    a11yName: "Water")
+        let preset = model.appearancePreset
+        // Only a dose that is due now: a one-tap ✓ must never resolve a future dose.
+        let due = model.today.doses.first { $0.status == .due }
+        MetricPage(tint: preset.waterEnd) {
+            ZStack {
+                ZStack {
+                    DualProgressRings(water: progress, medications: progress, preset: preset,
+                                      showMedications: false, centerText: "", lineWidth: 12)
+                    VStack(spacing: -2) {
+                        Text(Format.liters(progress.value))
+                            .font(.system(.title2, design: .rounded, weight: .bold).monospacedDigit())
+                            .contentTransition(.numericText())
+                        Text("of \(Format.liters(progress.goal)) L")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .frame(maxWidth: 130, maxHeight: 130)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Water")
+                .accessibilityValue(String(localized: "\(Format.liters(progress.value)) of \(Format.liters(progress.goal)) liters, \(progress.percent) percent"))
+
+                VStack {
+                    HStack {
+                        NavigationLink {
+                            DrinkView()
+                        } label: {
+                            Image(systemName: "cup.and.saucer.fill")
+                                .frame(width: 44, height: 44)
+                        }
+                        .buttonStyle(.plain)
+                        .background(.ultraThinMaterial, in: Circle())
+                        .accessibilityLabel("Choose drink")
+                        Spacer()
+                        CornerButton(title: "+250", label: "Add 250 milliliters of water") {
+                            model.addFluid(250)
+                        }
+                    }
+                    Spacer()
+                    HStack {
+                        CornerButton(title: "+100", label: "Add 100 milliliters of water") {
+                            model.addFluid(100)
+                        }
+                        Spacer()
+                        if let due {
+                            CornerButton(title: "✓", label: "Mark \(due.occurrence.medicationName) taken") {
+                                Task { await model.setDose(due.occurrence, status: .taken) }
+                            }
+                        } else {
+                            CornerButton(title: "+500", label: "Add 500 milliliters of water") {
+                                model.addFluid(500)
+                            }
+                        }
+                    }
+                }
+                .frame(maxWidth: 168, maxHeight: 168)
+            }
         } actions: {
             UndoRow(matches: { if case .fluid = $0 { true } else { false } })
-            ForEach([100.0, 250, 500], id: \.self) { ml in
-                AddButton(title: "+\(Int(ml))", unit: String(localized: "ml"), tint: .blue,
-                          a11yLabel: String(localized: "Add \(Int(ml)) milliliters of water")) {
-                    model.addFluid(ml)
-                }
+            CrownAmountLink(unit: String(localized: "ml"), tint: preset.waterEnd,
+                            start: 250, range: 10...2000, step: 10) {
+                model.addFluid($0)
             }
             ForEach(model.recentDrinks) { drink in
-                AddButton(title: drink.beverage.title, unit: String(localized: "\(Format.ml(drink.amountML)) ml"), tint: .blue,
+                AddButton(title: drink.beverage.title, unit: String(localized: "\(Format.ml(drink.amountML)) ml"),
+                          tint: preset.waterEnd,
                           a11yLabel: String(localized: "Add \(drink.beverage.title), \(Format.ml(drink.amountML)) milliliters")) {
                     model.addFluid(drink.amountML, beverage: drink.beverage, calories: drink.calories)
                 }
             }
-            DrinkLink()
         }
+    }
+}
+
+private struct CornerButton: View {
+    let title: String
+    let label: LocalizedStringKey
+    let action: () -> Void
+
+    var body: some View {
+        Button {
+            action()
+            WKInterfaceDevice.current().play(.success)
+        } label: {
+            Text(title)
+                .font(.system(.caption, design: .rounded, weight: .bold))
+                .minimumScaleFactor(0.6)
+                .frame(width: 44, height: 44)
+        }
+        .buttonStyle(.plain)
+        .background(.ultraThinMaterial, in: Circle())
+        .accessibilityLabel(label)
     }
 }
 
@@ -93,8 +166,8 @@ private struct MedicationsPage: View {
 
     var body: some View {
         let today = model.today
-        MetricPage(tint: .purple) {
-            BigRing(progress: today.medicationProgress, tint: .purple, symbol: "pills.fill",
+        MetricPage(tint: model.appearancePreset.medsEnd) {
+            BigRing(progress: today.medicationProgress, tint: model.appearancePreset.medsEnd, symbol: "pills.fill",
                     value: "\(today.dosesTaken)/\(today.doses.count)", unit: "",
                     caption: caption(today), a11yName: "Medications")
         } actions: {
@@ -216,18 +289,6 @@ private struct AddButton: View {
 }
 
 /// Opens the drink screen: pick what you drink (water by default), turn the crown for the amount, tap Add.
-private struct DrinkLink: View {
-    var body: some View {
-        NavigationLink {
-            DrinkView()
-        } label: {
-            Label("Choose drink", systemImage: "cup.and.saucer.fill")
-        }
-        .buttonStyle(.bordered)
-        .tint(.blue)
-    }
-}
-
 private struct DrinkView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
@@ -243,13 +304,13 @@ private struct DrinkView: View {
                 }
             }
             .pickerStyle(.navigationLink)
-            .tint(.blue)
+            .tint(model.appearancePreset.waterEnd)
             Spacer(minLength: 0)
             VStack(spacing: 0) {
                 Text("\(Int(amount).formatted()) ml")
                     .font(.system(size: 40, weight: .semibold, design: .rounded).monospacedDigit())
                     .contentTransition(.numericText())
-                Text(kcal > 0 ? String(localized: "≈ \(Format.kcal(kcal)) kcal") : " ")
+                Text(model.caloriesEnabled && kcal > 0 ? String(localized: "≈ \(Format.kcal(kcal)) kcal") : " ")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -269,7 +330,7 @@ private struct DrinkView: View {
                 WKInterfaceDevice.current().play(.success)
                 dismiss()
             }
-            .tint(.blue)
+            .tint(model.appearancePreset.waterEnd)
         }
         .focusable()
         .digitalCrownRotation($amount, from: 10, through: 2000, by: 10,
@@ -381,7 +442,7 @@ private struct DoseCard: View {
             HStack(alignment: .firstTextBaseline) {
                 Text(Format.time(dose.occurrence.scheduledAt))
                     .font(.caption.weight(.semibold).monospacedDigit())
-                    .foregroundStyle(.purple)
+                    .foregroundStyle(model.appearancePreset.medsEnd)
                 Spacer()
                 Label(dose.status.label, systemImage: dose.status.symbol)
                     .font(.caption2)

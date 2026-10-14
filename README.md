@@ -1,11 +1,11 @@
 # Nouri
 
-A small daily health tracker for iPhone and Apple Watch. Nouri tracks three things: fluids, calories and medication reminders. Logging an entry should take a couple of seconds.
+A small daily health tracker for iPhone and Apple Watch. Nouri tracks water and medication reminders (calorie code is kept but hidden in 1.0.3). Logging an entry should take a couple of seconds.
 
-- iPhone: Today dashboard with quick-add, custom entries, calorie presets, medications, hydration activity dashboard, 30-day history and settings (including hydration reminders, export and delete-all).
-- Apple Watch: one metric per screen (water, calories, medications), swiped horizontally. Quick-add (+100/+250/+500), Digital Crown custom amounts, and today's doses with Taken/Skip.
-- Widgets and complications: Hydration (with interactive +100/+250/+500 on the iPhone Home Screen small widget) and Medications status.
-- Medication reminders and optional hydration reminders are local notifications (Taken / Snooze / Skip for doses; +100 / +250 / +500 for hydration).
+- iPhone: Today dashboard with quick-add, medications, hydration activity dashboard, month calendar with day log and settings (hydration reminders with night quiet hours and a midday break, appearance, export, share beta stats, delete-all).
+- Apple Watch: Today rings with corner quick-add (+100/+250/+500), Digital Crown custom amounts, and today's doses with Taken/Skip.
+- Widgets and complications: Today (small, medium and large — water + medications together), plus separate Hydration and Medications. Logging is in the app, not on the widget.
+- Medication reminders and optional hydration reminders are local notifications (Taken / Snooze / Skip for doses; +100 / +250 / +500 for hydration). Hydration reminders start from your last drink.
 
 The app uses only Apple frameworks: SwiftUI, SwiftData, HealthKit, WidgetKit, WatchConnectivity, UserNotifications, BackgroundTasks, App Intents and Charts. It has no third-party dependencies.
 
@@ -25,6 +25,8 @@ xcodebuild test -project Nouri.xcodeproj -scheme Nouri -destination 'platform=iO
 
 The project is generated from `project.yml` with [XcodeGen](https://github.com/yonaskolb/XcodeGen). The generated `Nouri.xcodeproj` is committed, so you only need XcodeGen (`brew install xcodegen && xcodegen generate`) if you change targets or settings. XcodeGen is a development tool only and is not an app dependency.
 
+Git hooks (no Node/Husky): `brew install lefthook && lefthook install`, or `scripts/install-hooks.sh`. `commit-msg` checks Conventional Commits; `pre-commit` runs `swift test`; `pre-push` builds the iOS app. GitHub Actions is not used for 1.0.3.
+
 To run on a device, set your `DEVELOPMENT_TEAM` in `project.yml`. Then register the App Group `group.com.dru1dd.nouri` (or rename it in `project.yml` and `NouriStore.appGroup`) and enable HealthKit.
 
 ## Architecture
@@ -40,7 +42,10 @@ NouriKit/                     Swift package: everything shared by iPhone, Watch 
   Reminders/                  ReminderPlanner, HydrationReminderPlanner, ReminderScheduler
   Health/                     HealthService protocol + HealthKitService (iOS)
   App/AppModel.swift          @Observable façade used by both apps
-  App/AddWaterIntent.swift    LiveActivityIntent for widgets / Shortcuts
+  App/AddWaterIntent.swift    AppIntent for widgets / Shortcuts (store fallback if the app isn't running)
+  App/AnalyticsStore.swift    Local counters; Share Sheet from Settings
+  Domain/Appearance.swift     Palette presets for rings
+  UI/TodayRings.swift         Dual / single progress rings
 Nouri/                        iPhone app: App/AppDelegate wiring + SwiftUI views
 NouriWatch/                   Watch app: quick actions + medications
 Widgets/                      One widget source set, compiled into both widget extensions
@@ -67,11 +72,11 @@ Nouri keeps **SwiftData** as the local store, behind `NouriStore`:
 
 ## Hydration reminders
 
-Interval + quiet hours (defaults: every 2 hours, quiet 22:00–08:00). One-shot `hydrate.*` notifications share the pending budget with medication `dose.*` reminders (meds first). Reminders are skipped when today’s hydration already meets the goal. Enabling reminders requests notification permission. Actions log water through `AppModel.addFluid`.
+Interval + quiet hours (defaults: every 2 hours, quiet 22:00–08:00). The first reminder is `last drink + interval` (or `now + interval` if you haven’t drunk yet today). One-shot `hydrate.*` notifications share the pending budget with medication `dose.*` reminders (meds first). Today’s goal being met does not cancel tomorrow’s plan. Mid-day quiet hours leave morning and evening slots. Enabling reminders requests notification permission. Actions log water through `AppModel.addFluid`.
 
 ## Interactive widgets
 
-The Home Screen small hydration widget uses `AddWaterIntent` (`LiveActivityIntent`) so writes run in the **app process** through `AppModel` (Watch sync + HealthKit + timeline reload). Root causes of a “dead” Add button are usually missing App Group / signing on device, or the app never launching so `AppDependencyManager` never registers `AppModel` — not missing business logic in the extension.
+Home Screen hydration buttons use `AddWaterIntent` (`AppIntent`). If the app process is running, the write goes through `AppModel` (Watch sync + HealthKit + timeline reload). If not, the widget writes `NouriStore` in the App Group and reloads timelines; Watch sync and Health export happen the next time you open the iPhone app.
 
 ## Data model
 
@@ -82,7 +87,7 @@ The Home Screen small hydration widget uses `AddWaterIntent` (`LiveActivityInten
 | `Medication` | id, name, dosage, unit, notes, isActive, schedule JSON. |
 | `MedicationLog` | medicationID, doseKey, scheduledTime, takenAt, status. |
 | `CaloriePreset` | Named calorie shortcuts. |
-| `UserPreferences` | Goals, hydration reminder settings, onboarding flag. |
+| `UserPreferences` | Goals, hydration reminder settings, onboarding, `caloriesEnabled`, appearance preset. |
 
 Every synced entity has `updatedAt` and a soft-delete `deletedAt`.
 

@@ -1,9 +1,9 @@
+# Disabled for 1.0.3 — run tests locally (scripts/githooks or Lefthook).
+# Re-enable by restoring `push` / `pull_request` triggers.
 name: CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -17,16 +17,3 @@ jobs:
       - name: NouriKit tests
         working-directory: NouriKit
         run: swift test
-
-  build-and-ui-tests:
-    runs-on: macos-26
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Watch app
-        run: >
-          xcodebuild build -project Nouri.xcodeproj -scheme NouriWatch
-          -destination 'generic/platform=watchOS' CODE_SIGNING_ALLOWED=NO
-      - name: Build iPhone app and run tests
-        run: >
-          xcodebuild test -project Nouri.xcodeproj -scheme Nouri
-          -destination 'platform=iOS Simulator,name=iPhone 17'

@@ -210,6 +210,34 @@ public final class NouriStore {
         save()
     }
 
+    public func setDaytimeQuiet(enabled: Bool, startMinutes: Int, endMinutes: Int, at date: Date) {
+        let prefs = preferences()
+        prefs.daytimeQuietEnabled = enabled
+        prefs.daytimeQuietStartMinutes = startMinutes
+        prefs.daytimeQuietEndMinutes = endMinutes
+        prefs.updatedAt = Self.stamp(date, after: prefs.updatedAt)
+        save()
+    }
+
+    public func setCaloriesEnabled(_ enabled: Bool, at date: Date) {
+        let prefs = preferences()
+        prefs.caloriesEnabled = enabled
+        prefs.updatedAt = Self.stamp(date, after: prefs.updatedAt)
+        save()
+    }
+
+    public func setAppearancePreset(_ preset: AppearancePreset, at date: Date) {
+        let prefs = preferences()
+        prefs.appearancePreset = preset
+        prefs.updatedAt = Self.stamp(date, after: prefs.updatedAt)
+        save()
+    }
+
+    public func lastHydratingDrink(on day: Date, calendar: Calendar) -> Date? {
+        let interval = calendar.dateInterval(of: .day, for: day) ?? DateInterval(start: day, duration: 86_400)
+        return fluids(in: interval).filter(\.beverage.countsTowardHydration).map(\.timestamp).max()
+    }
+
     public func setOnboardingCompleted(_ done: Bool, at date: Date) {
         let prefs = preferences()
         prefs.hasCompletedOnboarding = done
@@ -274,6 +302,11 @@ public final class NouriStore {
         prefs.hydrationReminderIntervalMinutes = 120
         prefs.quietHoursStartMinutes = 22 * 60
         prefs.quietHoursEndMinutes = 8 * 60
+        prefs.daytimeQuietEnabled = false
+        prefs.daytimeQuietStartMinutes = 13 * 60
+        prefs.daytimeQuietEndMinutes = 14 * 60
+        prefs.caloriesEnabled = false
+        prefs.appearancePresetRaw = AppearancePreset.default.rawValue
         // Keep onboarding completed so the wipe doesn't force the welcome flow again.
         prefs.updatedAt = Self.stamp(date, after: prefs.updatedAt)
         save()
@@ -393,6 +426,8 @@ public final class NouriStore {
         if LastWriterWins.shouldApply(incoming: snapshot.goalsUpdatedAt, existing: prefs.updatedAt) {
             prefs.hydrationGoalML = snapshot.hydrationGoalML
             prefs.calorieGoal = snapshot.calorieGoal
+            prefs.caloriesEnabled = snapshot.caloriesEnabled
+            prefs.appearancePresetRaw = snapshot.appearancePresetRaw
             prefs.updatedAt = snapshot.goalsUpdatedAt
             changed = true
         }
@@ -417,7 +452,9 @@ public final class NouriStore {
             calorieGoal: prefs.calorieGoal,
             goalsUpdatedAt: prefs.updatedAt,
             medications: fetch(FetchDescriptor<Medication>()).map(\.record),
-            presets: fetch(FetchDescriptor<CaloriePreset>()).map(\.record)
+            presets: fetch(FetchDescriptor<CaloriePreset>()).map(\.record),
+            caloriesEnabled: prefs.caloriesEnabled,
+            appearancePresetRaw: prefs.appearancePresetRaw
         )
     }
 

@@ -75,6 +75,7 @@ public final class WatchConnectivityTransport: NSObject, SyncTransport {
 
     private let session: WCSession
     private var outbox: [SyncMessage] = []  // held only until activation completes
+    private var lastComplicationSnapshot: Data?  // skip waking the Watch for unchanged settings
     private nonisolated static let key = "m"
     private static let activatedFlag = "nouri.wc.activatedOnce"
 
@@ -100,6 +101,16 @@ public final class WatchConnectivityTransport: NSObject, SyncTransport {
         guard let data = try? JSONEncoder().encode(message) else { return }
         if case .snapshot = message {
             try? session.updateApplicationContext([Self.key: data])
+            #if os(iOS)
+            // Complications on the Watch read the Watch store; push settings so meds
+            // show up on the face without opening the Watch app. ~50 transfers a day, each
+            // wakes the Watch: only spend one when the settings actually changed.
+            if data != lastComplicationSnapshot, session.isComplicationEnabled,
+               session.remainingComplicationUserInfoTransfers > 0 {
+                lastComplicationSnapshot = data
+                session.transferCurrentComplicationUserInfo([Self.key: data])
+            }
+            #endif
         } else if session.isReachable {
             let session = session
             session.sendMessage([Self.key: data], replyHandler: nil) { @Sendable _ in

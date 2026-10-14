@@ -177,13 +177,30 @@ public final class UserPreferences {
     public var hydrationGoalML: Double = 2500
     public var calorieGoal: Double = 2000
     public var updatedAt: Date = Date.distantPast
-    /// Interval + quiet-hours hydration reminders (iPhone schedules; Watch does not).
+    /// Interval + quiet-hours hydration reminders (iPhone only: not synced, so the Watch keeps them off).
     public var hydrationRemindersEnabled: Bool = false
     public var hydrationReminderIntervalMinutes: Int = 120
     /// Minutes from midnight. Overnight quiet uses start > end (e.g. 22:00–08:00).
     public var quietHoursStartMinutes: Int = 22 * 60
     public var quietHoursEndMinutes: Int = 8 * 60
+    /// Optional same-day break (e.g. 13:00–14:00) on top of night quiet hours.
+    public var daytimeQuietEnabled: Bool = false
+    public var daytimeQuietStartMinutes: Int = 13 * 60
+    public var daytimeQuietEndMinutes: Int = 14 * 60
+
+    /// Nil when disabled or not a valid same-day range.
+    public var daytimeQuiet: Range<Int>? {
+        daytimeQuietEnabled && daytimeQuietStartMinutes < daytimeQuietEndMinutes
+            ? daytimeQuietStartMinutes..<daytimeQuietEndMinutes : nil
+    }
     public var hasCompletedOnboarding: Bool = false
+    public var caloriesEnabled: Bool = false
+    public var appearancePresetRaw: String = AppearancePreset.default.rawValue
+
+    public var appearancePreset: AppearancePreset {
+        get { AppearancePreset(rawValue: appearancePresetRaw) ?? .default }
+        set { appearancePresetRaw = newValue.rawValue }
+    }
 
     init() {}
 }

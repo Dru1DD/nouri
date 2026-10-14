@@ -47,11 +47,13 @@ struct FluidForm: View {
                 }
                 .pickerStyle(.wheel)
                 .accessibilityIdentifier("fluid-amount")
-                LabeledContent("Calories (kcal)") {
-                    TextField("kcal", value: Binding(get: { calories }, set: { calories = $0; caloriesEdited = true }),
-                              format: .number)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.trailing)
+                if model.caloriesEnabled {
+                    LabeledContent("Calories (kcal)") {
+                        TextField("kcal", value: Binding(get: { calories }, set: { calories = $0; caloriesEdited = true }),
+                                  format: .number)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                    }
                 }
                 DatePicker("Time", selection: $time, in: ...Date.now)
                     .accessibilityIdentifier("fluid-time")
@@ -61,6 +63,7 @@ struct FluidForm: View {
                 prefillCalories()
             }
             .onChange(of: amount) { prefillCalories() }
+            .themedBackground(model.appearancePreset)
             .navigationTitle(editing == nil ? "Add Drink" : "Edit Drink")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -122,6 +125,7 @@ struct FoodForm: View {
                         .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
+            .themedBackground(model.appearancePreset)
             .navigationTitle(editing == nil ? "Add Food" : "Edit Food")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

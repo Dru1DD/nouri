@@ -1,0 +1,17 @@
+# brew install lefthook && lefthook install
+# Same contract as scripts/githooks (no Node / Husky).
+
+commit-msg:
+  commands:
+    conventional:
+      run: scripts/githooks/commit-msg {1}
+
+pre-commit:
+  commands:
+    nourikit:
+      run: scripts/githooks/pre-commit
+
+pre-push:
+  commands:
+    build:
+      run: scripts/githooks/pre-push

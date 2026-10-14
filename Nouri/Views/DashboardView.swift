@@ -25,15 +25,16 @@ struct DashboardView: View {
         NavigationStack {
             List {
                 hydrationSection
-                caloriesSection
+                if model.caloriesEnabled { caloriesSection }
                 medicationsSection
                 activitySection
             }
+            .themedBackground(model.appearancePreset)
             .navigationTitle("Today")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink { HistoryView() } label: {
-                        Label("History", systemImage: "calendar")
+                        Label("Calendar", systemImage: "calendar")
                     }
                 }
                 ToolbarItem(placement: .topBarLeading) {
@@ -47,6 +48,15 @@ struct DashboardView: View {
                         Label("Settings", systemImage: "gearshape")
                     }
                 }
+            }
+            .navigationDestination(isPresented: Binding(
+                get: { model.pendingMedicationsDeepLink },
+                set: { if !$0 { model.pendingMedicationsDeepLink = false } }
+            )) {
+                MedicationsView()
+            }
+            .onOpenURL { url in
+                if url.host == "medications" { model.pendingMedicationsDeepLink = true }
             }
             .sheet(item: $sheet) { sheet in
                 switch sheet {
@@ -83,7 +93,7 @@ struct DashboardView: View {
             ProgressRow(
                 title: "Hydration",
                 symbol: "drop.fill",
-                tint: .blue,
+                tint: model.appearancePreset.waterEnd,
                 value: String(localized: "\(Format.liters(today.hydration.value)) / \(Format.liters(today.hydration.goal)) L"),
                 progress: today.hydration,
                 identifier: "hydration-total"
@@ -158,7 +168,7 @@ struct DashboardView: View {
                 ProgressRow(
                     title: "Medications",
                     symbol: "pills.fill",
-                    tint: .purple,
+                    tint: model.appearancePreset.medsEnd,
                     value: String(localized: "\(today.dosesTaken) / \(today.doses.count) taken"),
                     progress: today.medicationProgress,
                     identifier: "medications-total"
@@ -176,15 +186,20 @@ struct DashboardView: View {
     }
 
     private var activitySection: some View {
-        Section("Recent Activity") {
-            if today.activity.isEmpty {
+        // Food from older builds stays hidden while calories are off.
+        let activity = today.activity.filter { item in
+            if case .food = item { return model.caloriesEnabled }
+            return true
+        }
+        return Section("Recent Activity") {
+            if activity.isEmpty {
                 ContentUnavailableView {
                     Label("No drinks logged today", systemImage: "drop")
                 } description: {
                     Text("Tap +100, +250 or +500 above to log your first drink.")
                 }
             }
-            ForEach(today.activity) { item in
+            ForEach(activity) { item in
                 Button {
                     switch item {
                     case .fluid(let f): sheet = .editFluid(f)
@@ -346,6 +361,7 @@ struct StatusLabel: View {
 }
 
 struct ActivityRow: View {
+    @Environment(AppModel.self) private var model
     let item: ActivityItem
 
     var body: some View {
@@ -382,7 +398,8 @@ struct ActivityRow: View {
 
     private var amount: String {
         switch item {
-        case .fluid(let f): f.calories > 0
+        case .fluid(let f):
+            model.caloriesEnabled && f.calories > 0
             ? String(localized: "+\(Format.ml(f.amountML)) ml · \(Format.kcal(f.calories)) kcal")
             : String(localized: "+\(Format.ml(f.amountML)) ml")
         case .food(let f): String(localized: "+\(Format.kcal(f.calories)) kcal")

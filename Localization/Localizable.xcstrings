@@ -1,11 +1,58 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@" : {
-
+    "—" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "—"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "—"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "—"
+          }
+        }
+      }
     },
     "%@ · %@" : {
       "shouldTranslate" : false
+    },
+    "%@ · %@ kcal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@ kcal"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %@ kcal"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %@ ккал"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %@ ккал"
+          }
+        }
+      }
     },
     "%@ · %@ ml" : {
       "localizations" : {
@@ -30,7 +77,6 @@
       }
     },
     "%@ / %@ kcal" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -74,31 +120,35 @@
         }
       }
     },
-    "%@ %@, %lld percent of goal" : {
-      "extractionState" : "stale",
+    "%@ %@" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@, %3$lld%% celu"
+            "value" : "%@ %@"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@, %3$lld%% от цели"
+            "value" : "%@ %@"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@, %3$lld%% від мети"
+            "value" : "%@ %@"
           }
         }
       }
     },
     "%@ kcal" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -121,7 +171,6 @@
       }
     },
     "%@ kcal more in Apple Health from other apps" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -165,12 +214,46 @@
         }
       }
     },
-    "%@ L · %@" : {
+    "%@ L / day" : {
       "localizations" : {
-        "en" : {
+        "pl" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ L · %2$@"
+            "state" : "translated",
+            "value" : "%@ l / dzień"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ л / день"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ л / день"
+          }
+        }
+      }
+    },
+    "%@ liters" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ l"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ л"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ л"
           }
         }
       }
@@ -198,7 +281,6 @@
       }
     },
     "%@ ml more in Apple Health from other apps" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -221,7 +303,6 @@
       }
     },
     "%@ of %@ liters, %lld percent" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -265,11 +346,7 @@
         }
       }
     },
-    "%@ upcoming reminders scheduled" : {
-
-    },
     "%@, %lld percent of goal" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -291,14 +368,85 @@
         }
       }
     },
-    "%@%%" : {
-
+    "%lld" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
     },
-    "%@×" : {
-
+    "%lld · %@ ml" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld · %2$@ ml"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld · %@ ml"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld · %@ мл"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld · %@ мл"
+          }
+        }
+      }
+    },
+    "%lld / %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld / %2$lld"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld / %lld"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld / %lld"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld / %lld"
+          }
+        }
+      }
     },
     "%lld / %lld taken" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -320,8 +468,107 @@
         }
       }
     },
+    "%lld drinks · %@ ml left" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld drinks · %2$@ ml left"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napoje: %lld · zostało %@ ml"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напитков: %lld · осталось %@ мл"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напоїв: %lld · залишилось %@ мл"
+          }
+        }
+      }
+    },
+    "%lld h" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld godz."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ч"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld год"
+          }
+        }
+      }
+    },
+    "%lld min" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld мин"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld хв"
+          }
+        }
+      }
+    },
+    "%lld of %lld doses" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld doses"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dawki: %lld z %lld"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приёмов: %lld из %lld"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прийомів: %lld з %lld"
+          }
+        }
+      }
+    },
     "%lld of %lld taken" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -344,7 +591,6 @@
       }
     },
     "%lld of %lld taken, next %@" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -367,7 +613,6 @@
       }
     },
     "%lld upcoming reminders scheduled" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -479,31 +724,57 @@
         }
       }
     },
-    "%lld/%lld taken" : {
-      "extractionState" : "stale",
+    "%lld/%lld" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld"
+          }
+        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przyjęto %1$lld/%2$lld"
+            "value" : "%lld/%lld"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Принято %1$lld/%2$lld"
+            "value" : "%lld/%lld"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Прийнято %1$lld/%2$lld"
+            "value" : "%lld/%lld"
+          }
+        }
+      }
+    },
+    "%lld%%" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
           }
         }
       }
     },
     "%lld%% · %@" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -526,7 +797,6 @@
       }
     },
     "%lld×" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -548,11 +818,7 @@
         }
       }
     },
-    "+%@" : {
-
-    },
     "+%@ kcal" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -575,7 +841,6 @@
       }
     },
     "+%@ ml" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -598,7 +863,6 @@
       }
     },
     "+%@ ml · %@ kcal" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -620,8 +884,29 @@
         }
       }
     },
+    "+%lld" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        }
+      }
+    },
     "≈ %@ kcal" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -643,34 +928,95 @@
         }
       }
     },
-    "💧%@%%" : {
-
-    },
-    "250 ml" : {
-      "extractionState" : "stale",
+    "≈ %lld glasses" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "250 ml"
+            "value" : "≈ %lld szkl. po 250 ml"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "250 мл"
+            "value" : "≈ %lld стак. по 250 мл"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "250 мл"
+            "value" : "≈ %lld скл. по 250 мл"
+          }
+        }
+      }
+    },
+    "💊 %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💊 %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💊 %@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💊 %@"
+          }
+        }
+      }
+    },
+    "💧 Time for a drink" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💧 Czas się napić"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💧 Время попить"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💧 Час попити"
+          }
+        }
+      }
+    },
+    "A quick sip keeps you on track." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilka łyków i trzymasz plan."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пара глотков — и вы в графике."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кілька ковтків — і ви в графіку."
           }
         }
       }
     },
     "Add" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -693,7 +1039,6 @@
       }
     },
     "Add %@, %@ kilocalories" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -716,7 +1061,6 @@
       }
     },
     "Add %@, %@ milliliters" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -739,7 +1083,6 @@
       }
     },
     "Add %lld kilocalories" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -762,7 +1105,6 @@
       }
     },
     "Add %lld milliliters" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -784,31 +1126,29 @@
         }
       }
     },
-    "Add %lld milliliters of water" : {
-      "extractionState" : "stale",
+    "Add 100 milliliters of water" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dodaj %lld mililitrów wody"
+            "value" : "Dodaj 100 mililitrów wody"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Добавить %lld миллилитров воды"
+            "value" : "Добавить 100 миллилитров воды"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Додати %lld мілілітрів води"
+            "value" : "Додати 100 мілілітрів води"
           }
         }
       }
     },
     "Add 250 milliliters of water" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -830,11 +1170,29 @@
         }
       }
     },
-    "Add a Home Screen widget" : {
-
+    "Add 500 milliliters of water" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj 500 mililitrów wody"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Добавить 500 миллилитров воды"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додати 500 мілілітрів води"
+          }
+        }
+      }
     },
     "Add a medication reminder" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -878,8 +1236,29 @@
         }
       }
     },
+    "Add another" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj kolejny"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Добавить ещё"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додати ще"
+          }
+        }
+      }
+    },
     "Add Drink" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -902,7 +1281,6 @@
       }
     },
     "Add Food" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -924,8 +1302,29 @@
         }
       }
     },
+    "Add medication" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj lek"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Добавить лекарство"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додати ліки"
+          }
+        }
+      }
+    },
     "Add Medication" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -948,7 +1347,6 @@
       }
     },
     "Add Time" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -970,8 +1368,29 @@
         }
       }
     },
+    "Add your first medication" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj pierwszy lek"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Добавьте первое лекарство"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додайте перші ліки"
+          }
+        }
+      }
+    },
     "Added %@ kcal" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -994,7 +1413,6 @@
       }
     },
     "Added %@ ml · %@" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1012,29 +1430,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Додано %1$@ мл · %2$@"
-          }
-        }
-      }
-    },
-    "Alcohol %@ milliliters" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alkohol %@ mililitrów"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Алкоголь %@ миллилитров"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Алкоголь %@ мілілітрів"
           }
         }
       }
@@ -1062,7 +1457,6 @@
       }
     },
     "All done for today" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1085,7 +1479,6 @@
       }
     },
     "Also remove from Apple Health" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1114,7 +1507,6 @@
       }
     },
     "Amount" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1137,7 +1529,6 @@
       }
     },
     "Amount (ml)" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1155,6 +1546,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Об'єм (мл)"
+          }
+        }
+      }
+    },
+    "Appearance" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wygląd"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оформление"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оформлення"
           }
         }
       }
@@ -1181,8 +1594,73 @@
         }
       }
     },
+    "Apple Health isn't available on this device." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Zdrowie nie jest dostępne na tym urządzeniu."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Здоровье недоступно на этом устройстве."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Здоров'я недоступне на цьому пристрої."
+          }
+        }
+      }
+    },
+    "Average" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Średnio"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В среднем"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "У середньому"
+          }
+        }
+      }
+    },
+    "Back" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wstecz"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Назад"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Назад"
+          }
+        }
+      }
+    },
     "Beverages" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1210,8 +1688,73 @@
         }
       }
     },
+    "Break from" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przerwa od"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перерыв с"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перерва з"
+          }
+        }
+      }
+    },
+    "Break until" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przerwa do"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перерыв до"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перерва до"
+          }
+        }
+      }
+    },
+    "Calendar" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalendarz"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Календарь"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Календар"
+          }
+        }
+      }
+    },
     "Calorie Presets" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1234,7 +1777,6 @@
       }
     },
     "Calories" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1257,7 +1799,6 @@
       }
     },
     "Calories (kcal)" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1280,7 +1821,6 @@
       }
     },
     "Cancel" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1309,7 +1849,6 @@
       }
     },
     "Choose drink" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1331,8 +1870,29 @@
         }
       }
     },
+    "Colors for the app, widgets and Apple Watch." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolory aplikacji, widżetów i Apple Watch."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цвета приложения, виджетов и Apple Watch."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кольори застосунку, віджетів і Apple Watch."
+          }
+        }
+      }
+    },
     "Connect Apple Health" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1354,8 +1914,29 @@
         }
       }
     },
+    "Connected" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Połączono"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключено"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Підключено"
+          }
+        }
+      }
+    },
     "Connected to Apple Health" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1378,7 +1959,6 @@
       }
     },
     "Continue" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1407,7 +1987,6 @@
       }
     },
     "Custom amount" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1430,7 +2009,6 @@
       }
     },
     "Daily Goals" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1452,8 +2030,29 @@
         }
       }
     },
+    "Daily water goal" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzienny cel wody"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дневная цель по воде"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Денна ціль з води"
+          }
+        }
+      }
+    },
     "Dashboard" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1510,7 +2109,6 @@
       }
     },
     "Date" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1532,8 +2130,29 @@
         }
       }
     },
+    "Day" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzień"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "День"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "День"
+          }
+        }
+      }
+    },
     "Days" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1556,7 +2175,6 @@
       }
     },
     "Delete" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1585,7 +2203,6 @@
       }
     },
     "Delete All Data" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1613,8 +2230,57 @@
         }
       }
     },
+    "Deleted %@ kcal" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunięto %@ kcal"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удалено %@ ккал"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Видалено %@ ккал"
+          }
+        }
+      }
+    },
+    "Deleted %@ ml · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Deleted %1$@ ml · %2$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunięto %@ ml · %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удалено %@ мл · %@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Видалено %@ мл · %@"
+          }
+        }
+      }
+    },
     "Dose" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1637,7 +2303,6 @@
       }
     },
     "Dose amount" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1659,8 +2324,51 @@
         }
       }
     },
+    "Dose reminders with Taken, Snooze and Skip" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przypomnienia o dawkach z przyciskami Przyjęto, Drzemka i Pomiń"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напоминания о приёме с кнопками «Принято», «Отложить» и «Пропустить»"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нагадування про прийом з кнопками «Прийнято», «Відкласти» і «Пропустити»"
+          }
+        }
+      }
+    },
+    "Dose taken" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dawka przyjęta"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приём отмечен"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прийом відмічено"
+          }
+        }
+      }
+    },
     "Dose unit" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1683,7 +2391,6 @@
       }
     },
     "Doses taken today and the next reminder." : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1706,7 +2413,6 @@
       }
     },
     "Drink" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1728,8 +2434,51 @@
         }
       }
     },
+    "Drink logged" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisano napój"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Есть напитки"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Є напої"
+          }
+        }
+      }
+    },
+    "Drinks" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napoje"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напитки"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напої"
+          }
+        }
+      }
+    },
     "Edit Drink" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1752,7 +2501,6 @@
       }
     },
     "Edit Food" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1775,7 +2523,6 @@
       }
     },
     "Edit Medication" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1797,37 +2544,7 @@
         }
       }
     },
-    "Enable reminders" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enable reminders"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Włącz przypomnienia"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Включить напоминания"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Увімкнути нагадування"
-          }
-        }
-      }
-    },
     "Every" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1855,8 +2572,101 @@
         }
       }
     },
+    "Every %lld h" : {
+      "localizations" : {
+        "ru" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Каждый час"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Каждые %lld ч"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Каждые %lld ч"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Каждые %lld ч"
+                }
+              }
+            }
+          }
+        },
+        "uk" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Щогодини"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Кожні %lld год"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Кожні %lld год"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Кожні %lld год"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Co godzinę"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Co %lld godz."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Co %lld godz."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Co %lld godz."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Every day" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -1878,11 +2688,73 @@
         }
       }
     },
-    "Export creates a JSON file on this device. Delete All removes Nouri data on iPhone and syncs deletions to Apple Watch." : {
-
+    "Example notification: %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przykładowe powiadomienie: %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пример уведомления: %@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приклад сповіщення: %@"
+          }
+        }
+      }
+    },
+    "Example Today widget" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przykładowy widżet Dziś"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пример виджета «Сегодня»"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приклад віджета «Сьогодні»"
+          }
+        }
+      }
+    },
+    "Export creates a JSON file on this device. Share beta stats is anonymous counters only (no amounts or names) and leaves the device only if you share the file. Delete All removes Nouri data on iPhone and syncs deletions to Apple Watch." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eksport tworzy plik JSON na tym urządzeniu. Statystyki bety to tylko anonimowe liczniki (bez ilości i nazw) i opuszczają urządzenie tylko, gdy sam udostępnisz plik. Usuń wszystko kasuje dane Nouri na iPhonie i synchronizuje usunięcie z Apple Watch."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Экспорт создаёт JSON-файл на этом устройстве. Бета-статистика — только анонимные счётчики (без объёмов и названий), она покидает устройство, только если вы сами отправите файл. «Удалить всё» стирает данные Nouri на iPhone и синхронизирует удаление с Apple Watch."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Експорт створює JSON-файл на цьому пристрої. Бета-статистика — лише анонімні лічильники (без об'ємів і назв), вона залишає пристрій, тільки якщо ви самі надішлете файл. «Видалити все» стирає дані Nouri на iPhone і синхронізує видалення з Apple Watch."
+          }
+        }
+      }
     },
     "Export Data" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1910,11 +2782,117 @@
         }
       }
     },
-    "Get gentle nudges during the day. Quiet hours keep evenings and nights free." : {
-
+    "Fine-tune" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dokładniej"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Точнее"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Точніше"
+          }
+        }
+      }
+    },
+    "First nudge today at %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pierwsze przypomnienie dziś o %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Первое напоминание сегодня в %@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перше нагадування сьогодні о %@"
+          }
+        }
+      }
+    },
+    "First nudge tomorrow at %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pierwsze przypomnienie jutro o %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Первое напоминание завтра в %@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перше нагадування завтра о %@"
+          }
+        }
+      }
+    },
+    "Food" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jedzenie"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Еда"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Їжа"
+          }
+        }
+      }
+    },
+    "Gentle reminders" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delikatne przypomnienia"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мягкие напоминания"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "М'які нагадування"
+          }
+        }
+      }
     },
     "Get Started" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1942,31 +2920,7 @@
         }
       }
     },
-    "History" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Historia"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "История"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Історія"
-          }
-        }
-      }
-    },
     "Hydration" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2017,7 +2971,6 @@
       }
     },
     "kcal" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2039,40 +2992,139 @@
         }
       }
     },
-    "L" : {
-      "extractionState" : "stale",
+    "Keep it on your Home Screen" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "l"
+            "value" : "Miej go na ekranie początkowym"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "л"
+            "value" : "Держите под рукой на экране «Домой»"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "л"
+            "value" : "Тримайте під рукою на екрані «Дім»"
           }
         }
       }
     },
-    "Log a drink on Today to start your history." : {
-
+    "Let's start" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaczynajmy"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Начнём"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Почнімо"
+          }
+        }
+      }
+    },
+    "Log a drink in a tap, never miss a dose. Takes a minute to set up." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisuj napoje jednym dotknięciem i nie pomijaj dawek. Konfiguracja zajmie minutę."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Записывайте воду в одно касание и не пропускайте приём лекарств. Настройка займёт минуту."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Записуйте воду одним дотиком і не пропускайте прийом ліків. Налаштування займе хвилину."
+          }
+        }
+      }
+    },
+    "Log a drink or mark a dose to see today here." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisz napój lub zaznacz dawkę, aby zobaczyć tu dzisiejszy dzień."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запишите напиток или отметьте приём — и сегодняшний день появится здесь."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запишіть напій або відмітьте прийом — і сьогоднішній день з'явиться тут."
+          }
+        }
+      }
     },
     "Log drinks to see which beverages you have most often." : {
-
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisuj napoje, aby zobaczyć, co pijesz najczęściej."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Записывайте напитки, чтобы видеть, что вы пьёте чаще всего."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Записуйте напої, щоб бачити, що ви п'єте найчастіше."
+          }
+        }
+      }
     },
-    "Long-press your Home Screen, tap Edit, then add the Nouri Hydration widget for one-tap logging." : {
-
+    "Long-press the Home Screen, tap Edit → Add Widget, then pick Nouri → Today." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przytrzymaj ekran początkowy, stuknij Edycja → Dodaj widżet, a potem wybierz Nouri → Dziś."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удерживайте палец на экране «Домой», нажмите «Изменить» → «Добавить виджет» и выберите Nouri → «Сегодня»."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Утримуйте палець на екрані «Дім», натисніть «Змінити» → «Додати віджет» і виберіть Nouri → «Сьогодні»."
+          }
+        }
+      }
     },
     "Manage" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2090,6 +3142,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Керувати"
+          }
+        }
+      }
+    },
+    "Mark %@ taken" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oznacz %@ jako przyjęty"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отметить %@ как принятое"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відмітити %@ як прийняте"
           }
         }
       }
@@ -2116,8 +3190,51 @@
         }
       }
     },
+    "Medications this week" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leki w tym tygodniu"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Лекарства за неделю"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ліки за тиждень"
+          }
+        }
+      }
+    },
+    "Midday break" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przerwa w ciągu dnia"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дневной перерыв"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Денна перерва"
+          }
+        }
+      }
+    },
     "ml" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2139,8 +3256,29 @@
         }
       }
     },
+    "Most adults need 2–3 L a day. You can change it anytime." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Większość dorosłych potrzebuje 2–3 l dziennie. Możesz to zmienić w każdej chwili."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Большинству взрослых нужно 2–3 л в день. Цель можно изменить в любой момент."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Більшості дорослих потрібно 2–3 л на день. Ціль можна змінити будь-коли."
+          }
+        }
+      }
+    },
     "Name" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2163,7 +3301,6 @@
       }
     },
     "Name (optional)" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2186,7 +3323,6 @@
       }
     },
     "New Medication" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2208,8 +3344,57 @@
         }
       }
     },
+    "Next %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Next %1$@ %2$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Następnie: %@ %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Далее: %@ %@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Далі: %@ %@"
+          }
+        }
+      }
+    },
+    "Next month" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Następny miesiąc"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Следующий месяц"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Наступний місяць"
+          }
+        }
+      }
+    },
     "Next: %@" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2232,7 +3417,6 @@
       }
     },
     "Next: %@ %@" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2254,40 +3438,95 @@
         }
       }
     },
-    "No activity this week yet." : {
-
-    },
-    "No activity yet" : {
-      "extractionState" : "stale",
+    "Night quiet from" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No activity yet"
-          }
-        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Brak aktywności"
+            "value" : "Cisza nocna od"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Пока нет активности"
+            "value" : "Ночная тишина с"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Поки немає активності"
+            "value" : "Нічна тиша з"
+          }
+        }
+      }
+    },
+    "Night quiet until" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cisza nocna do"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ночная тишина до"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нічна тиша до"
+          }
+        }
+      }
+    },
+    "No activity" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak wpisów"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нет записей"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Немає записів"
+          }
+        }
+      }
+    },
+    "No doses scheduled this week." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W tym tygodniu brak zaplanowanych dawek."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "На этой неделе приёмов не запланировано."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цього тижня прийомів не заплановано."
           }
         }
       }
     },
     "No doses today" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2310,7 +3549,6 @@
       }
     },
     "No drinks logged today" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2338,37 +3576,51 @@
         }
       }
     },
-    "No drinks yet" : {
-      "extractionState" : "stale",
+    "No drinks or doses on this day." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No drinks yet"
-          }
-        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Brak napojów"
+            "value" : "Tego dnia brak napojów i dawek."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Пока нет напитков"
+            "value" : "В этот день нет напитков и приёмов."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Поки немає напоїв"
+            "value" : "Цього дня немає напоїв і прийомів."
+          }
+        }
+      }
+    },
+    "No drinks this week yet." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W tym tygodniu brak jeszcze napojów."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "На этой неделе напитков пока нет."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цього тижня напоїв поки немає."
           }
         }
       }
     },
     "No Medications" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2390,8 +3642,29 @@
         }
       }
     },
+    "Not now" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie teraz"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не сейчас"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не зараз"
+          }
+        }
+      }
+    },
     "Notes" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2413,31 +3686,51 @@
         }
       }
     },
-    "Nothing logged yet today." : {
-      "extractionState" : "stale",
+    "Nothing logged" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dziś jeszcze nic nie zapisano."
+            "value" : "Nic nie zapisano"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сегодня пока ничего не записано."
+            "value" : "Ничего не записано"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сьогодні ще нічого не записано."
+            "value" : "Нічого не записано"
+          }
+        }
+      }
+    },
+    "Nothing logged yet" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na razie nic nie zapisano"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пока ничего не записано"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поки нічого не записано"
           }
         }
       }
     },
     "Notifications are off, so reminders can't be delivered." : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2459,8 +3752,49 @@
         }
       }
     },
-    "Nouri helps you drink enough water. You can change this anytime in Settings." : {
-
+    "Notifications are off. Open Settings to enable them." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Powiadomienia są wyłączone. Włącz je w Ustawieniach."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Уведомления выключены. Включите их в Настройках."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сповіщення вимкнено. Увімкніть їх у Налаштуваннях."
+          }
+        }
+      }
+    },
+    "Nouri" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri"
+          }
+        }
+      }
     },
     "Nouri only reminds you about medications you add yourself. It does not give medical advice." : {
       "localizations" : {
@@ -2485,27 +3819,23 @@
       }
     },
     "Nouri reminds you about medications and hydration you configure. It does not provide medical advice." : {
-
-    },
-    "Nouri reminds you about medications you configure. It does not provide medical advice." : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nouri przypomina o skonfigurowanych przez Ciebie lekach. Aplikacja nie udziela porad medycznych."
+            "value" : "Nouri przypomina o lekach i wodzie zgodnie z Twoimi ustawieniami. Nie udziela porad medycznych."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nouri напоминает о лекарствах, которые вы настроили. Приложение не даёт медицинских рекомендаций."
+            "value" : "Nouri напоминает о лекарствах и воде так, как вы настроили. Приложение не даёт медицинских рекомендаций."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nouri нагадує про ліки, які ви налаштували. Застосунок не надає медичних порад."
+            "value" : "Nouri нагадує про ліки та воду так, як ви налаштували. Застосунок не надає медичних порад."
           }
         }
       }
@@ -2532,8 +3862,51 @@
         }
       }
     },
+    "Nouri saves water you log to Health, and shows amounts other apps logged separately. You can change access anytime in the Health app." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri zapisuje wodę w aplikacji Zdrowie i osobno pokazuje ilości z innych aplikacji. Dostęp możesz zmienić w aplikacji Zdrowie."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri сохраняет записанную воду в «Здоровье» и отдельно показывает то, что записали другие приложения. Доступ можно изменить в приложении «Здоровье»."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouri зберігає записану воду в «Здоров'ї» і окремо показує те, що записали інші застосунки. Доступ можна змінити в застосунку «Здоров'я»."
+          }
+        }
+      }
+    },
+    "now" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "teraz"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "сейчас"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "зараз"
+          }
+        }
+      }
+    },
     "of %@ kcal · %lld%%" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2555,18 +3928,29 @@
         }
       }
     },
-    "of %@ L · %@%%" : {
+    "of %@ L" : {
       "localizations" : {
-        "en" : {
+        "pl" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "of %1$@ L · %2$@%%"
+            "state" : "translated",
+            "value" : "z %@ l"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "из %@ л"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "з %@ л"
           }
         }
       }
     },
     "of %@ L · %lld%%" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2584,6 +3968,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "з %1$@ л · %2$lld%%"
+          }
+        }
+      }
+    },
+    "of %@ L · 64%%" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "z %@ l · 64%%"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "из %@ л · 64%%"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "з %@ л · 64%%"
+          }
+        }
+      }
+    },
+    "On Apple Watch, add the Nouri Hydration and Medications complications to your watch face." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na Apple Watch dodaj do tarczy komplikacje Nouri Nawodnienie i Leki."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "На Apple Watch добавьте на циферблат расширения Nouri «Вода» и «Лекарства»."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "На Apple Watch додайте на циферблат ускладнення Nouri «Вода» і «Ліки»."
           }
         }
       }
@@ -2611,7 +4039,6 @@
       }
     },
     "Once, %@" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2633,11 +4060,73 @@
         }
       }
     },
+    "One permission covers doses and water. Nights stay quiet." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jedna zgoda obejmuje leki i wodę. Noce pozostają ciche."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Одно разрешение — и для лекарств, и для воды. Ночью тихо."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Один дозвіл — і для ліків, і для води. Уночі тихо."
+          }
+        }
+      }
+    },
+    "One tap logging, on iPhone and Apple Watch" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapis jednym dotknięciem na iPhonie i Apple Watch"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запись в одно касание на iPhone и Apple Watch"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запис одним дотиком на iPhone і Apple Watch"
+          }
+        }
+      }
+    },
     "Only samples Nouri created are removed. Data from other apps is left alone." : {
-
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuwane są tylko wpisy utworzone przez Nouri. Dane z innych aplikacji pozostają nietknięte."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удаляются только записи, созданные Nouri. Данные других приложений не затрагиваются."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Видаляються лише записи, створені Nouri. Дані інших застосунків не зачіпаються."
+          }
+        }
+      }
     },
     "Open Settings" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2660,7 +4149,6 @@
       }
     },
     "Opens the entry for editing" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2682,11 +4170,73 @@
         }
       }
     },
-    "Optionally connect Apple Health so water and calories stay in sync. You can skip this." : {
-
+    "Optional. Nouri only reminds you about what you add yourself." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opcjonalnie. Nouri przypomina tylko o tym, co sam dodasz."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Необязательно. Nouri напоминает только о том, что вы добавили сами."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Необов'язково. Nouri нагадує лише про те, що ви додали самі."
+          }
+        }
+      }
+    },
+    "Optionally save the water you log to Health and see what other apps logged." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opcjonalnie zapisuj wodę w aplikacji Zdrowie i zobacz, co zapisały inne aplikacje."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По желанию сохраняйте воду в «Здоровье» и смотрите, что записали другие приложения."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "За бажанням зберігайте воду в «Здоров'ї» і дивіться, що записали інші застосунки."
+          }
+        }
+      }
+    },
+    "Palette" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paleta"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Палитра"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Палітра"
+          }
+        }
+      }
     },
     "Paused" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2708,8 +4258,29 @@
         }
       }
     },
+    "Previous month" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poprzedni miesiąc"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Предыдущий месяц"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Попередній місяць"
+          }
+        }
+      }
+    },
     "Quick add" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2731,66 +4302,7 @@
         }
       }
     },
-    "Quiet from" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quiet from"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cisza od"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Тишина с"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Тиша з"
-          }
-        }
-      }
-    },
-    "Quiet until" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quiet until"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cisza do"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Тишина до"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Тиша до"
-          }
-        }
-      }
-    },
     "Recent Activity" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2835,7 +4347,6 @@
       }
     },
     "Reminder %lld" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2886,7 +4397,6 @@
       }
     },
     "Reminders active" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2908,11 +4418,29 @@
         }
       }
     },
-    "Reminders pause after you reach your daily water goal, and never fire during quiet hours." : {
-
+    "Reminders pause once today's water goal is met and start again tomorrow. They never fire during night quiet hours or the midday break." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przypomnienia wstrzymują się po osiągnięciu dzisiejszego celu i wracają jutro. Nigdy nie pojawiają się w czasie ciszy nocnej ani przerwy w ciągu dnia."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напоминания останавливаются, когда дневная цель по воде выполнена, и возобновляются завтра. Они не приходят в часы ночной тишины и во время дневного перерыва."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нагадування зупиняються, коли денну ціль з води виконано, і відновлюються завтра. Вони не надходять у години нічної тиші та під час денної перерви."
+          }
+        }
+      }
     },
     "Repeat" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2935,7 +4463,6 @@
       }
     },
     "Save" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2958,7 +4485,6 @@
       }
     },
     "Save as quick preset" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -2980,36 +4506,57 @@
         }
       }
     },
-    "Set your daily water goal" : {
+    "Scheduled %@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set your daily water goal"
-          }
-        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ustaw dzienny cel wody"
+            "value" : "Zaplanowano %@"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Задайте дневную норму воды"
+            "value" : "По плану %@"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Встановіть денну норму води"
+            "value" : "За планом %@"
+          }
+        }
+      }
+    },
+    "Scheduled %@ · logged %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Scheduled %1$@ · logged %2$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaplanowano %@ · zapisano %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По плану %@ · отмечено %@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "За планом %@ · відмічено %@"
           }
         }
       }
     },
     "Settings" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3031,8 +4578,95 @@
         }
       }
     },
+    "Seven day hydration chart" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykres nawodnienia z siedmiu dni"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "График воды за семь дней"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Графік води за сім днів"
+          }
+        }
+      }
+    },
+    "Seven day medications chart" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykres leków z siedmiu dni"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "График приёмов за семь дней"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Графік прийомів за сім днів"
+          }
+        }
+      }
+    },
+    "Share beta stats" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Udostępnij statystyki bety"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отправить бета-статистику"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Надіслати бета-статистику"
+          }
+        }
+      }
+    },
+    "Share Beta Stats" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Udostępnij statystyki bety"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отправить бета-статистику"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Надіслати бета-статистику"
+          }
+        }
+      }
+    },
     "Share Export" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3060,8 +4694,29 @@
         }
       }
     },
+    "Shows what was logged that day" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokazuje, co zapisano tego dnia"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показывает, что было записано в этот день"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показує, що було записано цього дня"
+          }
+        }
+      }
+    },
     "Skip" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3084,7 +4739,6 @@
       }
     },
     "Snooze" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3106,36 +4760,57 @@
         }
       }
     },
-    "Start logging drinks to see your hydration trends." : {
+    "Stays on your devices. No account." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Start logging drinks to see your hydration trends."
-          }
-        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zacznij zapisywać napoje, aby zobaczyć trendy."
+            "value" : "Dane zostają na Twoich urządzeniach. Bez konta."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Начните записывать напитки, чтобы увидеть динамику."
+            "value" : "Данные остаются на ваших устройствах. Без аккаунта."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Почніть записувати напої, щоб побачити динаміку."
+            "value" : "Дані залишаються на ваших пристроях. Без акаунта."
+          }
+        }
+      }
+    },
+    "Step %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Step %1$lld of %2$lld"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Krok %lld z %lld"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шаг %lld из %lld"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Крок %lld з %lld"
           }
         }
       }
     },
     "tablet" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3158,7 +4833,6 @@
       }
     },
     "Taken" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3180,43 +4854,73 @@
         }
       }
     },
-    "Tap +100, +250 or +500 above to log your first drink." : {
-
-    },
-    "This permanently removes drinks, food, medications, presets and reminder settings on this device. Your Apple Watch will receive the deletions." : {
-
-    },
-    "This Week" : {
-      "extractionState" : "stale",
+    "Taken · Snooze 10 min · Skip" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This Week"
-          }
-        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ten tydzień"
+            "value" : "Przyjęto · Drzemka 10 min · Pomiń"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Эта неделя"
+            "value" : "Принято · Отложить на 10 мин · Пропустить"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Цей тиждень"
+            "value" : "Прийнято · Відкласти на 10 хв · Пропустити"
+          }
+        }
+      }
+    },
+    "Tap +100, +250 or +500 above to log your first drink." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stuknij +100, +250 lub +500 powyżej, aby zapisać pierwszy napój."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нажмите +100, +250 или +500 выше, чтобы записать первый напиток."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Натисніть +100, +250 або +500 вище, щоб записати перший напій."
+          }
+        }
+      }
+    },
+    "This permanently removes drinks, food, medications, presets and reminder settings on this device. Your Apple Watch will receive the deletions." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napoje, jedzenie, leki, presety i ustawienia przypomnień zostaną trwale usunięte z tego urządzenia. Usunięcie trafi też na Apple Watch."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напитки, еда, лекарства, пресеты и настройки напоминаний будут удалены с этого устройства навсегда. Удаление дойдёт и до Apple Watch."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напої, їжу, ліки, пресети та налаштування нагадувань буде видалено з цього пристрою назавжди. Видалення дійде й до Apple Watch."
           }
         }
       }
     },
     "Time" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3239,7 +4943,6 @@
       }
     },
     "Times" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3262,7 +4965,6 @@
       }
     },
     "Times per day" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3285,7 +4987,6 @@
       }
     },
     "Today" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3314,7 +5015,6 @@
       }
     },
     "Today's water intake." : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3337,7 +5037,6 @@
       }
     },
     "Undo" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3360,7 +5059,6 @@
       }
     },
     "Undo +%@ kcal" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3383,7 +5081,6 @@
       }
     },
     "Undo +%@ ml" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3406,7 +5103,6 @@
       }
     },
     "Unit" : {
-      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {
@@ -3424,6 +5120,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Одиниця"
+          }
+        }
+      }
+    },
+    "Vitamin D" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Witamina D"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Витамин D"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вітамін D"
           }
         }
       }
@@ -3450,31 +5168,134 @@
         }
       }
     },
-    "Welcome to Nouri" : {
-      "extractionState" : "stale",
+    "Water and medications together." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Welcome to Nouri"
-          }
-        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Witamy w Nouri"
+            "value" : "Woda i leki razem."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Добро пожаловать в Nouri"
+            "value" : "Вода и лекарства вместе."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ласкаво просимо до Nouri"
+            "value" : "Вода та ліки разом."
+          }
+        }
+      }
+    },
+    "Water and medications, in one place" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Woda i leki w jednym miejscu"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вода и лекарства в одном месте"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вода та ліки в одному місці"
+          }
+        }
+      }
+    },
+    "Water reminders" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przypomnienia o wodzie"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напоминания о воде"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нагадування про воду"
+          }
+        }
+      }
+    },
+    "Water this week" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Woda w tym tygodniu"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вода за неделю"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вода за тиждень"
+          }
+        }
+      }
+    },
+    "Your daily water goal" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój dzienny cel wody"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ваша дневная цель по воде"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ваша денна ціль з води"
+          }
+        }
+      }
+    },
+    "Your medications" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje leki"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ваши лекарства"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ваші ліки"
           }
         }
       }
