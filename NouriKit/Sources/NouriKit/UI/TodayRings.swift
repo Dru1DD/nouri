@@ -63,20 +63,23 @@ public struct SingleProgressRing: View {
     public var gradient: LinearGradient
     public var centerText: String
     public var accessibilityName: String
+    public var lineWidth: CGFloat
 
-    public init(progress: GoalProgress, gradient: LinearGradient, centerText: String, accessibilityName: String) {
+    public init(progress: GoalProgress, gradient: LinearGradient, centerText: String, accessibilityName: String,
+                lineWidth: CGFloat = 8) {
         self.progress = progress
         self.gradient = gradient
         self.centerText = centerText
         self.accessibilityName = accessibilityName
+        self.lineWidth = lineWidth
     }
 
     public var body: some View {
         ZStack {
-            Circle().stroke(Color.primary.opacity(0.12), lineWidth: 8)
+            Circle().stroke(Color.primary.opacity(0.12), lineWidth: lineWidth)
             Circle()
                 .trim(from: 0, to: progress.fraction)
-                .stroke(gradient, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                .stroke(gradient, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
             Text(centerText)
                 .font(.system(.caption, design: .rounded, weight: .bold).monospacedDigit())

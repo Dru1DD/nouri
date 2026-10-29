@@ -333,7 +333,7 @@ private struct DrinkView: View {
             .tint(model.appearancePreset.waterEnd)
         }
         .focusable()
-        .digitalCrownRotation($amount, from: 10, through: 2000, by: 10,
+        .digitalCrownRotation(detent: $amount, from: 10, through: 2000, by: 10,
                               sensitivity: .medium, isContinuous: false, isHapticFeedbackEnabled: true)
         .onChange(of: beverage) { amount = beverage.defaultServingML }
     }
@@ -396,7 +396,7 @@ private struct CrownAmountView: View {
             .tint(tint)
         }
         .focusable()
-        .digitalCrownRotation($amount, from: range.lowerBound, through: range.upperBound, by: step,
+        .digitalCrownRotation(detent: $amount, from: range.lowerBound, through: range.upperBound, by: step,
                               sensitivity: .medium, isContinuous: false, isHapticFeedbackEnabled: true)
     }
 }
@@ -453,23 +453,22 @@ private struct DoseCard: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
             if dose.status.isResolved {
-                Button("Undo") { set(nil) }
-                    .buttonStyle(.bordered)
+                Button { set(nil) } label: {
+                    Text("Undo").compactPill(.white.opacity(0.15))
+                }
+                .buttonStyle(.plain)
             } else {
                 HStack(spacing: 6) {
                     Button { set(.taken) } label: {
-                        Label("Taken", systemImage: "checkmark")
-                            .frame(maxWidth: .infinity)
+                        Label("Taken", systemImage: "checkmark").compactPill(.green)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.green)
                     Button { set(.skipped) } label: {
-                        Image(systemName: "forward.end")
-                            .frame(minWidth: 30)
+                        Image(systemName: "forward.end").compactPill(.white.opacity(0.15))
                     }
-                    .buttonStyle(.bordered)
+                    .frame(width: 52)
                     .accessibilityLabel("Skip")
                 }
+                .buttonStyle(.plain)
             }
         }
         .padding(10)
@@ -488,5 +487,16 @@ private struct DoseCard: View {
     private func set(_ status: DoseLogStatus?) {
         WKInterfaceDevice.current().play(status == nil ? .click : .success)
         Task { await model.setDose(dose.occurrence, status: status) }
+    }
+}
+
+private extension View {
+    /// Small capsule button face; watchOS bordered buttons ignore `controlSize`.
+    func compactPill(_ fill: some ShapeStyle) -> some View {
+        font(.footnote.weight(.semibold))
+            .frame(maxWidth: .infinity)
+            .frame(height: 32)
+            .background(fill, in: .capsule)
+            .contentShape(.capsule)
     }
 }

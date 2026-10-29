@@ -239,8 +239,6 @@ struct SettingsView: View {
     @State private var removeFromHealth = false
     @State private var exportURL: URL?
     @State private var showExport = false
-    @State private var analyticsURL: URL?
-    @State private var showAnalytics = false
 
     private let intervalOptions = [30, 60, 120, 180, 240]
 
@@ -406,8 +404,6 @@ struct SettingsView: View {
             Section {
                 Button("Export Data") { exportData() }
                     .accessibilityIdentifier("export-data")
-                Button("Share beta stats") { exportAnalytics() }
-                    .accessibilityIdentifier("share-beta-stats")
                 Button("Delete All Data", role: .destructive) {
                     removeFromHealth = false
                     confirmDelete = true
@@ -416,7 +412,7 @@ struct SettingsView: View {
             } header: {
                 Text("Data")
             } footer: {
-                Text("Export creates a JSON file on this device. Share beta stats is anonymous counters only (no amounts or names) and leaves the device only if you share the file. Delete All removes Nouri data on iPhone and syncs deletions to Apple Watch.")
+                Text("Export creates a JSON file on this device. Delete All removes Nouri data on iPhone and syncs deletions to Apple Watch.")
             }
 
             Section {
@@ -468,15 +464,6 @@ struct SettingsView: View {
                 .presentationDetents([.medium])
             }
         }
-        .sheet(isPresented: $showAnalytics) {
-            if let analyticsURL {
-                ShareLink(item: analyticsURL) {
-                    Label("Share Beta Stats", systemImage: "square.and.arrow.up")
-                }
-                .padding()
-                .presentationDetents([.medium])
-            }
-        }
     }
 
     private func minutesBinding(_ minutes: Int) -> Date {
@@ -486,16 +473,6 @@ struct SettingsView: View {
     private func minutes(from date: Date) -> Int {
         let c = Calendar.current.dateComponents([.hour, .minute], from: date)
         return (c.hour ?? 0) * 60 + (c.minute ?? 0)
-    }
-
-    private func exportAnalytics() {
-        do {
-            let data = try model.exportAnalyticsJSON()
-            let url = FileManager.default.temporaryDirectory.appendingPathComponent("nouri-beta-stats.json")
-            try data.write(to: url, options: .atomic)
-            analyticsURL = url
-            showAnalytics = true
-        } catch {}
     }
 
     private func exportData() {
