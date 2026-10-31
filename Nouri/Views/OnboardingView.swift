@@ -41,6 +41,7 @@ struct OnboardingView: View {
                     .padding(.vertical, 6)
             }
             .buttonStyle(.borderedProminent)
+            .foregroundStyle(.white)  // the palette's dark text color is unreadable on the filled tint
             .tint(step == 2 && model.medications.isEmpty ? .secondary : preset.waterEnd)
             .padding(.horizontal, 24)
             .padding(.bottom, 12)

@@ -2,8 +2,8 @@
 
 A small daily health tracker for iPhone and Apple Watch. Nouri tracks water and medication reminders (calorie code is kept but hidden in 1.0.3). Logging an entry should take a couple of seconds.
 
-- iPhone: Today dashboard with quick-add, medications, hydration activity dashboard, month calendar with day log and settings (hydration reminders with night quiet hours and a midday break, appearance, export, delete-all).
-- Apple Watch: Today rings with corner quick-add (+100/+250/+500), Digital Crown custom amounts, and today's doses with Taken/Skip.
+- iPhone: Today dashboard with quick-add, medications, hydration activity dashboard, month calendar with day log and settings (Quick Add amounts: up to four, 10–2000 ml, synced to the Watch; hydration reminders with night quiet hours and a midday break, appearance, export, delete-all).
+- Apple Watch: Today rings with corner quick-add (your Quick Add amounts; the first three sit in the corners, a fourth below the fold), Digital Crown custom amounts, and today's doses with Taken/Skip.
 - Widgets and complications: Today (small, medium and large — water + medications together), plus separate Hydration and Medications. Logging is in the app, not on the widget.
 - Medication reminders and optional hydration reminders are local notifications (Taken / Snooze / Skip for doses; +100 / +250 / +500 for hydration). Hydration reminders start from your last drink.
 

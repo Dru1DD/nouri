@@ -197,6 +197,14 @@ public final class UserPreferences {
     public var caloriesEnabled: Bool = false
     public var appearancePresetRaw: String = AppearancePreset.default.rawValue
 
+    /// Hydration quick-add amounts, see `QuickAddPresets`. Existing stores get the defaults.
+    public var quickAddAmountsRaw: String = QuickAddPresets.encode(QuickAddPresets.defaults)
+
+    public var quickAddAmounts: [Int] {
+        get { QuickAddPresets.decode(quickAddAmountsRaw) }
+        set { quickAddAmountsRaw = QuickAddPresets.encode(QuickAddPresets.sanitized(newValue)) }
+    }
+
     public var appearancePreset: AppearancePreset {
         get { AppearancePreset(rawValue: appearancePresetRaw) ?? .default }
         set { appearancePresetRaw = newValue.rawValue }

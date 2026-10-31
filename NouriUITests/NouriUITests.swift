@@ -153,6 +153,23 @@ final class NouriUITests: XCTestCase {
         XCTAssertTrue(app.descendants(matching: .any)["hydration-total"].waitForExistence(timeout: 5))
     }
 
+    func testCustomQuickAddPreset() {
+        app.buttons["Settings"].tap()
+        let preset = app.buttons["quick-add-250"]
+        XCTAssertTrue(preset.waitForExistence(timeout: 3))
+        preset.tap()
+        let field = app.alerts.textFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 3))
+        field.clearAndType("330")
+        app.alerts.buttons["Save"].tap()
+        XCTAssertTrue(app.buttons["quick-add-330"].waitForExistence(timeout: 3))
+
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertFalse(app.buttons["add-water-250"].exists)
+        app.buttons["add-water-330"].tap()
+        waitForValue("hydration-total", containing: "0.33 / 2.50 L")
+    }
+
     func testOpenActivityDashboard() {
         app.buttons["open-dashboard"].tap()
         XCTAssertTrue(app.descendants(matching: .any)["activity-dashboard"].waitForExistence(timeout: 3))

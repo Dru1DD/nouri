@@ -28,6 +28,8 @@ public final class AppModel {
     public private(set) var hasCompletedOnboarding = false
     public private(set) var caloriesEnabled = false
     public private(set) var appearancePreset: AppearancePreset = .default
+    /// Hydration quick-add amounts in ml, in display order. Never empty.
+    public private(set) var quickAddAmounts = QuickAddPresets.defaults
     public private(set) var scheduledReminderCount = 0
     public private(set) var healthConnected = false
     /// Last persistence error suitable for a user-facing alert, if any.
@@ -95,6 +97,7 @@ public final class AppModel {
         hasCompletedOnboarding = prefs.hasCompletedOnboarding
         caloriesEnabled = prefs.caloriesEnabled
         appearancePreset = prefs.appearancePreset
+        quickAddAmounts = prefs.quickAddAmounts
     }
 
     public func refreshExternal() async {
@@ -394,6 +397,43 @@ public final class AppModel {
 
     public func setAppearancePreset(_ preset: AppearancePreset) {
         store.setAppearancePreset(preset, at: now())
+        settingsChanged()
+    }
+
+    /// Appends a quick-add amount, or says why it can't.
+    @discardableResult
+    public func addQuickAddAmount(_ amountML: Int) -> QuickAddPresets.Problem? {
+        if let problem = QuickAddPresets.problem(adding: amountML, to: quickAddAmounts) { return problem }
+        setQuickAddAmounts(quickAddAmounts + [amountML])
+        return nil
+    }
+
+    @discardableResult
+    public func updateQuickAddAmount(at index: Int, to amountML: Int) -> QuickAddPresets.Problem? {
+        guard quickAddAmounts.indices.contains(index) else { return nil }
+        if let problem = QuickAddPresets.problem(adding: amountML, to: quickAddAmounts, at: index) { return problem }
+        var amounts = quickAddAmounts
+        amounts[index] = amountML
+        setQuickAddAmounts(amounts)
+        return nil
+    }
+
+    /// The last amount can't be removed: the quick-add row always keeps one button.
+    public func removeQuickAddAmounts(at offsets: IndexSet) {
+        var amounts = quickAddAmounts
+        amounts.remove(atOffsets: offsets)
+        guard !amounts.isEmpty else { return }
+        setQuickAddAmounts(amounts)
+    }
+
+    public func moveQuickAddAmounts(from source: IndexSet, to destination: Int) {
+        var amounts = quickAddAmounts
+        amounts.move(fromOffsets: source, toOffset: destination)
+        setQuickAddAmounts(amounts)
+    }
+
+    private func setQuickAddAmounts(_ amounts: [Int]) {
+        store.setQuickAddAmounts(amounts, at: now())
         settingsChanged()
     }
 

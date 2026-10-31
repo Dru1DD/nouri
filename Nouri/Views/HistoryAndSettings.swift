@@ -239,6 +239,10 @@ struct SettingsView: View {
     @State private var removeFromHealth = false
     @State private var exportURL: URL?
     @State private var showExport = false
+    @State private var showAmountEditor = false
+    @State private var editingIndex: Int?
+    @State private var editedAmount: Int?
+    @State private var amountProblem: QuickAddPresets.Problem?
 
     private let intervalOptions = [30, 60, 120, 180, 240]
 
@@ -256,6 +260,46 @@ struct SettingsView: View {
                         LabeledContent("Calories", value: String(localized: "\(Format.kcal(model.calorieGoal)) kcal"))
                     }
                 }
+            }
+
+            Section {
+                ForEach(Array(model.quickAddAmounts.enumerated()), id: \.element) { index, amount in
+                    Button {
+                        editAmount(at: index)
+                    } label: {
+                        LabeledContent("+\(amount) ml") {
+                            Image(systemName: "pencil")
+                        }
+                    }
+                    .foregroundStyle(.primary)
+                    .accessibilityLabel("Edit quick-add amount, \(amount) milliliters")
+                    .accessibilityIdentifier("quick-add-\(amount)")
+                }
+                .onDelete { model.removeQuickAddAmounts(at: $0) }
+                .onMove { model.moveQuickAddAmounts(from: $0, to: $1) }
+                .deleteDisabled(model.quickAddAmounts.count == 1)
+                if model.quickAddAmounts.count < QuickAddPresets.maxCount {
+                    Button("Add Amount", systemImage: "plus") { editAmount(at: nil) }
+                        .accessibilityIdentifier("quick-add-new")
+                }
+            } header: {
+                Text("Quick Add")
+            } footer: {
+                Text("Buttons for logging water on Today and Apple Watch. Swipe to remove, hold and drag to reorder.")
+            }
+            .alert(editingIndex == nil ? "Add Amount" : "Edit Amount", isPresented: $showAmountEditor) {
+                TextField("ml", value: $editedAmount, format: .number)
+                    .keyboardType(.numberPad)
+                Button("Cancel", role: .cancel) {}
+                Button("Save") { saveAmount() }
+            } message: {
+                Text("From \(QuickAddPresets.range.lowerBound) to \(QuickAddPresets.range.upperBound) ml.")
+            }
+            .alert("Can't Save Amount", isPresented: Binding(get: { amountProblem != nil },
+                                                             set: { if !$0 { amountProblem = nil } })) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(amountProblemText)
             }
 
             Section {
@@ -463,6 +507,27 @@ struct SettingsView: View {
                 .padding()
                 .presentationDetents([.medium])
             }
+        }
+    }
+
+    private func editAmount(at index: Int?) {
+        editingIndex = index
+        editedAmount = index.map { model.quickAddAmounts[$0] }
+        showAmountEditor = true
+    }
+
+    private func saveAmount() {
+        let amount = editedAmount ?? 0
+        amountProblem = editingIndex.map { model.updateQuickAddAmount(at: $0, to: amount) }
+            ?? model.addQuickAddAmount(amount)
+    }
+
+    private var amountProblemText: String {
+        switch amountProblem {
+        case .outOfRange: String(localized: "Enter an amount from \(QuickAddPresets.range.lowerBound) to \(QuickAddPresets.range.upperBound) ml.")
+        case .duplicate: String(localized: "This amount is already in Quick Add.")
+        case .full: String(localized: "Quick Add holds up to \(QuickAddPresets.maxCount) amounts.")
+        case nil: ""
         }
     }
 
