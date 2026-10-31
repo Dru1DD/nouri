@@ -87,7 +87,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         let dosePayload = DoseNotification.payload(from: info)
         Task { @MainActor in
             if let hydrateML {
-                model.addFluid(hydrateML, surface: .notification)
+                model.addFluid(hydrateML)
             } else if let dosePayload {
                 await model.handleNotificationAction(action, payload: dosePayload)
             }

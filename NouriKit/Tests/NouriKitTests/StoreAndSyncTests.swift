@@ -503,19 +503,6 @@ import Testing
 
 
 
-@Suite struct AnalyticsStoreTests {
-    @Test func countsPerDayAndOncePerDay() throws {
-        let analytics = AnalyticsStore(suiteName: "nouri.tests.\(UUID().uuidString)")
-        analytics.track("water_logged", ["surface": "phone"])
-        analytics.track("water_logged", ["surface": "phone"])
-        analytics.trackOncePerDay("widget_seen", ["family": "systemSmall"])
-        analytics.trackOncePerDay("widget_seen", ["family": "systemSmall"])
-        let json = try JSONSerialization.jsonObject(with: analytics.exportJSON()) as? [String: Any]
-        let today = (json?["days"] as? [String: [String: Int]])?["0"]
-        #expect(today == ["water_logged|surface=phone": 2, "widget_seen|family=systemSmall": 1])
-    }
-}
-
 @MainActor
 @Suite struct HealthAndBackfillTests {
     @Test func connectingHealthExportsEarlierEntries() async {

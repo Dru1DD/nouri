@@ -88,10 +88,13 @@ public struct SettingsSnapshot: Codable, Hashable, Sendable {
     public var presets: [PresetRecord]
     public var caloriesEnabled: Bool
     public var appearancePresetRaw: String
+    /// Nil from builds before quick-add presets: the receiver keeps what it has.
+    public var quickAddAmounts: [Int]?
 
     public init(hydrationGoalML: Double, calorieGoal: Double, goalsUpdatedAt: Date,
                 medications: [MedicationRecord], presets: [PresetRecord],
-                caloriesEnabled: Bool = false, appearancePresetRaw: String = AppearancePreset.default.rawValue) {
+                caloriesEnabled: Bool = false, appearancePresetRaw: String = AppearancePreset.default.rawValue,
+                quickAddAmounts: [Int]? = nil) {
         self.hydrationGoalML = hydrationGoalML
         self.calorieGoal = calorieGoal
         self.goalsUpdatedAt = goalsUpdatedAt
@@ -99,6 +102,7 @@ public struct SettingsSnapshot: Codable, Hashable, Sendable {
         self.presets = presets
         self.caloriesEnabled = caloriesEnabled
         self.appearancePresetRaw = appearancePresetRaw
+        self.quickAddAmounts = quickAddAmounts
     }
 
     public init(from decoder: Decoder) throws {
@@ -110,6 +114,7 @@ public struct SettingsSnapshot: Codable, Hashable, Sendable {
         presets = try c.decode([PresetRecord].self, forKey: .presets)
         caloriesEnabled = try c.decodeIfPresent(Bool.self, forKey: .caloriesEnabled) ?? false
         appearancePresetRaw = try c.decodeIfPresent(String.self, forKey: .appearancePresetRaw) ?? AppearancePreset.default.rawValue
+        quickAddAmounts = try c.decodeIfPresent([Int].self, forKey: .quickAddAmounts)
     }
 }
 

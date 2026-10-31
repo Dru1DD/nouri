@@ -44,12 +44,12 @@ struct DayProvider: TimelineProvider {
     func placeholder(in context: Context) -> DayEntry { .placeholder }
 
     func getSnapshot(in context: Context, completion: @escaping (DayEntry) -> Void) {
-        completion(context.isPreview ? .placeholder : load(at: .now, family: context.family))
+        completion(context.isPreview ? .placeholder : load(at: .now))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<DayEntry>) -> Void) {
         let now = Date.now
-        let entry = load(at: now, family: context.family)
+        let entry = load(at: now)
         let cal = Calendar.current
         let midnight = cal.dateInterval(of: .day, for: now)?.end ?? now.addingTimeInterval(3600)
         let nextDose = entry.summary.doses.map(\.occurrence.scheduledAt).first { $0 > now }
@@ -57,8 +57,7 @@ struct DayProvider: TimelineProvider {
         completion(Timeline(entries: [entry], policy: .after(refresh)))
     }
 
-    private func load(at now: Date, family: WidgetFamily) -> DayEntry {
-        AnalyticsStore().trackOncePerDay("widget_seen", ["family": "\(family)"])
+    private func load(at now: Date) -> DayEntry {
         guard let container = try? NouriStore.makeContainer() else { return .placeholder }
         let store = NouriStore(container: container)
         let summary = store.summary(for: now, now: now, calendar: .current)
@@ -69,13 +68,13 @@ struct DayProvider: TimelineProvider {
 // MARK: - Today
 
 #if os(iOS)
-/// Water and medications side by side (medium), plus today's doses (large).
+/// Concentric water + medication rings with today's numbers (medium), plus today's doses (large).
 /// Small and lock-screen sizes use the separate Hydration / Medications widgets.
 struct TodayWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "Today", provider: DayProvider()) { entry in
             TodayView(entry: entry)
-                .themedBackground(entry.appearance)
+                .vividBackground(.today, entry.appearance)
         }
         .configurationDisplayName("Today")
         .description("Water and medications together.")
@@ -93,25 +92,40 @@ struct TodayView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 16) {
-                waterColumn
-                medsColumn
+            HStack(spacing: 16) {
+                ZStack {
+                    DualProgressRings(water: water, medications: summary.medicationProgress, preset: entry.appearance,
+                                      showMedications: !summary.doses.isEmpty, centerText: "", lineWidth: 13)
+                    Image(systemName: "drop.fill")
+                        .font(.title3)
+                        .foregroundStyle(entry.appearance.waterGradient)
+                        .accessibilityHidden(true)
+                }
+                .padding(6)
+                .aspectRatio(1, contentMode: .fit)
+                .frame(maxHeight: 124)
+                VStack(alignment: .leading, spacing: 8) {
+                    waterStat
+                    medsStat
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             if family == .systemLarge {
-                Divider()
+                Divider().overlay(.white.opacity(0.3))
                 doseList
                 Spacer(minLength: 0)
             }
         }
     }
 
-    private var waterColumn: some View {
-        VStack(alignment: .leading, spacing: 4) {
+    private var waterStat: some View {
+        VStack(alignment: .leading, spacing: 1) {
             Label("Water", systemImage: "drop.fill")
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(entry.appearance.waterEnd)
+                .foregroundStyle(entry.appearance.waterStart)
             Text("\(Format.liters(water.value)) L")
-                .font(.title2.bold().monospacedDigit())
+                .font(.title3.bold().monospacedDigit())
+                .contentTransition(.numericText(value: water.value))
                 .minimumScaleFactor(0.6)
                 .lineLimit(1)
             Text("of \(Format.liters(water.goal)) L · \(water.percent)%")
@@ -119,32 +133,27 @@ struct TodayView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
-            Spacer(minLength: 0)
-            ProgressView(value: water.fraction).tint(entry.appearance.waterEnd)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Hydration")
         .accessibilityValue("\(Format.liters(water.value)) of \(Format.liters(water.goal)) liters, \(water.percent) percent")
     }
 
-    private var medsColumn: some View {
-        VStack(alignment: .leading, spacing: 4) {
+    private var medsStat: some View {
+        VStack(alignment: .leading, spacing: 1) {
             Label("Medications", systemImage: "pills.fill")
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(entry.appearance.medsEnd)
+                .foregroundStyle(entry.appearance.medsStart)
                 .lineLimit(1)
             Text(summary.doses.isEmpty ? "—" : "\(summary.dosesTaken)/\(summary.doses.count)")
-                .font(.title2.bold().monospacedDigit())
+                .font(.title3.bold().monospacedDigit())
+                .contentTransition(.numericText(value: Double(summary.dosesTaken)))
             Text(medsCaption)
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
-            Spacer(minLength: 0)
-            ProgressView(value: summary.medicationProgress.fraction).tint(entry.appearance.medsEnd)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Medications")
         .accessibilityValue(medsCaption)
@@ -178,7 +187,7 @@ struct TodayView: View {
                     Spacer()
                     Label(dose.status.label, systemImage: dose.status.symbol)
                         .font(.caption2)
-                        .foregroundStyle(dose.status == .taken ? entry.appearance.medsEnd : .secondary)
+                        .foregroundStyle(dose.status == .taken ? entry.appearance.medsStart : .secondary)
                 }
                 .accessibilityElement(children: .combine)
             }
@@ -187,20 +196,67 @@ struct TodayView: View {
 }
 #endif
 
+// MARK: - Style
+
+private enum WidgetStyle { case water, medications, today }
+
 private extension View {
-    /// Palette background (or the system one) with a soft wash, and palette text color.
-    func themedBackground(_ preset: AppearancePreset) -> some View {
-        foregroundStyle(preset.text.map(AnyShapeStyle.init) ?? AnyShapeStyle(.primary))
+    /// Saturated gradient in the palette's hue with a soft glow, light text on top.
+    /// Tinted and clear Home Screens drop the background and recolor the content on their own.
+    func vividBackground(_ style: WidgetStyle, _ preset: AppearancePreset) -> some View {
+        let colors: [Color]
+        let glows: [(Color, UnitPoint)]
+        switch style {
+        case .water:
+            colors = [preset.waterEnd.mix(with: .black, by: 0.25), preset.waterEnd.mix(with: .black, by: 0.45)]
+            glows = [(preset.waterStart, .topLeading)]
+        case .medications:
+            colors = [preset.medsEnd.mix(with: .black, by: 0.4), preset.medsEnd.mix(with: .black, by: 0.5)]
+            glows = [(preset.medsStart, .topLeading)]
+        case .today:
+            colors = [preset.waterEnd.mix(with: .black, by: 0.7), preset.waterEnd.mix(with: .black, by: 0.88)]
+            glows = [(preset.waterStart, .topLeading), (preset.medsStart, .bottomTrailing)]
+        }
+        return environment(\.colorScheme, .dark)
+            .foregroundStyle(.white)
             .containerBackground(for: .widget) {
                 ZStack {
-                    if let background = preset.background {
-                        background
-                    } else {
-                        Rectangle().fill(.fill.tertiary)
+                    LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing)
+                    ForEach(glows.indices, id: \.self) { i in
+                        RadialGradient(colors: [glows[i].0.opacity(0.25), .clear], center: glows[i].1,
+                                       startRadius: 0, endRadius: 170)
                     }
-                    preset.backgroundWash
                 }
             }
+    }
+}
+
+/// Big ring with a symbol and value inside, for the small Home Screen widgets.
+private struct BadgeRing: View {
+    let progress: GoalProgress
+    let symbol: String
+    let value: String
+    let animatedValue: Double
+    let accessibilityName: String
+
+    var body: some View {
+        ZStack {
+            SingleProgressRing(progress: progress,
+                               gradient: LinearGradient(colors: [.white, .white.opacity(0.75)], startPoint: .top, endPoint: .bottom),
+                               centerText: "", accessibilityName: accessibilityName, lineWidth: 11)
+            VStack(spacing: 0) {
+                Image(systemName: symbol).font(.title3)
+                Text(verbatim: value)
+                    .font(.system(.headline, design: .rounded, weight: .bold).monospacedDigit())
+                    .contentTransition(.numericText(value: animatedValue))
+                    .minimumScaleFactor(0.6)
+                    .lineLimit(1)
+            }
+            .padding(.horizontal, 14)
+        }
+        .padding(6)
+        .aspectRatio(1, contentMode: .fit)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -210,7 +266,7 @@ struct HydrationWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "Hydration", provider: DayProvider()) { entry in
             HydrationView(entry: entry)
-                .themedBackground(entry.appearance)
+                .vividBackground(.water, entry.appearance)
         }
         .configurationDisplayName("Hydration")
         .description("Today's water intake.")
@@ -250,8 +306,16 @@ struct HydrationView: View {
                 .font(.title3)
                 .foregroundStyle(entry.appearance.waterEnd)
                 .widgetLabel {
-                    Gauge(value: progress.fraction) { Text("Water") }
-                        .tint(entry.appearance.waterEnd)
+                    Gauge(value: progress.fraction) {
+                        Text("Water")
+                    } currentValueLabel: {
+                        EmptyView()
+                    } minimumValueLabel: {
+                        Text(verbatim: "")
+                    } maximumValueLabel: {
+                        Text(verbatim: "\(progress.percent)%")
+                    }
+                    .tint(entry.appearance.waterEnd)
                 }
         #endif
         case .accessoryRectangular:
@@ -259,24 +323,21 @@ struct HydrationView: View {
                 Text("Hydration").font(.headline)
                 Text("\(liters) / \(Format.liters(progress.goal)) L")
                     .minimumScaleFactor(0.7)
-                ProgressView(value: progress.fraction).tint(entry.appearance.waterEnd)
+                ProgressView(value: progress.fraction).tint(entry.appearance.waterStart)
             }
         default:
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Hydration")
-                    .font(.headline)
-                    .foregroundStyle(entry.appearance.waterEnd)
-                Spacer()
+            VStack(spacing: 4) {
+                BadgeRing(progress: progress, symbol: "drop.fill", value: "\(progress.percent)%",
+                          animatedValue: Double(progress.percent), accessibilityName: "Hydration")
                 Text(liters)
-                    .font(.title.bold().monospacedDigit())
+                    .font(.headline.monospacedDigit())
+                    .contentTransition(.numericText(value: progress.value))
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
-                Text("of \(Format.liters(progress.goal)) L · \(progress.percent)%")
-                    .font(.caption)
+                Text("of \(Format.liters(progress.goal)) L")
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
-                    .minimumScaleFactor(0.7)
                     .lineLimit(1)
-                ProgressView(value: progress.fraction).tint(entry.appearance.waterEnd)
             }
         }
     }
@@ -288,7 +349,7 @@ struct MedicationWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "Medications", provider: DayProvider()) { entry in
             MedicationStatusView(entry: entry)
-                .themedBackground(entry.appearance)
+                .vividBackground(.medications, entry.appearance)
                 .widgetURL(URL(string: "nouri://medications"))
         }
         .configurationDisplayName("Medications")
@@ -333,8 +394,16 @@ struct MedicationStatusView: View {
                 .font(.title3)
                 .foregroundStyle(entry.appearance.medsEnd)
                 .widgetLabel {
-                    Gauge(value: summary.medicationProgress.fraction) { Text(counts) }
-                        .tint(entry.appearance.medsEnd)
+                    Gauge(value: summary.medicationProgress.fraction) {
+                        Text(counts)
+                    } currentValueLabel: {
+                        EmptyView()
+                    } minimumValueLabel: {
+                        Text(verbatim: "")
+                    } maximumValueLabel: {
+                        Text(verbatim: "\(summary.medicationProgress.percent)%")
+                    }
+                    .tint(entry.appearance.medsEnd)
                 }
         #endif
         case .accessoryRectangular:
@@ -344,16 +413,14 @@ struct MedicationStatusView: View {
                     .lineLimit(2)
             }
         default:
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Medications")
-                    .font(.headline)
-                    .foregroundStyle(entry.appearance.medsEnd)
-                Spacer()
-                Text("\(counts) taken").font(.title2.bold().monospacedDigit()).minimumScaleFactor(0.7)
+            VStack(spacing: 4) {
+                BadgeRing(progress: summary.medicationProgress, symbol: "pills.fill",
+                          value: summary.doses.isEmpty ? "—" : counts,
+                          animatedValue: Double(summary.dosesTaken), accessibilityName: "Medications")
                 Text(next.map { String(localized: "Next: \($0)") }
                      ?? (summary.doses.isEmpty ? String(localized: "No doses today") : String(localized: "All done for today")))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.caption.weight(.medium))
+                    .multilineTextAlignment(.center)
                     .lineLimit(2)
                     .minimumScaleFactor(0.7)
             }

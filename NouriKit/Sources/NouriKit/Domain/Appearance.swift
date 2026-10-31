@@ -91,7 +91,3 @@ public enum AppearancePreset: String, Codable, CaseIterable, Identifiable, Senda
     }
     #endif
 }
-
-public enum LogSurface: String, Codable, Sendable {
-    case phone, watch, shortcut, notification
-}

@@ -41,6 +41,7 @@ struct OnboardingView: View {
                     .padding(.vertical, 6)
             }
             .buttonStyle(.borderedProminent)
+            .foregroundStyle(.white)  // the palette's dark text color is unreadable on the filled tint
             .tint(step == 2 && model.medications.isEmpty ? .secondary : preset.waterEnd)
             .padding(.horizontal, 24)
             .padding(.bottom, 12)
@@ -295,7 +296,7 @@ struct OnboardingView: View {
 
     private var widgetStep: some View {
         StepLayout(title: "Keep it on your Home Screen",
-                   subtitle: "Long-press the Home Screen, tap Edit → Add Widget, then pick Nouri → Today.") {
+                   subtitle: "Long-press the Home Screen, tap Edit → Add Widget, then pick Nouri: Water Tracker → Today.") {
             WidgetMock(preset: preset, goal: goal, reduceMotion: reduceMotion,
                        medication: model.medications.first)
         } content: {
@@ -481,7 +482,7 @@ private struct NotificationPreview: View {
             AppIconView().scaleEffect(0.55).frame(width: 40, height: 40)
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
-                    Text("Nouri").font(.subheadline.weight(.semibold))
+                    Text("Nouri: Water Tracker").font(.subheadline.weight(.semibold))
                     Spacer()
                     Text("now").font(.caption).foregroundStyle(.secondary)
                 }

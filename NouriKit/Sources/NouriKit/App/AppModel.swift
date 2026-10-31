@@ -28,6 +28,8 @@ public final class AppModel {
     public private(set) var hasCompletedOnboarding = false
     public private(set) var caloriesEnabled = false
     public private(set) var appearancePreset: AppearancePreset = .default
+    /// Hydration quick-add amounts in ml, in display order. Never empty.
+    public private(set) var quickAddAmounts = QuickAddPresets.defaults
     public private(set) var scheduledReminderCount = 0
     public private(set) var healthConnected = false
     /// Last persistence error suitable for a user-facing alert, if any.
@@ -42,7 +44,6 @@ public final class AppModel {
     @ObservationIgnored private let plansReminders: Bool
     @ObservationIgnored private let now: () -> Date
     @ObservationIgnored private let calendar: () -> Calendar
-    @ObservationIgnored public let analytics: AnalyticsStore
 
     public init(
         store: NouriStore,
@@ -50,7 +51,6 @@ public final class AppModel {
         health: HealthService? = nil,
         reminders: ReminderScheduler? = nil,
         plansReminders: Bool = true,
-        analytics: AnalyticsStore = AnalyticsStore(),
         now: @escaping () -> Date = Date.init,
         calendar: @escaping () -> Calendar = { Calendar.autoupdatingCurrent }
     ) {
@@ -60,7 +60,6 @@ public final class AppModel {
         self.plansReminders = plansReminders
         self.now = now
         self.calendar = calendar
-        self.analytics = analytics
         self.sync = transport.map { SyncEngine(store: store, transport: $0, now: now) }
         today = store.summary(for: now(), now: now(), calendar: calendar())
         sync?.onRemoteChange = { [weak self] records in self?.handleRemote(records) }
@@ -73,7 +72,6 @@ public final class AppModel {
             #endif
         }
         refresh()
-        analytics.trackFirstOpenIfNeeded()
     }
 
     // MARK: - Lifecycle
@@ -99,6 +97,7 @@ public final class AppModel {
         hasCompletedOnboarding = prefs.hasCompletedOnboarding
         caloriesEnabled = prefs.caloriesEnabled
         appearancePreset = prefs.appearancePreset
+        quickAddAmounts = prefs.quickAddAmounts
     }
 
     public func refreshExternal() async {
@@ -139,14 +138,6 @@ public final class AppModel {
     }
 
     static let healthBackfill: TimeInterval = 30 * 86_400
-
-    private var defaultSurface: LogSurface {
-        #if os(watchOS)
-        .watch
-        #else
-        .phone
-        #endif
-    }
 
     /// Both iPhone and Watch plan local reminders from their store. The Watch cannot rely on
     /// iPhone notification mirroring for an independent Watch app.
@@ -192,15 +183,13 @@ public final class AppModel {
     // MARK: - Entries
 
     /// Adds a drink. `timestamp` defaults to now; past times are allowed, future ones are clamped.
-    public func addFluid(_ amountML: Double, beverage: BeverageType = .water, calories: Double? = nil, timestamp: Date? = nil,
-                         surface: LogSurface? = nil) {
+    public func addFluid(_ amountML: Double, beverage: BeverageType = .water, calories: Double? = nil, timestamp: Date? = nil) {
         guard amountML > 0 else { return }
         let date = now()
         let kcal = max(calories ?? beverage.defaultCalories(amountML: amountML), 0)
         let record = store.addFluid(amountML: amountML, beverage: beverage, calories: kcal,
                                     timestamp: min(timestamp ?? date, date), at: date)
         lastAdded = LastAdded(id: record.id, kind: .fluid(amountML: amountML, beverage: beverage))
-        analytics.track("water_logged", ["surface": (surface ?? defaultSurface).rawValue])
         localChange(record)
         Task { await rescheduleReminders() }
     }
@@ -212,7 +201,6 @@ public final class AppModel {
         let record = store.addFood(name: name.trimmingCharacters(in: .whitespacesAndNewlines), calories: kcal,
                                    timestamp: min(timestamp ?? date, date), at: date)
         lastAdded = LastAdded(id: record.id, kind: .food(kcal: kcal))
-        analytics.track("food_logged", ["surface": defaultSurface.rawValue])
         localChange(record)
     }
 
@@ -306,7 +294,6 @@ public final class AppModel {
     public func setDose(key: String, medicationID: UUID, scheduledAt: Date, status: DoseLogStatus?) async {
         localChange(store.logDose(key: key, medicationID: medicationID, scheduledAt: scheduledAt, status: status, at: now()))
         if status != nil {
-            analytics.track("dose_logged", ["surface": defaultSurface.rawValue])
             await reminders?.clear(doseKey: key)
         }
         await rescheduleReminders()
@@ -319,7 +306,7 @@ public final class AppModel {
     /// Handles a tap on a notification action (Taken / Skip / Snooze / hydrate amounts).
     public func handleNotificationAction(_ action: String, userInfo: [AnyHashable: Any]) async {
         if let amount = HydrationNotification.amountML(for: action) {
-            addFluid(amount, surface: .notification)
+            addFluid(amount)
             return
         }
         guard let payload = DoseNotification.payload(from: userInfo) else { return }
@@ -349,9 +336,7 @@ public final class AppModel {
     }
 
     public func saveMedication(_ info: MedicationInfo) async {
-        let isNew = !store.medications().contains { $0.id == info.id }
         store.saveMedication(info, at: now())
-        if isNew { analytics.track("med_added") }
         // During onboarding the Reminders step asks, with context.
         if notificationsAllowed == nil, hasCompletedOnboarding { await requestNotificationPermission() }
         settingsChanged()
@@ -394,7 +379,6 @@ public final class AppModel {
 
     public func completeOnboarding() {
         store.setOnboardingCompleted(true, at: now())
-        analytics.track("onboarding_done")
         settingsChanged()
     }
 
@@ -416,8 +400,41 @@ public final class AppModel {
         settingsChanged()
     }
 
-    public func exportAnalyticsJSON() throws -> Data {
-        try analytics.exportJSON()
+    /// Appends a quick-add amount, or says why it can't.
+    @discardableResult
+    public func addQuickAddAmount(_ amountML: Int) -> QuickAddPresets.Problem? {
+        if let problem = QuickAddPresets.problem(adding: amountML, to: quickAddAmounts) { return problem }
+        setQuickAddAmounts(quickAddAmounts + [amountML])
+        return nil
+    }
+
+    @discardableResult
+    public func updateQuickAddAmount(at index: Int, to amountML: Int) -> QuickAddPresets.Problem? {
+        guard quickAddAmounts.indices.contains(index) else { return nil }
+        if let problem = QuickAddPresets.problem(adding: amountML, to: quickAddAmounts, at: index) { return problem }
+        var amounts = quickAddAmounts
+        amounts[index] = amountML
+        setQuickAddAmounts(amounts)
+        return nil
+    }
+
+    /// The last amount can't be removed: the quick-add row always keeps one button.
+    public func removeQuickAddAmounts(at offsets: IndexSet) {
+        var amounts = quickAddAmounts
+        amounts.remove(atOffsets: offsets)
+        guard !amounts.isEmpty else { return }
+        setQuickAddAmounts(amounts)
+    }
+
+    public func moveQuickAddAmounts(from source: IndexSet, to destination: Int) {
+        var amounts = quickAddAmounts
+        amounts.move(fromOffsets: source, toOffset: destination)
+        setQuickAddAmounts(amounts)
+    }
+
+    private func setQuickAddAmounts(_ amounts: [Int]) {
+        store.setQuickAddAmounts(amounts, at: now())
+        settingsChanged()
     }
 
     public var pendingMedicationsDeepLink = false

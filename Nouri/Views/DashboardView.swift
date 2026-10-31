@@ -98,7 +98,7 @@ struct DashboardView: View {
                 progress: today.hydration,
                 identifier: "hydration-total"
             )
-            QuickAddRow(values: [100, 250, 500], unit: "ml", idPrefix: "add-water", a11yLabel: { String(localized: "Add \($0) milliliters") }) { model.addFluid($0) } more: {
+            QuickAddRow(values: model.quickAddAmounts.map(Double.init), unit: "ml", idPrefix: "add-water", a11yLabel: { String(localized: "Add \($0) milliliters") }) { model.addFluid($0) } more: {
                 sheet = .fluid
             }
             if !model.recentDrinks.isEmpty {
@@ -196,7 +196,7 @@ struct DashboardView: View {
                 ContentUnavailableView {
                     Label("No drinks logged today", systemImage: "drop")
                 } description: {
-                    Text("Tap +100, +250 or +500 above to log your first drink.")
+                    Text("Tap a quick-add amount above to log your first drink.")
                 }
             }
             ForEach(activity) { item in
@@ -323,6 +323,7 @@ struct DoseRow: View {
             if !dose.status.isResolved {
                 Button("Taken") { Task { await model.setDose(dose.occurrence, status: .taken) } }
                     .buttonStyle(.borderedProminent)
+                    .foregroundStyle(.white)  // the palette's dark text color is unreadable on the filled tint
                     .accessibilityIdentifier("dose-taken-\(dose.occurrence.medicationName)")
             }
         }

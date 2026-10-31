@@ -233,6 +233,13 @@ public final class NouriStore {
         save()
     }
 
+    public func setQuickAddAmounts(_ amounts: [Int], at date: Date) {
+        let prefs = preferences()
+        prefs.quickAddAmounts = amounts
+        prefs.updatedAt = Self.stamp(date, after: prefs.updatedAt)
+        save()
+    }
+
     public func lastHydratingDrink(on day: Date, calendar: Calendar) -> Date? {
         let interval = calendar.dateInterval(of: .day, for: day) ?? DateInterval(start: day, duration: 86_400)
         return fluids(in: interval).filter(\.beverage.countsTowardHydration).map(\.timestamp).max()
@@ -307,6 +314,7 @@ public final class NouriStore {
         prefs.daytimeQuietEndMinutes = 14 * 60
         prefs.caloriesEnabled = false
         prefs.appearancePresetRaw = AppearancePreset.default.rawValue
+        prefs.quickAddAmounts = QuickAddPresets.defaults
         // Keep onboarding completed so the wipe doesn't force the welcome flow again.
         prefs.updatedAt = Self.stamp(date, after: prefs.updatedAt)
         save()
@@ -428,6 +436,7 @@ public final class NouriStore {
             prefs.calorieGoal = snapshot.calorieGoal
             prefs.caloriesEnabled = snapshot.caloriesEnabled
             prefs.appearancePresetRaw = snapshot.appearancePresetRaw
+            if let amounts = snapshot.quickAddAmounts { prefs.quickAddAmounts = amounts }
             prefs.updatedAt = snapshot.goalsUpdatedAt
             changed = true
         }
@@ -454,7 +463,8 @@ public final class NouriStore {
             medications: fetch(FetchDescriptor<Medication>()).map(\.record),
             presets: fetch(FetchDescriptor<CaloriePreset>()).map(\.record),
             caloriesEnabled: prefs.caloriesEnabled,
-            appearancePresetRaw: prefs.appearancePresetRaw
+            appearancePresetRaw: prefs.appearancePresetRaw,
+            quickAddAmounts: prefs.quickAddAmounts
         )
     }
 
